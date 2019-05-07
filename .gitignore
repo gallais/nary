@@ -1,1 +1,4 @@
 *.agdai
+*~
+doc/latex/
+doc/output
