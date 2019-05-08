@@ -3,7 +3,6 @@
 
 open import Data.Empty
 open import Level using (Level; _⊔_)
-open import Function
 
 private
   variable
@@ -15,6 +14,57 @@ private
     P : A → Set p
     Q : A → Set q
     R : A → Set r
+    x y t u : A
+
+\end{code}
+%<*equality>
+\begin{code}
+data _≡_ {A : Set a} (x : A) : A → Set a where
+  refl : x ≡ x
+\end{code}
+%</equality>
+\begin{code}
+
+
+\end{code}
+%<*cong>
+\begin{code}
+cong : (f : A → B) → x ≡ y → f x ≡ f y
+cong f refl = refl
+\end{code}
+%</cong>
+\begin{code}
+
+\end{code}
+%<*cong2>
+\begin{code}
+cong₂ :  (f : A → B → C) →
+         x ≡ y → t ≡ u → f x t ≡ f y u
+cong₂ f refl refl = refl
+\end{code}
+%</cong2>
+\begin{code}
+
+
+\end{code}
+%<*subst>
+\begin{code}
+subst : (P : A → Set p) → x ≡ y → P x → P y
+subst P refl px = px
+\end{code}
+%</subst>
+\begin{code}
+
+\end{code}
+%<*subst2>
+\begin{code}
+subst₂ :  (P : A → B → Set p) →
+          x ≡ y → t ≡ u → P x t → P y u
+subst₂ P refl refl pxt = pxt
+\end{code}
+%</subst2>
+\begin{code}
+
 
 \end{code}
 %<*list>
@@ -41,7 +91,6 @@ module _ {I : Set i} where
 
 private
   variable
-    x y : A
     xs ys : List A
 
 module _ {A : Set a} where
