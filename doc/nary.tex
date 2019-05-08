@@ -55,41 +55,75 @@ functions \AF{congₙ} and \AF{substₙ} of respective types (pseudocode):
 
 The standard library defines a set of handy combinators to talk about
 indexed families without having to manipulate their index explicitly.
-This empowers us to write lighter types when the index is mostly
-threaded around, and even sometimes locally modified.
+The pointwise lifting of common type constructors means the index is
+threaded but we also have specialised combinators which either adjust
+locally the value of the index, or quantified over it. This empowers
+us to write lighter types which focus on the important predicates at
+hand.
 
-Before we can talk about concrete indexed families and describe these
-various combinators, we need to introduce the data the families will be
-indexed over. We pick \AD{List} the level polymorphic type of lists
-parametrised by the type of their elements.
+Before we can talk about concrete indexed families, describe these
+various combinators, and demonstrate their usefulness, we need to
+introduce the data the families will be indexed over. We pick \AD{List}
+the level polymorphic type of lists parametrised by the type of their
+elements as our running example.
 
 \ExecuteMetaData[StateOfTheArt.tex]{list}
 
 The most straightforward non-trivial indexed family we can define over
 \AD{List} is the predicate lifting \AF{All} which ensures that a given
 predicate \AB{P} holds of all the elements of a list. It has two
-constructors which bear the same name as their counterparts in the
+constructors which each bear the same name as their counterparts in the
 underlying data: nil (\AIC{[]}) is a proof that all the elements in the
 empty list satisfy \AB{P} and cons (\AIC{\_::\_}) is a proof that \AB{P}
-holds of all the elements of a non-empty list if it holds of the head
-and of all the elements in the tail.
+holds of all the elements of a non-empty list if it holds of its head
+and of all the elements in its tail.
 
 \ExecuteMetaData[StateOfTheArt.tex]{all}
 
+\paragraph{Existential Quantifier} In type theory, existential quantifiers
+are represented as dependent pairs. We introduce \AF{Σ}, a record type of
+dependent pairs. They can be constructed using \AIC{\_,\_} and we can project
+out the first and second component by using \ARF{proj₁} and \ARF{proj₂}
+respecitvely.
+
+\ExecuteMetaData[StateOfTheArt.tex]{sigma}
+
+The existential quantifier for indexed families is defined as a special
+case of \AF{Σ} which takes the index \AF{Set} implicitly.\todo{More ⟨⟩}
 
 \ExecuteMetaData[StateOfTheArt.tex]{exists}
+
+Using \AF{∃⟨\_⟩} we can write our first statement about an indexed family:
+{(\AF{All} \AB{P})} is always satisfiable. That is to say that we can always
+find a list (the empty one) for which it holds.
+
 \ExecuteMetaData[StateOfTheArt.tex]{satisfiable}
 
+\paragraph{Universal Quantifiers} The pendant of existential quantification
+is universal quantification. In type theory this corresponds to a dependent
+function type. Here we have room for variations and we can consider both
+the explicit \emph{and} the implicit quantifiers.\todo{More []}
+
+\ExecuteMetaData[StateOfTheArt.tex]{universal}
 \ExecuteMetaData[StateOfTheArt.tex]{iuniversal}
+
+Provided that a proposition holds of any value, we can prove it will hold
+of any list of values by induction on such a list. Because we perform
+induction on the list it is convenient to take it as an explicit argument
+whereas the proof itself can take its argument implicitly.
+
+\ExecuteMetaData[StateOfTheArt.tex]{replicate}
+
+\paragraph{Implication}
+\todo{Binary Ternary}
 \ExecuteMetaData[StateOfTheArt.tex]{implies}
 \ExecuteMetaData[StateOfTheArt.tex]{ap}
+
+\paragraph{Negation}
 
 \ExecuteMetaData[StateOfTheArt.tex]{negation}
 \ExecuteMetaData[StateOfTheArt.tex]{any}
 \ExecuteMetaData[StateOfTheArt.tex]{none}
-
-\ExecuteMetaData[StateOfTheArt.tex]{universal}
-\ExecuteMetaData[StateOfTheArt.tex]{replicate}
 
 \section{Working With Multiple Indices}
 

@@ -87,6 +87,16 @@ module _ {I : Set i} where
 %</iuniversal>
 \begin{code}
 
+module _ {I : Set i} where
+\end{code}
+%<*universal>
+\begin{code}
+  Π[_] : (I → Set p) → Set (i ⊔ p)
+  Π[ P ] = ∀ i → P i
+\end{code}
+%</universal>
+\begin{code}
+
 
 private
   variable
@@ -114,15 +124,21 @@ module _ {A : Set a} where
 %</any>
 \begin{code}
 
-infix 10 ∃⟨_⟩
 \end{code}
-%<*exists>
+%<*sigma>
 \begin{code}
 record Σ (A : Set a) (P : A → Set p) : Set (a ⊔ p) where
   constructor _,_
   field proj₁ : A
         proj₂ : P proj₁
+\end{code}
+%</sigma>
+\begin{code}
 
+infix 10 ∃⟨_⟩
+\end{code}
+%<*exists>
+\begin{code}
 ∃⟨_⟩ : {A : Set a} (P : A → Set p) → Set (a ⊔ p)
 ∃⟨ P ⟩ = Σ _ P
 \end{code}
@@ -162,7 +178,6 @@ data ⊥ : Set where
 %</negation>
 \begin{code}
 
-
 \end{code}
 %<*none>
 \begin{code}
@@ -189,16 +204,6 @@ satisfiable : ∃⟨ All P ⟩
 satisfiable = [] , []
 \end{code}
 %</satisfiable>
-\begin{code}
-
-module _ {I : Set i} where
-\end{code}
-%<*universal>
-\begin{code}
-  Π[_] : (I → Set p) → Set (i ⊔ p)
-  Π[ P ] = ∀ i → P i
-\end{code}
-%</universal>
 \begin{code}
 
 \end{code}
