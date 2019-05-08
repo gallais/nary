@@ -4,7 +4,7 @@ as well as a type-level compositional DSL to write clean types involving
 indexed families of arity exactly one (Section~\ref{sec:unarycombinators}).
 None of these solutions scale well.
 
-\section{N-ary combinators... for N up to 2}\label{sec:nary2}
+\section{N-ary Combinators... for N up to 2}\label{sec:nary2}
 
 Agda's standard library relies on propositional equality defined as
 a level polymorphic inductive family with one constructor \AIC{refl}.
@@ -64,7 +64,15 @@ function's type.
 
 The standard library defines a set of handy combinators to talk about
 indexed families without having to manipulate their index explicitly.
-The pointwise lifting of common type constructors means the index is
+These form a compositional type-level DSL: each combinator has a very
+specific semantics and putting them together builds an overall meaning.
+A typical expression built using this DSL follows a fairly simple schema:
+a combinator acting as a quantifier for the index surrounding a combination
+of pointwise liftings of common type constructors.
+
+
+
+The pointwise liftings of common type constructors mean the index is
 threaded but we also have specialised combinators which either adjust
 locally the value of the index, or quantify over it. This empowers
 us to write lighter types which focus on the important predicates at
@@ -89,6 +97,17 @@ and of all the elements in its tail.
 
 \ExecuteMetaData[StateOfTheArt.tex]{all}
 
+\subsubsection{Quantifiers}
+
+We have two types of quantifiers: existential and universal. As they are
+meant to \emph{surround} the indexed expression they are acting upon, we
+define them as essentially pairs of brackets. The opening one is systematically
+decorated with a mnemonic symbol: \AF{∃} for existential quantification,
+\AF{Π} for explicit dependent quantification and \AF{∀} for implicit
+universal quantification. Additionally we use chevrons for existential
+quantifiers and square brackets for universal ones, recalling the operators
+diamond and box of modal logic.
+
 \paragraph{Existential Quantifier} In type theory, existential quantifiers
 are represented as dependent pairs. We introduce \AF{Σ}, a record type of
 dependent pairs. They can be constructed using \AIC{\_,\_} and we can project
@@ -98,7 +117,7 @@ respectively.
 \ExecuteMetaData[StateOfTheArt.tex]{sigma}
 
 The existential quantifier for indexed families is defined as a special
-case of \AF{Σ} which takes the index \AF{Set} implicitly.\todo{More ⟨⟩}
+case of \AF{Σ} which takes the index \AF{Set} implicitly.
 
 \ExecuteMetaData[StateOfTheArt.tex]{exists}
 
@@ -112,7 +131,7 @@ find a list (the empty one) for which it holds.
 is universal quantification. In type theory this corresponds to a dependent
 function space. Here we have room for variations and we can consider both
 the explicit (\AF{Π[\_]}) \emph{and} the implicit (\AF{∀[\_]}) universal
-quantifiers.\todo{More []}
+quantifiers.
 
 \ExecuteMetaData[StateOfTheArt.tex]{universal}
 \ExecuteMetaData[StateOfTheArt.tex]{iuniversal}
@@ -124,16 +143,38 @@ whereas the proof itself can take its argument implicitly.
 
 \ExecuteMetaData[StateOfTheArt.tex]{replicate}
 
-\paragraph{Pointwise Implication}
-\todo{Binary Ternary}
+\subsubsection{Pointwise Liftings}
+
+Pointwise liftings for an index type \AB{I} are operators turning a type
+constructor on \AF{Set}s into one acting on \AB{I}-indexed families by
+threading the index. They are meant to be used partially applied so that
+both their inputs and their output are \AB{I}-indexed.
+
+\paragraph{Implication} We start with the most used of all: implication.
 \ExecuteMetaData[StateOfTheArt.tex]{implies}
+
 \ExecuteMetaData[StateOfTheArt.tex]{ap}
 
-\paragraph{Pointwise Negation}
+\paragraph{Conjunction} To state that the conjunction of two predicates hold
+we can use the pointwise lifting of pairing.
+
+\ExecuteMetaData[StateOfTheArt.tex]{conjunction}
+
+This enables to write functions which return more than one result. We can
+for instance write the type of \AF{unzip}, the proof that if the conjunction
+of \AB{P} and \AB{Q} holds of all the elements of a given list then both
+\AB{P} and \AB{Q} in isolation hold of all of that list's elements.
+\ExecuteMetaData[StateOfTheArt.tex]{unzip}
+
+\paragraph{Negation}
 
 \ExecuteMetaData[StateOfTheArt.tex]{negation}
-\ExecuteMetaData[StateOfTheArt.tex]{any}
-\ExecuteMetaData[StateOfTheArt.tex]{none}
+\ExecuteMetaData[StateOfTheArt.tex]{pure}
+
+\subsubsection{Adjustments to The Ambient Index}
+
+\paragraph{Constant}
+\paragraph{Update}
 
 \subsection{Working With Multiple Indices}
 

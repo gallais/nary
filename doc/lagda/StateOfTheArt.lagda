@@ -64,7 +64,7 @@ subst₂ P refl refl pr = pr
 %</subst2>
 \begin{code}
 
-
+infixr 9 _∷_
 \end{code}
 %<*list>
 \begin{code}
@@ -124,6 +124,7 @@ module _ {A : Set a} where
 %</any>
 \begin{code}
 
+infixr 8 _,_
 \end{code}
 %<*sigma>
 \begin{code}
@@ -166,7 +167,30 @@ _<⋆>_ : ∀[ All (P ⇒ Q) ⇒ All P ⇒ All Q ]
 %</ap>
 \begin{code}
 
-infix 10 ¬_
+
+infix 10 _∩_
+\end{code}
+%<*conjunction>
+\begin{code}
+_∩_ : (I → Set p) → (I → Set q) → (I → Set (p ⊔ q))
+(P ∩ Q) i = Σ (P i) λ _ → Q i
+\end{code}
+%</conjunction>
+\begin{code}
+
+\end{code}
+%<*unzip>
+\begin{code}
+unzip : ∀[ All (P ∩ Q) ⇒ All P ∩ All Q ]
+unzip []               = [] , []
+unzip ((p , q) ∷ pqs)  =  let (ps , qs) = unzip pqs
+                          in (p ∷ ps) , (q ∷ qs)
+\end{code}
+%</unzip>
+\begin{code}
+
+
+infix 11 ¬_
 \end{code}
 %<*negation>
 \begin{code}
@@ -188,6 +212,15 @@ none ¬p (x ∷ px)  = none ¬p px
 %</none>
 \begin{code}
 
+
+\end{code}
+%<*pure>
+\begin{code}
+pure : ∀[ P ⇒ ¬ ¬ P ]
+pure p ¬p = ¬p p
+\end{code}
+%</pure>
+\begin{code}
 
 \end{code}
 %<*any>
