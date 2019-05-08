@@ -51,11 +51,32 @@ functions \AF{congₙ} and \AF{substₙ} of respective types (pseudocode):
                 & \AB{R} \AB{a₁} ⋯ \AB{aₙ} → \AB{R} \AB{b₁} ⋯ \AB{bₙ}
 \end{tabular}
 
-\section{Working with Indexed Families}
+\section{Working with Indexed Families}\label{sec:unarycombinators}
 
+The standard library defines a set of handy combinators to talk about
+indexed families without having to manipulate their index explicitly.
+This empowers us to write lighter types when the index is mostly
+threaded around, and even sometimes locally modified.
+
+Before we can talk about concrete indexed families and describe these
+various combinators, we need to introduce the data the families will be
+indexed over. We pick \AD{List} the level polymorphic type of lists
+parametrised by the type of their elements.
 
 \ExecuteMetaData[StateOfTheArt.tex]{list}
+
+The most straightforward non-trivial indexed family we can define over
+\AD{List} is the predicate lifting \AF{All} which ensures that a given
+predicate \AB{P} holds of all the elements of a list. It has two
+constructors which bear the same name as their counterparts in the
+underlying data: nil (\AIC{[]}) is a proof that all the elements in the
+empty list satisfy \AB{P} and cons (\AIC{\_::\_}) is a proof that \AB{P}
+holds of all the elements of a non-empty list if it holds of the head
+and of all the elements in the tail.
+
 \ExecuteMetaData[StateOfTheArt.tex]{all}
+
+
 \ExecuteMetaData[StateOfTheArt.tex]{exists}
 \ExecuteMetaData[StateOfTheArt.tex]{satisfiable}
 
