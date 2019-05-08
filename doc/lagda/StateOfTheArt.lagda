@@ -58,9 +58,9 @@ subst P refl px = px
 \end{code}
 %<*subst2>
 \begin{code}
-subst₂ :  (P : A → B → Set p) →
-          x ≡ y → t ≡ u → P x t → P y u
-subst₂ P refl refl pxt = pxt
+subst₂ :  (R : A → B → Set p) →
+          x ≡ y → t ≡ u → R x t → R y u
+subst₂ P refl refl pr = pr
 \end{code}
 %</subst2>
 \begin{code}

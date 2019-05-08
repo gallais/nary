@@ -1,14 +1,55 @@
+For user convenience, Agda's standard library has accumulated a set of
+equality-manipulating combinators of varying arities (Section~\ref{sec:nary2})
+as well as a type-level compositional DSL to write clean types involving
+indexed families of arity exactly one (Section~\ref{sec:unarycombinators}).
+None of these solutions scale well.
 
-\section{N-ary combinators... for N up to 2}
+\section{N-ary combinators... for N up to 2}\label{sec:nary2}
+
+Agda's standard library relies on propositional equality defined as
+a level polymorphic inductive family with one constructor \AIC{refl}.
 
 \ExecuteMetaData[StateOfTheArt.tex]{equality}
+
+As one would expect from a notion of equality, it is congruent (i.e.
+for any function equal inputs yield equal outputs) and substitutive
+(i.e. equals behave the same with respect to predicates). Concretely
+this means we can write the two following functions by dependent
+pattern-matching on the equality proof:
 
 \ExecuteMetaData[StateOfTheArt.tex]{cong}
 \ExecuteMetaData[StateOfTheArt.tex]{subst}
 
+However we quickly realise that it is convenient to be able to use
+congruence for functions which take more than one argument and
+substitution for at least binary relations. The standard library
+provides binary versions of both of these functions:
+
 \ExecuteMetaData[StateOfTheArt.tex]{cong2}
 \ExecuteMetaData[StateOfTheArt.tex]{subst2}
 
+If we want to go beyond arity two however we are left to either define
+our own ternary, quaternary, etc. versions of \AF{cong} and \AF{subst}
+or awkwardly chaining the ones with a lower arity to slowly massage
+the expression at hand into the shape we want. Both of these solutions
+are unsatisfactory.
+
+\paragraph{Wish} Ideally, we would like to define once and for all two
+functions \AF{congₙ} and \AF{substₙ} of respective types (pseudocode):
+
+\medskip
+\noindent\begin{tabular}{@{}l@{~}l}
+  \AF{congₙ} : & (\AB{f} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
+               & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+               & \AB{f} \AB{a₁} ⋯ \AB{aₙ} \AD{≡} \AB{f} \AB{b₁} ⋯ \AB{bₙ}
+\end{tabular}
+\medskip
+
+\noindent\begin{tabular}{@{}l@{~}l}
+  \AF{substₙ} : & (\AB{R} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AF{Set} \AB{r}) →\\
+                & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+                & \AB{R} \AB{a₁} ⋯ \AB{aₙ} → \AB{R} \AB{b₁} ⋯ \AB{bₙ}
+\end{tabular}
 
 \section{Working with Indexed Families}
 
