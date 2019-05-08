@@ -55,11 +55,22 @@
 % The default list of authors is too long for headers.
 % \renewcommand{\shortauthors}{B. Trovato et al.}
 
+\begin{abstract}
+Agda's standard library struggles in various places with n-ary relations:
+it introduces congruence and substitution operators of arities up to two,
+and provides users with convenient combinators for manipulating indexed
+families of arity one.
+
+We write fully level polymorphic n-ary versions of these operators and
+combinators, exploiting the unifier to guarantee minimal user input is
+needed.
+\end{abstract}
+
 \maketitle
 
 \input{nary.tex}
 
-\bibliographystyle{ACM-Reference-Format}
-\bibliography{sample-bibliography}
+% \bibliographystyle{ACM-Reference-Format}
+% \bibliography{main.bib}
 
 \end{document}
