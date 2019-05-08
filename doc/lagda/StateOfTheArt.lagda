@@ -217,8 +217,35 @@ map f (px ∷ pxs)  = f px ∷ map f pxs
 %</map>
 \begin{code}
 
-open import Data.Nat.Base
-open import Relation.Binary.PropositionalEquality
+\end{code}
+%<*nat>
+\begin{code}
+data ℕ : Set where
+  zero  : ℕ
+  suc   : ℕ → ℕ
+\end{code}
+%</nat>
+\begin{code}
+
+\end{code}
+%<*lesseq>
+\begin{code}
+data _≤_ : (m n : ℕ) → Set where
+  z≤n : ∀ {n} → zero ≤ n
+  s≤s : ∀ {m n} → m ≤ n → suc m ≤ suc n
+\end{code}
+%</lesseq>
+\begin{code}
+
+
+\end{code}
+%<*greateq>
+\begin{code}
+_≥_ : (m n : ℕ) → Set
+m ≥ n = n ≤ m
+\end{code}
+%</greateq>
+\begin{code}
 
 private
   variable
@@ -227,12 +254,12 @@ private
 \end{code}
 %<*brokenantisym>
 \begin{code}
-asym : ∀[ (m ≥_) ⇒ (m ≤_) ⇒ (m ≡_) ]
-asym z≤n        z≤n        = refl
-asym (s≤s m≥n)  (s≤s m≤n)  = cong suc (asym m≥n m≤n)
+antisym : ∀[ (m ≥_) ⇒ (m ≤_) ⇒ (m ≡_) ]
 \end{code}
 %</brokenantisym>
 \begin{code}
+antisym z≤n        z≤n        = refl
+antisym (s≤s m≥n)  (s≤s m≤n)  = cong suc (antisym m≥n m≤n)
 
 
 \end{code}

@@ -2,8 +2,9 @@ AGDA=agda-2.6.0 +RTS -M2G -H2G -A128M -RTS
 PAPER=tyde19
 
 AGDA_FILES:=\
-  lagda/StateOfTheArt.lagda
-  
+  lagda/StateOfTheArt.lagda \
+  lagda/Examples.lagda
+
 AGDA_OUTPUT:=$(patsubst lagda/%.lagda,output/%.tex,$(AGDA_FILES))
 AGDA_TEX:=$(patsubst lagda/%.lagda,latex/%.tex,$(AGDA_FILES))
 
@@ -13,6 +14,7 @@ PAPER_DEPENDENCIES:= \
   latex/nary.tex \
   latex/agda.sty \
   latex/unicode.tex \
+  latex/commands.tex \
   $(AGDA_TEX)
 
 all: latex/$(PAPER).pdf

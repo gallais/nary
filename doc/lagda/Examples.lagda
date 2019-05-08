@@ -319,7 +319,14 @@ module _ {a b c d e} {A : Set a} {B : Set b} {C : Set c} {D : Set d} {E : Set e}
 -- _⇒_ : (A₁ → ⋯ → Aₙ → Set r) → (A₁ → ⋯ → Aₙ → Set s) → (A₁ → ⋯ → Aₙ → Set _)
 -- P ⇒ Q = λ a₁ → ⋯ → λ aₙ → P a₁ ⋯ aₙ → Q a₁ ⋯ aₙ
 
+
+\end{code}
+%<*antisym>
+\begin{code}
   antisym : ∀[ _≤_ ⇒ _≥_ ⇒ _≡_ ]
+\end{code}
+%</antisym>
+\begin{code}
   antisym = ≤-antisym
 
 ------------------------------------------------------------------------

@@ -33,4 +33,23 @@
 
 \section{Working With Multiple Indices}
 
+We started by showing both the type and the implementation of each of our
+examples. Although convenient at first to build an understanding of which
+arguments are explicit and which ones are implicit, we are in the end only
+interested about the way combinators let us write types. From now on, we
+focus on the types and only the types of our examples.
+
+The combinators presented earlier which are all available in the standard
+library work well for unary predicates. Unfortunately they do not scale
+beyond that. Meaning that if we are manipulating binary relations for
+instance we have to partially apply them before we can use our combinators.
+This leads to cluttered types which are not much better than their fully
+explicit counterparts. Assuming that \AF{\_≤\_} is the usual order on natural
+numbers and \AF{\_≥\_} is its converse, to state that \AF{\_≤\_} is antisymmetric
+we have to write:
+
 \ExecuteMetaData[StateOfTheArt.tex]{brokenantisym}
+
+When ideally we would have written:
+
+\ExecuteMetaData[Examples.tex]{antisym}
