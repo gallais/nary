@@ -1,7 +1,6 @@
 \begin{code}
 {-# OPTIONS --safe --without-K #-}
 
-open import Data.Empty
 open import Level using (Level; _⊔_)
 
 private
@@ -115,14 +114,17 @@ module _ {A : Set a} where
 %</any>
 \begin{code}
 
-  infix 10 ∃⟨_⟩
+infix 10 ∃⟨_⟩
 \end{code}
 %<*exists>
 \begin{code}
-  record ∃⟨_⟩ (P : A → Set p) : Set (a ⊔ p) where
-    constructor _,_
-    field witness   : A
-          property  : P witness
+record Σ (A : Set a) (P : A → Set p) : Set (a ⊔ p) where
+  constructor _,_
+  field proj₁ : A
+        proj₂ : P proj₁
+
+∃⟨_⟩ : {A : Set a} (P : A → Set p) → Set (a ⊔ p)
+∃⟨ P ⟩ = Σ _ P
 \end{code}
 %</exists>
 \begin{code}
@@ -152,6 +154,8 @@ infix 10 ¬_
 \end{code}
 %<*negation>
 \begin{code}
+data ⊥ : Set where
+
 ¬_ : (I → Set p) → (I → Set p)
 (¬ P) i = P i → ⊥
 \end{code}
