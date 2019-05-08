@@ -130,7 +130,7 @@ whereas the proof itself can take its argument implicitly.
 We started by showing both the type and the implementation of each of our
 examples. Although convenient at first to build an understanding of which
 arguments are explicit and which ones are implicit, we are in the end only
-interested about the way combinators let us write types. From now on, we
+interested in the way combinators let us write types. From now on, we
 focus on the types and only the types of our examples.
 
 The combinators presented earlier which are all available in the standard
@@ -147,3 +147,21 @@ we have to write:
 When ideally we would have written:
 
 \ExecuteMetaData[Examples.tex]{antisym}
+
+
+\section{Getting Acquainted With the Unifier}
+
+It is important to build an understanding of the way the unifier proceeds
+to be able to write combinators usable with minimal user input.
+
+Forgetting for a moment about level polymorphism, let us look at the first
+wrong turn one may take. The type of an arbitrary function may be understood
+as a list of \AF{Set}s (the successive domains) paired with a \AF{Set} (the
+codomain). We can then compute the function's actual type as a \AF{foldr} on
+the list.
+
+\ExecuteMetaData[Broken.tex]{function}
+\ExecuteMetaData[Broken.tex]{sem}
+
+
+
