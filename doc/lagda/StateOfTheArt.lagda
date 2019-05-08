@@ -214,6 +214,17 @@ none ¬p (x ∷ px)  = none ¬p px
 
 
 \end{code}
+%<*distrib>
+\begin{code}
+distrib : ∀[ ¬ (_≡ []) ⇒ All (¬ P) ⇒ ¬ All P ]
+distrib ne []        []       = ne refl
+distrib ne (¬p ∷ _)  (p ∷ _)  = ¬p p
+\end{code}
+%</distrib>
+\begin{code}
+
+
+\end{code}
 %<*pure>
 \begin{code}
 pure : ∀[ P ⇒ ¬ ¬ P ]
