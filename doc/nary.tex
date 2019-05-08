@@ -34,8 +34,8 @@ or awkwardly chaining the ones with a lower arity to slowly massage
 the expression at hand into the shape we want. Both of these solutions
 are unsatisfactory.
 
-\paragraph{Wish} Ideally, we would like to define once and for all two
-functions \AF{congₙ} and \AF{substₙ} of respective types (pseudocode):
+\paragraph{Wish} We would like to define once and for all two functions
+\AF{congₙ} and \AF{substₙ} of respective types (pseudocode):
 
 \medskip
 \noindent\begin{tabular}{@{}l@{~}l}
@@ -51,13 +51,22 @@ functions \AF{congₙ} and \AF{substₙ} of respective types (pseudocode):
                 & \AB{R} \AB{a₁} ⋯ \AB{aₙ} → \AB{R} \AB{b₁} ⋯ \AB{bₙ}
 \end{tabular}
 
-\section{Working with Indexed Families}\label{sec:unarycombinators}
+\section{Invariant Respecting Programs}
+
+A key feature of dependently typed languages is the ability to enforce
+strong invariants in inductive families. As soon as the programmer starts
+baking in these constraints, they need to write constraints-respecting
+programs. Although a lot of programs are index-preserving, users need
+to be painfully explicit about the index being threaded all across the
+function's type.
+
+\subsection{Working With Indexed Families}\label{sec:unarycombinators}
 
 The standard library defines a set of handy combinators to talk about
 indexed families without having to manipulate their index explicitly.
 The pointwise lifting of common type constructors means the index is
 threaded but we also have specialised combinators which either adjust
-locally the value of the index, or quantified over it. This empowers
+locally the value of the index, or quantify over it. This empowers
 us to write lighter types which focus on the important predicates at
 hand.
 
@@ -84,7 +93,7 @@ and of all the elements in its tail.
 are represented as dependent pairs. We introduce \AF{Σ}, a record type of
 dependent pairs. They can be constructed using \AIC{\_,\_} and we can project
 out the first and second component by using \ARF{proj₁} and \ARF{proj₂}
-respecitvely.
+respectively.
 
 \ExecuteMetaData[StateOfTheArt.tex]{sigma}
 
@@ -101,8 +110,9 @@ find a list (the empty one) for which it holds.
 
 \paragraph{Universal Quantifiers} The pendant of existential quantification
 is universal quantification. In type theory this corresponds to a dependent
-function type. Here we have room for variations and we can consider both
-the explicit \emph{and} the implicit quantifiers.\todo{More []}
+function space. Here we have room for variations and we can consider both
+the explicit (\AF{Π[\_]}) \emph{and} the implicit (\AF{∀[\_]}) universal
+quantifiers.\todo{More []}
 
 \ExecuteMetaData[StateOfTheArt.tex]{universal}
 \ExecuteMetaData[StateOfTheArt.tex]{iuniversal}
@@ -114,18 +124,18 @@ whereas the proof itself can take its argument implicitly.
 
 \ExecuteMetaData[StateOfTheArt.tex]{replicate}
 
-\paragraph{Implication}
+\paragraph{Pointwise Implication}
 \todo{Binary Ternary}
 \ExecuteMetaData[StateOfTheArt.tex]{implies}
 \ExecuteMetaData[StateOfTheArt.tex]{ap}
 
-\paragraph{Negation}
+\paragraph{Pointwise Negation}
 
 \ExecuteMetaData[StateOfTheArt.tex]{negation}
 \ExecuteMetaData[StateOfTheArt.tex]{any}
 \ExecuteMetaData[StateOfTheArt.tex]{none}
 
-\section{Working With Multiple Indices}
+\subsection{Working With Multiple Indices}
 
 We started by showing both the type and the implementation of each of our
 examples. Although convenient at first to build an understanding of which
@@ -133,20 +143,31 @@ arguments are explicit and which ones are implicit, we are in the end only
 interested in the way combinators let us write types. From now on, we
 focus on the types and only the types of our examples.
 
-The combinators presented earlier which are all available in the standard
-library work well for unary predicates. Unfortunately they do not scale
+The combinators presented earlier are all available in the standard library.
+They work really well for unary predicates. Unfortunately they do not scale
 beyond that. Meaning that if we are manipulating binary relations for
-instance we have to partially apply them before we can use our combinators.
-This leads to cluttered types which are not much better than their fully
-explicit counterparts. Assuming that \AF{\_≤\_} is the usual order on natural
-numbers and \AF{\_≥\_} is its converse, to state that \AF{\_≤\_} is antisymmetric
-we have to write:
+instance we have to partially the relations in question before we can use
+our usual combinators. This leads to cluttered types which are not much better
+than their fully expanded counterparts. For instance, assuming that \AF{\_≤\_}
+is the usual order on natural numbers and \AF{\_≥\_} its converse, to state
+that \AF{\_≤\_} is antisymmetric we have to write:
 
 \ExecuteMetaData[StateOfTheArt.tex]{brokenantisym}
 
-When ideally we would have written:
+Ideally we could have used combinators similar to the ones for unary predicates
+and have simply written:
 
 \ExecuteMetaData[Examples.tex]{antisym}
+
+We could naturally write a library for binary relations following the same
+conventions as the one for unary predicates. However this will create two
+new issues: first, the day we need a library for ternary relations, we have to
+duplicate the work once again; second, we now have two sets of definitions
+with conflicting them which cannot be both imported in the same module without
+forcing users to manually disambiguate each use site.
+
+\paragraph{Wish} We would like to define once and for all n-ary quantifiers,
+and pointwise lifting of common type constructors.
 
 
 \section{Getting Acquainted With the Unifier}
