@@ -227,11 +227,11 @@ focus on the types and only the types of our examples.
 The combinators presented earlier are all available in the standard library.
 They work really well for unary predicates. Unfortunately they do not scale
 beyond that. Meaning that if we are manipulating binary relations for
-instance we have to partially the relations in question before we can use
-our usual combinators. This leads to cluttered types which are not much better
-than their fully expanded counterparts. For instance, assuming that \AF{\_≤\_}
-is the usual order on natural numbers and \AF{\_≥\_} its converse, to state
-that \AF{\_≤\_} is antisymmetric we have to write:
+instance we have to partially apply the relations in question before we can
+use our usual unary combinators. This leads to cluttered types which are not
+much better than their fully expanded counterparts. For instance, assuming
+that \AF{\_≤\_} is the usual order on natural numbers and \AF{\_≥\_} its
+converse, to state that \AF{\_≤\_} is antisymmetric we have to write:
 
 \ExecuteMetaData[StateOfTheArt.tex]{brokenantisym}
 
@@ -240,16 +240,31 @@ and have simply written:
 
 \ExecuteMetaData[Examples.tex]{antisym}
 
-We could naturally write a library for binary relations following the same
-conventions as the one for unary predicates. However this will create two
-new issues: first, the day we need a library for ternary relations, we have to
-duplicate the work once again; second, we now have two sets of definitions
-with conflicting them which cannot be both imported in the same module without
-forcing users to manually disambiguate each use site.
+We could duplicate the definitions for unary predicates and have equivalent
+combinators for binary relations however this will create two new issues.
+First, the day we need a library for ternary relations we will have triplicated
+the initial work. Second, we would have two sets of definitions with identical
+names meaning they cannot be both imported in the same module without clashing
+thus forcing users to manually disambiguate each use site.
 
 \paragraph{Wish} We would like to define once and for all n-ary quantifiers,
-and pointwise lifting of common type constructors.
+pointwise lifting of common type constructors, and adjustment functions.
 
+\section{Plan}
+
+\paragraph{Reified Types} We need to come up with a representation of n-ary
+functions which is as general as possible: the domains should be allowed to
+be different types, even types defined at different levels.
+
+\paragraph{Semantics} We need to give a semantics taking a reified type and
+computing its meaning as a \AF{Set} at some level which will also need to
+be computed.
+
+\paragraph{Invertible} The representation and its semantics should be unifier
+friendly. That is to say that if using a combinators yields a constraint of
+the form ``this type should be result of evaluating the representation of an
+n-ary function type'' then Agda should be able to reconstruct the
+representation and discharge the constraints without any outside help.
 
 \section{Getting Acquainted With the Unifier}
 
