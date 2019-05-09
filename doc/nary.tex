@@ -108,16 +108,16 @@ universal quantification. Additionally we use chevrons for existential
 quantifiers and square brackets for universal ones, recalling the operators
 diamond and box of modal logic.
 
-\paragraph{Existential Quantifier} In type theory, existential quantifiers
-are represented as dependent pairs. We introduce \AF{Σ}, a record type of
-dependent pairs. They can be constructed using \AIC{\_,\_} and we can project
-out the first and second component by using \ARF{proj₁} and \ARF{proj₂}
+\paragraph{Existential Quantifier}\label{def:sigma} In type theory, existential
+quantifiers are represented as dependent pairs. We introduce \AR{Σ}, a record
+type of dependent pairs. They can be constructed using \AIC{\_,\_} and we can
+project out the first and second component by using \ARF{proj₁} and \ARF{proj₂}
 respectively.
 
 \ExecuteMetaData[StateOfTheArt.tex]{sigma}
 
 The existential quantifier for indexed families is defined as a special
-case of \AF{Σ} which takes the index \AF{Set} implicitly.
+case of \AR{Σ} which takes the index \AF{Set} implicitly.
 
 \ExecuteMetaData[StateOfTheArt.tex]{exists}
 
@@ -271,14 +271,48 @@ representation and discharge the constraints without any outside help.
 It is important to build an understanding of the way the unifier proceeds
 to be able to write combinators usable with minimal user input.
 
-Forgetting for a moment about level polymorphism, let us look at the first
-wrong turn one may take. The type of an arbitrary function may be understood
-as a list of \AF{Set}s (the successive domains) paired with a \AF{Set} (the
-codomain). We can then compute the function's actual type as a \AF{foldr} on
-the list.
 
-\ExecuteMetaData[Broken.tex]{function}
-\ExecuteMetaData[Broken.tex]{sem}
+\section{Representating N-ary Function Types}
 
+Recall that a binary function type {\AB{A} → \AB{B} → \AB{C}} can also be seen
+as a unary function type with codomain {\AB{B} → \AB{C}}. As a consequence there
+is no hope for us to get Agda to build the representation we have in mind without
+passing it at least a little bit of information. The least we can do is tell Agda
+the arity of the function. From this single natural number we will compute the
+shape of the whole representation.
 
+Recall that unification is good at reconstructing values of types which have
+η-rules. As a consequence, from the natural number \AB{n} passed to us as an
+argument we are going to essentially compute a number of big right-nested
+product.
 
+\paragraph{Right Nested Products} The two building blocks of right nested
+products are a binary product \AF{\_×\_} (defined as the non-dependent special
+case of \AR{Σ} we saw in Section~\ref{def:sigma}) and the unit type
+\AF{⊤} defined as a record with no field whatsoever.
+
+\ExecuteMetaData[N-ary.tex]{unit}
+
+Even though \AF{⊤} is defined as a \AF{Set}, we will sometimes need to use
+it at a higher level. The usual solution is to manually lift it to the
+appropriate level. Because \AR{Lift} is also a record, it will not get in the
+way of reconstruction.
+
+\ExecuteMetaData[N-ary.tex]{lift}
+
+\paragraph{Level Polymorphism} To achieve fully general level polymorphism, we
+need all the domains of our function type to be potentially at different levels.
+Luckily the notion of \AF{Level} in Agda is a primitive \AF{Set} and we can thus
+define containers storing them like any other type of values. Our first definition
+called \AF{Levels} defines an \AB{n}-tuple of \AF{Level}s by induction on \AB{n}.
+
+\ExecuteMetaData[N-ary.tex]{levels}
+
+\paragraph{Heterogeneous Domains}\todo{}
+
+\ExecuteMetaData[N-ary.tex]{tolevel}
+\ExecuteMetaData[N-ary.tex]{sets}
+
+\paragraph{Semantics}\todo{}
+
+\ExecuteMetaData[N-ary.tex]{arrows}

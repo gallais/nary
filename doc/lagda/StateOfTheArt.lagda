@@ -137,7 +137,6 @@ record Σ (A : Set a) (P : A → Set p) : Set (a ⊔ p) where
 %</sigma>
 \begin{code}
 
-infix 10 ∃⟨_⟩
 \end{code}
 %<*exists>
 \begin{code}
@@ -169,7 +168,6 @@ _<⋆>_ : ∀[ All (P ⇒ Q) ⇒ All P ⇒ All Q ]
 \begin{code}
 
 
-infix 10 _∩_
 \end{code}
 %<*conjunction>
 \begin{code}
@@ -190,8 +188,6 @@ unzip ((p , q) ∷ pqs)  =  let (ps , qs) = unzip pqs
 %</unzip>
 \begin{code}
 
-
-infix 11 ¬_
 \end{code}
 %<*negation>
 \begin{code}
@@ -271,14 +267,19 @@ map f (px ∷ pxs)  = f px ∷ map f pxs
 %</map>
 \begin{code}
 
+private
+  module DISPLAYONLY where
 \end{code}
 %<*const>
 \begin{code}
-const : Set a → (I → Set a)
-const A i = A
+    const : Set a → (I → Set a)
+    const A i = A
 \end{code}
 %</const>
 \begin{code}
+
+const : A → (I → A)
+const a i = a
 
 \end{code}
 %<*toList>
@@ -324,16 +325,10 @@ concat⁺ ((px ∷ pxs)  ∷ pxss)  = px ∷ concat⁺ (pxs ∷ pxss)
 %</join>
 \begin{code}
 
-
-\end{code}
-%<*nat>
-\begin{code}
-data ℕ : Set where
-  zero  : ℕ
-  suc   : ℕ → ℕ
-\end{code}
-%</nat>
-\begin{code}
+open import Agda.Builtin.Nat
+  using (zero; suc)
+  renaming (Nat to ℕ)
+  public
 
 \end{code}
 %<*lesseq>

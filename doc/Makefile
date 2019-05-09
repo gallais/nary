@@ -4,7 +4,8 @@ PAPER=tyde19
 AGDA_FILES:=\
   lagda/StateOfTheArt.lagda \
   lagda/Examples.lagda \
-  lagda/Broken.lagda
+  lagda/Broken.lagda \
+  lagda/N-ary.lagda
 
 AGDA_OUTPUT:=$(patsubst lagda/%.lagda,output/%.tex,$(AGDA_FILES))
 AGDA_TEX:=$(patsubst lagda/%.lagda,latex/%.tex,$(AGDA_FILES))

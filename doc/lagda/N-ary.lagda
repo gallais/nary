@@ -3,15 +3,45 @@
 
 module N-ary where
 
-open import Level as L using (Level; _⊔_; Lift)
-open import Agda.Builtin.Unit
-open import Data.Product
-open import Data.Sum using (_⊎_)
-open import Data.Nat.Base using (ℕ; zero; suc; pred)
-open import Data.Fin.Base using (Fin; zero; suc)
-open import Function
-open import Relation.Nullary
+open import Level as L using (Level; _⊔_)
+open import StateOfTheArt
+  hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; ¬_
+         ; _≡_; refl; ⊥
+         )
 open import Relation.Binary.PropositionalEquality
+open import Data.Empty
+open import Data.Sum using (_⊎_)
+-- open import Data.Fin.Base using (Fin; zero; suc)
+
+private
+  variable
+    a b r : Level
+
+------------------------------------------------------------------------
+-- Building blocks of right-nested product
+
+\end{code}
+%<*unit>
+\begin{code}
+record ⊤ : Set where
+  constructor tt
+\end{code}
+%</unit>
+\begin{code}
+
+infixr 2 _×_
+_×_ : Set a → Set b → Set (a ⊔ b)
+A × B = Σ A λ _ → B
+
+\end{code}
+%<*lift>
+\begin{code}
+record Lift ℓ (A : Set a) : Set (ℓ ⊔ a) where
+  constructor lift
+  field lower : A
+\end{code}
+%</lift>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- Concrete examples can be found in README.N-ary. This file's comments
@@ -36,23 +66,42 @@ open import Relation.Binary.PropositionalEquality
 -- may be built by η-expansion and unification). Each Level will be that
 -- of one of the Sets we want to take the n-ary product of.
 
+\end{code}
+%<*levels>
+\begin{code}
 Levels : ℕ → Set
-Levels zero    = ⊤
-Levels (suc n) = Level × Levels n
+Levels zero     = ⊤
+Levels (suc n)  = Level × Levels n
+\end{code}
+%</levels>
+\begin{code}
 
 -- The overall product's Level will be the least upper bound of all of the
 -- Levels involved.
 
-toLevel : ∀ n → Levels n → Level
-toLevel zero    _        = L.zero
-toLevel (suc n) (l , ls) = l ⊔ toLevel n ls
+\end{code}
+%<*tolevel>
+\begin{code}
+⨆ : ∀ n → Levels n → Level
+⨆ zero     _         = L.zero
+⨆ (suc n)  (l , ls)  = l ⊔ ⨆ n ls
+\end{code}
+%</tolevel>
+\begin{code}
 
 -- Second, a "vector" of `n` Sets whose respective Levels are determined
 -- by the `Levels n` input.
 
-Sets : ∀ n (ls : Levels n) → Set (L.suc (toLevel n ls))
-Sets zero    _        = Lift _ ⊤
-Sets (suc n) (l , ls) = Set l × Sets n ls
+
+\end{code}
+%<*sets>
+\begin{code}
+Sets : ∀ n (ls : Levels n) → Set (L.suc (⨆ n ls))
+Sets zero     _         = Lift _ ⊤
+Sets (suc n)  (l , ls)  = Set l × Sets n ls
+\end{code}
+%</sets>
+\begin{code}
 
 -- Third, the n-ary product itself: provided n Levels and a corresponding
 -- "vector" of `n` Sets, we can build a big right-nested product type packing
@@ -60,7 +109,7 @@ Sets (suc n) (l , ls) = Set l × Sets n ls
 -- we want our `(un)curryₙ` functions to work for user-written functions and
 -- they rarely are ⊤-terminated.
 
-Product : ∀ n {ls} → Sets n ls → Set (toLevel n ls)
+Product : ∀ n {ls} → Sets n ls → Set (⨆ n ls)
 Product 0       _        = ⊤
 Product 1       (a , _)  = a
 Product (suc n) (a , as) = a × Product n as
@@ -69,9 +118,16 @@ Product (suc n) (a , as) = a × Product n as
 -- by a "vector" of `n` Sets and whose codomain is B. `Arrows` forms such
 -- a type of shape `A₁ → ⋯ → Aₙ → B` by induction on `n`.
 
-Arrows : ∀ n {r ls} → Sets n ls → Set r → Set (toLevel n ls ⊔ r)
-Arrows zero    _        b = b
-Arrows (suc n) (a , as) b = a → Arrows n as b
+
+\end{code}
+%<*arrows>
+\begin{code}
+Arrows : ∀ n {ls} → Sets n ls → Set r → Set (r ⊔ ⨆ n ls)
+Arrows zero     _         b = b
+Arrows (suc n)  (a , as)  b = a → Arrows n as b
+\end{code}
+%</arrows>
+\begin{code}
 
 
 ------------------------------------------------------------------------
@@ -89,7 +145,7 @@ Arrows (suc n) (a , as) b = a → Arrows n as b
 -- n-ary versions of `cong` and `subst`
 
 Congₙ : ∀ n {ls : Levels n} {as : Sets n ls} {r} {b : Set r} →
-        (f g : Arrows n as b) → Set (toLevel n ls ⊔ r)
+        (f g : Arrows n as b) → Set (r ⊔ ⨆ n ls)
 Congₙ zero    f g = f ≡ g
 Congₙ (suc n) f g = ∀ {x y} → x ≡ y → Congₙ n (f x) (g y)
 
@@ -99,16 +155,16 @@ congₙ zero    f      = refl
 congₙ (suc n) f refl = congₙ n (f _)
 
 Substₙ : ∀ n {r} {ls : Levels n} {as : Sets n ls} →
-         (f g : Arrows n as (Set r)) → Set (toLevel n ls ⊔ r)
+         (f g : Arrows n as (Set r)) → Set (⨆ n ls ⊔ r)
 Substₙ zero    f g = f → g
 Substₙ (suc n) f g = ∀ {x y} → x ≡ y → Substₙ n (f x) (g y)
 
-substₙ : ∀ n {ls : Levels n} {as : Sets n ls} {r} →
+substₙ : ∀ {n} {ls : Levels n} {as : Sets n ls} {r} →
          (f : Arrows n as (Set r)) → Substₙ n f f
-substₙ zero    f x    = x
-substₙ (suc n) f refl = substₙ n (f _)
+substₙ {zero}   f x    = x
+substₙ {suc n}  f refl = substₙ (f _)
 
-
+{-
 ------------------------------------------------------------------------
 -- (un)curry
 
@@ -126,12 +182,14 @@ uncurryₙ : ∀ n {ls : Levels n} {as : Sets n ls} {r} {b : Set r} →
 uncurryₙ 0               f = const f
 uncurryₙ 1               f = f
 uncurryₙ (suc n@(suc _)) f = uncurry (uncurryₙ n ∘′ f)
+-}
 
 ------------------------------------------------------------------------
 -- projection of the k-th component
 
 -- To know at which Set level the k-th projection out of an n-ary product
 -- lives, we need to extract said level, by induction on k.
+{-
 
 Levelₙ : ∀ {n} → Levels n → Fin n → Level
 Levelₙ (l , _)  zero    = l
@@ -154,10 +212,11 @@ projₙ 1               zero    v        = v
 projₙ (suc n@(suc _)) zero    (v , _)  = v
 projₙ (suc n@(suc _)) (suc k) (_ , vs) = projₙ n k vs
 projₙ 1 (suc ()) v
-
+-}
 ------------------------------------------------------------------------
 -- removal of the k-th component
 
+{-
 Levelₙ⁻ : ∀ {n} → Levels n → Fin n → Levels (pred n)
 Levelₙ⁻               (_ , ls) zero    = ls
 Levelₙ⁻ {suc (suc _)} (l , ls) (suc k) = l , Levelₙ⁻ ls k
@@ -175,10 +234,10 @@ removeₙ (suc (suc _))       zero    (_ , vs) = vs
 removeₙ (suc (suc zero))    (suc k) (v , _)  = v
 removeₙ (suc (suc (suc _))) (suc k) (v , vs) = v , removeₙ _ k vs
 removeₙ (suc zero) (suc ()) _
-
+-}
 ------------------------------------------------------------------------
 -- insertion of a k-th component
-
+{-
 Levelₙ⁺ : ∀ {n} → Levels n → Fin (suc n) → Level → Levels (suc n)
 Levelₙ⁺         ls       zero    l⁺ = l⁺ , ls
 Levelₙ⁺ {suc _} (l , ls) (suc k) l⁺ = l , Levelₙ⁺ ls k l⁺
@@ -196,10 +255,10 @@ insertₙ (suc n)       zero    v⁺ vs       = v⁺ , vs
 insertₙ 1             (suc k) v⁺ vs       = vs , insertₙ 0 k v⁺ _
 insertₙ (suc (suc n)) (suc k) v⁺ (v , vs) = v , insertₙ _ k v⁺ vs
 insertₙ 0 (suc ()) _ _
-
+-}
 ------------------------------------------------------------------------
 -- update of a k-th component
-
+{-
 Levelₙᵘ : ∀ {n} → Levels n → Fin n → Level → Levels n
 Levelₙᵘ (_ , ls) zero    lᵘ = lᵘ , ls
 Levelₙᵘ (l , ls) (suc k) lᵘ = l , Levelₙᵘ ls k lᵘ
@@ -218,31 +277,36 @@ updateₙ 1 (suc ()) _ _
 updateₙ′ : ∀ n {ls lᵘ} {as : Sets n ls} k {aᵘ : Set lᵘ} (f : Projₙ as k → aᵘ) →
            Product n as → Product n (Updateₙ as k aᵘ)
 updateₙ′ n k = updateₙ n k
-
+-}
 ------------------------------------------------------------------------
 -- compose function at the n-th position
 
+{-
 composeₙ : ∀ n {ls r} {as : Sets n ls} {b : Set r} →
            ∀ {lᵒ lⁿ} {aᵒ : Set lᵒ} {aⁿ : Set lⁿ} →
            (aⁿ → aᵒ) → Arrows n as (aᵒ → b) → Arrows n as (aⁿ → b)
 composeₙ zero    f g = g ∘′ f
 composeₙ (suc n) f g = composeₙ n f ∘′ g
-
+-}
 ------------------------------------------------------------------------
 -- mapping under n arguments
 
+{-
 mapₙ : ∀ n {ls r s} {as : Sets n ls} {b : Set r} {c : Set s} →
        (b → c) → Arrows n as b → Arrows n as c
 mapₙ zero    f v = f v
 mapₙ (suc n) f g = mapₙ n f ∘′ g
+-}
 
 ------------------------------------------------------------------------
 -- hole at the n-th position
 
+{-
 holeₙ : ∀ n {ls r lʰ} {as : Sets n ls} {b : Set r} {aʰ : Set lʰ} →
         (aʰ → Arrows n as b) → Arrows n as (aʰ → b)
 holeₙ zero    f = f
 holeₙ (suc n) f = holeₙ n ∘′ flip f
+-}
 
 ------------------------------------------------------------------------
 -- function constant in its n first arguments
@@ -268,25 +332,27 @@ constₙ (suc n) v = const (constₙ n v)
 -- number arguments (`n`) implicit.
 ------------------------------------------------------------------------
 
+infix 5 ∃⟨_⟩ ∀[_] Π[_]
+
 ------------------------------------------------------------------------
 -- n-ary existential quantifier
 
-∃⟨_⟩ : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ toLevel n ls)
+∃⟨_⟩ : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ ⨆ n ls)
 ∃⟨_⟩ {zero}                f = f
-∃⟨_⟩ {suc n} {as = a , as} f = ∃ λ x → ∃⟨ f x ⟩
+∃⟨_⟩ {suc n} {as = a , as} f = Σ _ λ x → ∃⟨ f x ⟩
 
 ------------------------------------------------------------------------
 -- n-ary universal quantifier
 
 -- implicit
 
-∀[_] : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ toLevel n ls)
+∀[_] : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ ⨆ n ls)
 ∀[_] {zero}                f = f
 ∀[_] {suc n} {as = a , as} f = {x : a} → ∀[ f x ]
 
 -- explicit
 
-Π[_] : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ toLevel n ls)
+Π[_] : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ ⨆ n ls)
 Π[_] {zero}                f = f
 Π[_] {suc n} {as = a , as} f = (x : a) → Π[ f x ]
 
@@ -296,7 +362,7 @@ constₙ (suc n) v = const (constₙ n v)
 
 -- implication
 
-infixr 8 _⇒_
+infixr 6 _⇒_
 _⇒_ : ∀ {n} {ls r s} {as : Sets n ls} (f :  Arrows n as (Set r)) (g : Arrows n as (Set s)) →
       Arrows n as (Set (r ⊔ s))
 _⇒_ {zero}  f g   = f → g
@@ -312,7 +378,7 @@ _∩_ {suc n} f g x = f x ∩ g x
 
 -- disjunction
 
-infixr 6 _∪_
+infixr 8 _∪_
 _∪_ : ∀ {n} {ls r s} {as : Sets n ls} (f :  Arrows n as (Set r)) (g : Arrows n as (Set s)) →
       Arrows n as (Set (r ⊔ s))
 _∪_ {zero}  f g   = f ⊎ g
@@ -320,7 +386,8 @@ _∪_ {suc n} f g x = f x ∪ g x
 
 -- negation
 
-∁ : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Arrows n as (Set r)
-∁ {zero}  f   = ¬ f
-∁ {suc n} f x = ∁ (f x)
+infix 9 ¬_
+¬_ : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Arrows n as (Set r)
+¬_ {zero}  f   = f → ⊥
+¬_ {suc n} f x = ¬_ (f x)
 \end{code}
