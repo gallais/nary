@@ -13,9 +13,11 @@ PAPER_DEPENDENCIES:= \
   latex/acmart.cls \
   latex/tyde19.tex \
   latex/nary.tex \
+  latex/nary.bib \
   latex/agda.sty \
   latex/unicode.tex \
   latex/commands.tex \
+  latex/ACM-Reference-Format.bst \
   $(AGDA_TEX)
 
 all: latex/$(PAPER).pdf
@@ -31,17 +33,16 @@ latex/agda.sty: $(AGDA_OUTPUT)
 output/%.tex: lagda/%.lagda
 	${AGDA} -i lagda/ --latex --latex-dir=output/ $<
 
-latex/%.tex: output/%.tex
-	mkdir -p $(dir $@)
-	cp $< $@
-
-
-latex/%.tex: %.tex
-	mkdir -p $(dir $@)
-	cp $< $@
-
 latex/$(PAPER).pdf: $(PAPER_DEPENDENCIES)
 	cd latex && latexmk -pdf -bibtex ${PAPER}.tex
+
+latex/%: output/%
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/%: %
+	mkdir -p $(dir $@)
+	cp $< $@
 
 clean:
 	find . -name "*.agdai" | xargs rm

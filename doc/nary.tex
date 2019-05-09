@@ -148,11 +148,17 @@ whereas the proof itself can take its argument implicitly.
 Pointwise liftings for an index type \AB{I} are operators turning a type
 constructor on \AF{Set}s into one acting on \AB{I}-indexed families by
 threading the index. They are meant to be used partially applied so that
-both their inputs and their output are \AB{I}-indexed.
+both their inputs and their output are \AB{I}-indexed, hence the mismatch
+between their arity and the number of places for their arguments.
 
-\paragraph{Implication} We start with the most used of all: implication.
+\paragraph{Implication} We start with the most used of all: implication
+i.e. functions from proofs of one predicate to proofs of another.
 \ExecuteMetaData[StateOfTheArt.tex]{implies}
 
+The combinator \AF{\_⇒\_} associates to the right just like the type
+constructor for functions does. We can write the analogue of sequential
+application for applicative functors~\cite{DBLP:journals/jfp/McbrideP08}
+like so:
 \ExecuteMetaData[StateOfTheArt.tex]{ap}
 
 \paragraph{Conjunction} To state that the conjunction of two predicates hold
