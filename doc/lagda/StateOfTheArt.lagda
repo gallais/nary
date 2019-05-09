@@ -5,11 +5,12 @@ open import Level using (Level; _⊔_)
 
 private
   variable
-    a b c p q r i : Level
+    a b c p q r i j : Level
     A : Set a
     B : Set b
     C : Set c
     I : Set i
+    J : Set j
     P : A → Set p
     Q : A → Set q
     R : A → Set r
@@ -269,6 +270,60 @@ map f (px ∷ pxs)  = f px ∷ map f pxs
 \end{code}
 %</map>
 \begin{code}
+
+\end{code}
+%<*const>
+\begin{code}
+const : Set a → (I → Set a)
+const A i = A
+\end{code}
+%</const>
+\begin{code}
+
+\end{code}
+%<*toList>
+\begin{code}
+toList : ∀[ All P ⇒ const (List ∃⟨ P ⟩) ]
+toList []          = []
+toList (px ∷ pxs)  = (_ , px) ∷ toList pxs
+\end{code}
+%</toList>
+\begin{code}
+
+
+\end{code}
+%<*update>
+\begin{code}
+_⊢_ : (I → J) → (J → Set p) → (I → Set p)
+(f ⊢ P) i = P (f i)
+\end{code}
+%</update>
+\begin{code}
+
+
+\end{code}
+%<*concat>
+\begin{code}
+concat : List (List A) → List A
+concat []                 = []
+concat ([]        ∷ xss)  = concat xss
+concat ((x ∷ xs)  ∷ xss)  = x ∷ concat (xs ∷ xss)
+\end{code}
+%</concat>
+\begin{code}
+
+
+\end{code}
+%<*join>
+\begin{code}
+concat⁺ : ∀[ All (All P) ⇒ concat ⊢ All P ]
+concat⁺ []                    = []
+concat⁺ ([]          ∷ pxss)  = concat⁺ pxss
+concat⁺ ((px ∷ pxs)  ∷ pxss)  = px ∷ concat⁺ (pxs ∷ pxss)
+\end{code}
+%</join>
+\begin{code}
+
 
 \end{code}
 %<*nat>

@@ -186,11 +186,35 @@ index either by ignoring it completely, adjusting it using a function
 or overwriting it entirely. We won't detail the last option as, as always,
 overwriting is adjusting with a constant function.
 
-\paragraph{Constant}\todo{}
+\paragraph{Constant} Although we manipulate indexed families, some of
+our function's arguments or its result may not depend on the index.
+The \AF{const}ant indexed family is precisely what we need to represent
+these cases.
 
-\paragraph{Update}\todo{}
+\ExecuteMetaData[StateOfTheArt.tex]{const}
 
+The erasure function taking a proof that \AB{P} holds of all a list's
+elements to a list of pairs of elements and proofs that \AB{P} holds
+of them is an instance where the return type is constant in the index.
 
+\ExecuteMetaData[StateOfTheArt.tex]{toList}
+
+\paragraph{Update} On the other end of the spectrum, we have operations
+which update the ambient index using an abitrary function. The notation
+\AF{\_⊢\_} is inspired by the convention in type theory to consider that
+proofs in sequent calculus are written in an ambient context and that we
+may use a turnstyle to describe the addition of newly-bound variables to
+it.
+
+\ExecuteMetaData[StateOfTheArt.tex]{update}
+
+Stating that a function is compatible with \AF{All} is a typical use case
+of such a combinator. If the function at hand is called \AF{f} then the
+convention in the standard library is to call such a proof \AF{f⁺} as it
+makes \AF{f} appear in the conclusion. We pick \AF{concat} (whose classic
+definition is left out) in this concrete example.
+
+\ExecuteMetaData[StateOfTheArt.tex]{join}
 
 \subsection{Working With Multiple Indices}
 
