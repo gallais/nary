@@ -3,7 +3,7 @@
 
 module N-ary where
 
-open import Level as L using (Level; _⊔_)
+open import Level as L using (Level; 0ℓ; _⊔_)
 open import StateOfTheArt
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; ¬_
          ; _≡_; refl; ⊥
@@ -83,8 +83,8 @@ Levels (suc n)  = Level × Levels n
 %<*tolevel>
 \begin{code}
 ⨆ : ∀ n → Levels n → Level
-⨆ zero     _         = L.zero
-⨆ (suc n)  (l , ls)  = l ⊔ ⨆ n ls
+⨆ zero     _         = 0ℓ
+⨆ (suc n)  (l , ls)  = l ⊔ (⨆ n ls)
 \end{code}
 %</tolevel>
 \begin{code}
@@ -122,7 +122,7 @@ Product (suc n) (a , as) = a × Product n as
 \end{code}
 %<*arrows>
 \begin{code}
-Arrows : ∀ n {ls} → Sets n ls → Set r → Set (r ⊔ ⨆ n ls)
+Arrows : ∀ n {ls} → Sets n ls → Set r → Set (r ⊔ (⨆ n ls))
 Arrows zero     _         b = b
 Arrows (suc n)  (a , as)  b = a → Arrows n as b
 \end{code}

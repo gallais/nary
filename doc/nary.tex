@@ -172,11 +172,12 @@ of \AB{P} and \AB{Q} holds of all the elements of a given list then both
 \AB{P} and \AB{Q} in isolation hold of all of that list's elements.
 \ExecuteMetaData[StateOfTheArt.tex]{unzip}
 
-\paragraph{Negation}\todo{Pick pure vs distrib}
+\paragraph{Negation}\todo{Pick pure vs distrib vs empty}
 
 \ExecuteMetaData[StateOfTheArt.tex]{negation}
 \ExecuteMetaData[StateOfTheArt.tex]{pure}
 \ExecuteMetaData[StateOfTheArt.tex]{distrib}
+\ExecuteMetaData[StateOfTheArt.tex]{empty}
 
 \subsubsection{Adjustments to The Ambient Index}
 
@@ -271,7 +272,6 @@ representation and discharge the constraints without any outside help.
 It is important to build an understanding of the way the unifier proceeds
 to be able to write combinators usable with minimal user input.
 
-
 \section{Representating N-ary Function Types}
 
 Recall that a binary function type {\AB{A} → \AB{B} → \AB{C}} can also be seen
@@ -284,9 +284,9 @@ shape of the whole representation.
 Recall that unification is good at reconstructing values of types which have
 η-rules. As a consequence, from the natural number \AB{n} passed to us as an
 argument we are going to essentially compute a number of big right-nested
-product.
+products.
 
-\paragraph{Right Nested Products} The two building blocks of right nested
+\paragraph{Right-Nested Products} The two building blocks of right-nested
 products are a binary product \AF{\_×\_} (defined as the non-dependent special
 case of \AR{Σ} we saw in Section~\ref{def:sigma}) and the unit type
 \AF{⊤} defined as a record with no field whatsoever.
@@ -303,16 +303,42 @@ way of reconstruction.
 \paragraph{Level Polymorphism} To achieve fully general level polymorphism, we
 need all the domains of our function type to be potentially at different levels.
 Luckily the notion of \AF{Level} in Agda is a primitive \AF{Set} and we can thus
-define containers storing them like any other type of values. Our first definition
-called \AF{Levels} defines an \AB{n}-tuple of \AF{Level}s by induction on \AB{n}.
+manipulate them just like any other values. In particular we can define containers
+storing them. Our first definition called \AF{Levels} defines an \AB{n}-tuple of
+\AF{Level}s by induction on \AB{n}.
 
 \ExecuteMetaData[N-ary.tex]{levels}
 
-\paragraph{Heterogeneous Domains}\todo{}
+\paragraph{Heterogeneous Domains} Before we can generate the big right-nested
+\AB{n}-tuple packaging the function's domains, we need to compute the level at
+which it is going to live. The definition of \AR{Σ} makes clear that the product
+of two types living respectively at level \AB{a} and \AB{b} sits at level
+{(\AB{a} ⊔ \AB{b})} i.e. the least upper bound of \AB{a} and \AB{b}.
+We define \AF{⨆} as the generalisation of the least upper bound operator
+to {(\AF{Levels} \AB{n})} by induction on \AB{n}.
 
 \ExecuteMetaData[N-ary.tex]{tolevel}
+
+Knowing that {(\AF{Set} \AB{a})} sits at level {(\AF{suc} \AB{a})}, it is
+natural to declare that our \AB{n}-tuple of sets defined at various \AF{Levels}
+will be defined at the sucessor of the generalised least upper bound of these
+\AF{Levels}.
+
 \ExecuteMetaData[N-ary.tex]{sets}
 
-\paragraph{Semantics}\todo{}
+We can now encode an \AB{n}-ary function space as essentially a collection \AB{ls}
+of {(\AF{Levels} \AB{n})} together with a corresponding \AB{n}-tuple of type
+{(\AF{Sets} \AB{n} \AB{ls})} for the domain, and a level \AB{r} and a
+{(\AF{Set} \AB{r})} for the codomain.
+
+\paragraph{Semantics} We can give this encoding a semantics in a straightforward way
+by induction on \AB{n} and case analysis on the {(\AF{Sets} \AB{n} \AB{ls})} argument.
+A \AIC{zero}-ary function type is simply the codomain whilst a {(\AIC{suc} \AB{n})}-ary
+one is a unary function type whose codomain is the \AB{n}-ary function type obtained
+by induction hypothesis.
 
 \ExecuteMetaData[N-ary.tex]{arrows}
+
+Our first example is a \AN{2}-ary function: our favourite indexed family \AD{All}.
+
+\ExecuteMetaData[Examples.tex]{all}

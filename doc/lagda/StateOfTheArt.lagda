@@ -16,15 +16,15 @@ private
     R : A → Set r
     x y t u : A
 
+module _ {A : Set a} where
 \end{code}
 %<*equality>
 \begin{code}
-data _≡_ {A : Set a} (x : A) : A → Set a where
-  refl : x ≡ x
+  data _≡_ (x : A) : A → Set a where
+    refl : x ≡ x
 \end{code}
 %</equality>
 \begin{code}
-
 
 \end{code}
 %<*cong>
@@ -193,6 +193,9 @@ unzip ((p , q) ∷ pqs)  =  let (ps , qs) = unzip pqs
 \begin{code}
 data ⊥ : Set where
 
+⊥-elim : ⊥ → A
+⊥-elim ()
+
 ¬_ : (I → Set p) → (I → Set p)
 (¬ P) i = P i → ⊥
 \end{code}
@@ -220,6 +223,15 @@ distrib ne (¬p ∷ _)  (p ∷ _)  = ¬p p
 %</distrib>
 \begin{code}
 
+\end{code}
+%<*empty>
+\begin{code}
+empty : ∀[ ¬ P ] → ∀[ All P ⇒ [] ≡_ ]
+empty ¬p []          = refl
+empty ¬p (px ∷ pxs)  = ⊥-elim (¬p px)
+\end{code}
+%</empty>
+\begin{code}
 
 \end{code}
 %<*pure>
@@ -340,6 +352,11 @@ data _≤_ : (m n : ℕ) → Set where
 %</lesseq>
 \begin{code}
 
+_<_ : (m n : ℕ) → Set
+m < n = suc m ≤ n
+
+_>_ : (m n : ℕ) → Set
+m > n = n < m
 
 \end{code}
 %<*greateq>

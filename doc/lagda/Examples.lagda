@@ -3,21 +3,21 @@
 
 module Examples where
 
+open import Level
 open import Data.Empty
 open import Level using (Level)
-open import Data.Nat.Base
+open import Data.Nat.Base using (_+_)
 open import Data.Nat.Properties
-open import StateOfTheArt
+open import StateOfTheArt as SOA
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; ¬_
-         ; _≡_; refl; ⊥
-         ; _≤_; _≥_; antisym
+         ; ⊥
+         ; antisym
          )
-open import Relation.Binary.PropositionalEquality
 
 
 private
   variable
-    a b c d e : Level
+    a b c d e p : Level
     A : Set a
     B : Set b
     C : Set c
@@ -35,6 +35,21 @@ private
 -- such functions.
 
 open import N-ary
+
+------------------------------------------------------------------------
+-- Examples of Arrows n As B
+------------------------------------------------------------------------
+
+module _ {a} {A : Set a} where
+
+\end{code}
+%<*all>
+\begin{code}
+  _ : Arrows 2 ((A → Set p) , List A , _) (Set (p ⊔ a))
+  _ = All
+\end{code}
+%</all>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- Generalised equality-manipulating combinators
@@ -334,13 +349,12 @@ all₂ = _≟_
 \end{code}
 %<*antisym>
 \begin{code}
-antisym : ∀[ _≤_ ⇒ _≥_ ⇒ _≡_ ]
+antisym : ∀[ _≥_ ⇒ _≤_ ⇒ _≡_ ]
 \end{code}
 %</antisym>
 \begin{code}
-antisym = ≤-antisym
+antisym = SOA.antisym
 
-open import Data.Nat.Base
 open import Data.Sum
 open import Relation.Binary using (module Tri); open Tri
 open import Data.Nat.Properties
@@ -350,23 +364,26 @@ open import Relation.Binary.PropositionalEquality.Core
 -- _∪_ : (A₁ → ⋯ → Aₙ → Set r) → (A₁ → ⋯ → Aₙ → Set s) → (A₁ → ⋯ → Aₙ → Set _)
 -- P ∪ Q = λ a₁ → ⋯ → λ aₙ → P a₁ ⋯ aₙ ⊎ Q a₁ ⋯ aₙ
 
+{-
 ≤->-connex : Π[ _≤_ ∪ _>_ ]
 ≤->-connex m n with <-cmp m n
 ... | tri< a ¬b ¬c = inj₁ (<⇒≤ a)
 ... | tri≈ ¬a b ¬c = inj₁ (≤-reflexive b)
 ... | tri> ¬a ¬b c = inj₂ c
-
+-}
 ------------------------------------------------------------------------
 -- _∩_ : (A₁ → ⋯ → Aₙ → Set r) → (A₁ → ⋯ → Aₙ → Set s) → (A₁ → ⋯ → Aₙ → Set _)
 -- P ∩ Q = λ a₁ → ⋯ → λ aₙ → P a₁ ⋯ aₙ ⊎ Q a₁ ⋯ aₙ
 
+{-
 <-inversion : ∀[ _<_ ⇒ _≤_ ∩ _≢_ ]
 <-inversion m<n = <⇒≤ m<n , <⇒≢ m<n
-
+-}
 ------------------------------------------------------------------------
 -- ∁ : (A₁ → ⋯ → Aₙ → Set r) → (A₁ → ⋯ → Aₙ → Set _)
 -- ∁ P = λ a₁ → ⋯ → λ aₙ → P a₁ ⋯ aₙ ⊎ Q a₁ ⋯ aₙ
-
+{-
 m<n⇒m≱n : ∀[ _>_ ⇒ ¬ _≤_ ]
 m<n⇒m≱n m>n m≤n = <⇒≱ m>n m≤n
+-}
 \end{code}
