@@ -1,8 +1,13 @@
+\section*{Introduction}
+
 For user convenience, Agda's standard library has accumulated a set of
 equality-manipulating combinators of varying arities (Section~\ref{sec:nary2})
 as well as a type-level compositional DSL to write clean types involving
 indexed families of arity exactly one (Section~\ref{sec:unarycombinators}).
-None of these solutions scale well.
+None of these solutions scale well. By getting acquainted with the unifier
+(Section~\ref{sec:unifier}), we can design a good representation of n-ary
+function spaces (Section~\ref{sec:naryfunction}) which empowers us to write
+generalised combinators usable with minimal user input.
 
 \section{N-ary Combinators... for N up to 2}\label{sec:nary2}
 
@@ -251,7 +256,9 @@ thus forcing users to manually disambiguate each use site.
 \paragraph{Wish} We would like to define once and for all n-ary quantifiers,
 pointwise lifting of common type constructors, and adjustment functions.
 
-\section{Plan}
+\section{Plan} We can start to draw out the structure of our contribution now
+that we have a good idea of the current state of the art, its limitation, and
+the extension we want to see. Here are the key points we need to deliver:
 
 \paragraph{Reified Types} We need to come up with a representation of n-ary
 functions which is as general as possible: the domains should be allowed to
@@ -263,16 +270,20 @@ be computed.
 
 \paragraph{Invertible} The representation and its semantics should be unifier
 friendly. That is to say that if using a combinators yields a constraint of
-the form ``this type should be result of evaluating the representation of an
-n-ary function type'' then Agda should be able to reconstruct the
+the form ``this type should be the result of evaluating the representation of
+an n-ary function type'' then Agda should be able to reconstruct the
 representation and discharge the constraints without any outside help.
 
-\section{Getting Acquainted With the Unifier}
+\paragraph{Applications} Lastly we need to deliver the two wishes we
+formulated earlier by actually implementing the n-ary versions of \AF{cong},
+\AF{subst}, and the various combinators for manipulating indexed families.
+
 
 It is important to build an understanding of the way the unifier proceeds
 to be able to write combinators usable with minimal user input.
 
-\section{Representating N-ary Function Types}
+
+\section{Representating N-ary Function Types}\label{sec:naryfunction}
 
 Recall that a binary function type {\AB{A} → \AB{B} → \AB{C}} can also be seen
 as a unary function type with codomain {\AB{B} → \AB{C}}. As a consequence there
