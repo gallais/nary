@@ -27,9 +27,9 @@ latex/%.cls: %.cls
 	mkdir -p $(dir $@)
 	cp $< $@
 
-latex/agda.sty: $(AGDA_OUTPUT)
+latex/agda.sty: agda.sty
 	mkdir -p latex/
-	cp output/agda.sty latex/
+	cp agda.sty latex/
 
 output/%.tex: lagda/%.lagda
 	${AGDA} -i lagda/ --latex --latex-dir=output/ $<
