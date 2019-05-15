@@ -7,6 +7,7 @@ open import Level as L using (Level; 0ℓ; _⊔_)
 open import StateOfTheArt
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; ¬_
          ; _≡_; refl; ⊥
+         ; map
          )
 open import Relation.Binary.PropositionalEquality
 open import Data.Empty
@@ -110,6 +111,10 @@ Sets (suc n)  (l , ls)  = Set l × Sets n ls
 %</sets>
 \begin{code}
 
+_<$>_ : (∀ {ℓ} → Set ℓ → Set ℓ) → ∀ {n ls} → Sets n ls → Sets n ls
+_<$>_ f {zero}   as        = _
+_<$>_ f {suc n}  (a , as)  = f a , f <$> as
+
 private
   variable
     as : Sets n ls
@@ -138,12 +143,39 @@ Product (suc n)  (a , as)  = a × Product n as
 \end{code}
 %<*arrows>
 \begin{code}
-Arrows : ∀ n {ls} → Sets n ls → Set r → Set (r ⊔ (⨆ n ls))
+Arrows : ∀ n {ls} → Sets n ls → ∀ {r} → Set r → Set (r ⊔ (⨆ n ls))
 Arrows zero     _         b = b
 Arrows (suc n)  (a , as)  b = a → Arrows n as b
 \end{code}
 %</arrows>
 \begin{code}
+
+module _ {a b} {A : Set a} {B : Set b} where
+
+  map : (f : A → B) → List A → List B
+  map f [] = []
+  map f (x ∷ xs) = f x ∷ map f xs
+
+  zipWith : ∀ {c} {C : Set c} → (A → B → C) → List A → List B → List C
+  zipWith f (a ∷ as) (b ∷ bs) = f a b ∷ zipWith f as bs
+  zipWith f _ _ = []
+
+open import Function using (_∘′_; _|>′_)
+
+\end{code}
+%<*zipWith>
+\begin{code}
+zipWithₙ : ∀ n {ls as} {r} {R : Set r} →
+           (Product n {ls} as → R) →
+           (Product n (List <$> as) → List R)
+\end{code}
+%</zipWith>
+\begin{code}
+zipWithₙ 0                f as         = []
+zipWithₙ 1                f (as , _)   = map (f ∘′ (_, _)) as
+zipWithₙ (suc n@(suc _))  f (as , ass) =
+  zipWith _|>′_ as (zipWithₙ n (λ as a → f (a , as)) ass)
+
 
 ------------------------------------------------------------------------
 -- Generic Programs

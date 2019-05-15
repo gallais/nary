@@ -473,14 +473,6 @@ unit type, can be inferred by Agda so we leave it out.
 \ExecuteMetaData[N-ary.tex]{disjunction}
 \ExecuteMetaData[N-ary.tex]{negation}
 
-\subsection{Product and Currying}
-
-\ExecuteMetaData[N-ary.tex]{product}
-\ExecuteMetaData[N-ary.tex]{curry}
-\ExecuteMetaData[N-ary.tex]{uncurry}
-
-\todo{Discuss non top terminated}
-
 
 \section{}
 
@@ -492,8 +484,24 @@ unit type, can be inferred by Agda so we leave it out.
 
 
 
+\section{Further Generic Programming}
 
-\section{Example: Printf}
+\subsection{Product and (Un)Currying}
+
+\ExecuteMetaData[N-ary.tex]{product}
+\ExecuteMetaData[N-ary.tex]{curry}
+\ExecuteMetaData[N-ary.tex]{uncurry}
+
+\todo{Discuss non top terminated}
+
+\subsection{N-ary Zipping Functions}
+
+Some functions are easier to write curried but easier to use uncurried.
+This is the case for instance with \AF{zipWithₙ}.\todo{explain}
+
+\ExecuteMetaData[N-ary.tex]{zipWith}
+
+\subsection{Printf}
 
 \ExecuteMetaData[Printf.tex]{chunk}
 \ExecuteMetaData[Printf.tex]{format}
