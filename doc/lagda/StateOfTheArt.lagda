@@ -338,7 +338,7 @@ concat⁺ ((px ∷ pxs)  ∷ pxss)  = px ∷ concat⁺ (pxs ∷ pxss)
 \begin{code}
 
 open import Agda.Builtin.Nat
-  using (zero; suc)
+  using (zero; suc; _+_)
   renaming (Nat to ℕ)
   public
 

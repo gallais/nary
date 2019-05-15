@@ -5,6 +5,7 @@ AGDA_FILES:=\
   lagda/StateOfTheArt.lagda \
   lagda/Examples.lagda \
   lagda/Broken.lagda \
+  lagda/Unifier.lagda \
   lagda/N-ary.lagda
 
 AGDA_OUTPUT:=$(patsubst lagda/%.lagda,output/%.tex,$(AGDA_FILES))
