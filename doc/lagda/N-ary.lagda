@@ -15,7 +15,7 @@ open import Data.Sum using (_⊎_)
 
 private
   variable
-    a b r : Level
+    a b r s : Level
 
 ------------------------------------------------------------------------
 -- Building blocks of right-nested product
@@ -76,6 +76,12 @@ Levels (suc n)  = Level × Levels n
 %</levels>
 \begin{code}
 
+
+private
+  variable
+    n : ℕ
+    ls : Levels n
+
 -- The overall product's Level will be the least upper bound of all of the
 -- Levels involved.
 
@@ -103,6 +109,10 @@ Sets (suc n)  (l , ls)  = Set l × Sets n ls
 %</sets>
 \begin{code}
 
+private
+  variable
+    as : Sets n ls
+
 -- Third, the n-ary product itself: provided n Levels and a corresponding
 -- "vector" of `n` Sets, we can build a big right-nested product type packing
 -- a value for each one of these Sets. We have a special case for 1 because
@@ -110,8 +120,7 @@ Sets (suc n)  (l , ls)  = Set l × Sets n ls
 -- they rarely are ⊤-terminated.
 
 Product : ∀ n {ls} → Sets n ls → Set (⨆ n ls)
-Product 0       _        = ⊤
-Product 1       (a , _)  = a
+Product zero    _        = ⊤
 Product (suc n) (a , as) = a × Product n as
 
 -- Similarly we may want to talk about a function whose domains are given
@@ -164,7 +173,6 @@ substₙ : ∀ {n} {ls : Levels n} {as : Sets n ls} {r} →
 substₙ {zero}   f x    = x
 substₙ {suc n}  f refl = substₙ (f _)
 
-{-
 ------------------------------------------------------------------------
 -- (un)curry
 
@@ -173,16 +181,13 @@ substₙ {suc n}  f refl = substₙ (f _)
 
 curryₙ : ∀ n {ls} {as : Sets n ls} {r} {b : Set r} →
          (Product n as → b) → Arrows n as b
-curryₙ 0               f = f _
-curryₙ 1               f = f
-curryₙ (suc n@(suc _)) f = curryₙ n ∘′ curry f
+curryₙ zero     f = f _
+curryₙ (suc n)  f = λ a → curryₙ n (λ as → f (a , as))
 
 uncurryₙ : ∀ n {ls : Levels n} {as : Sets n ls} {r} {b : Set r} →
            Arrows n as b → (Product n as → b)
-uncurryₙ 0               f = const f
-uncurryₙ 1               f = f
-uncurryₙ (suc n@(suc _)) f = uncurry (uncurryₙ n ∘′ f)
--}
+uncurryₙ zero     f _         =  f
+uncurryₙ (suc n)  f (a , as)  = uncurryₙ n (f a) as
 
 ------------------------------------------------------------------------
 -- projection of the k-th component
@@ -337,25 +342,42 @@ infix 5 ∃⟨_⟩ ∀[_] Π[_]
 ------------------------------------------------------------------------
 -- n-ary existential quantifier
 
-∃⟨_⟩ : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ ⨆ n ls)
-∃⟨_⟩ {zero}                f = f
-∃⟨_⟩ {suc n} {as = a , as} f = Σ _ λ x → ∃⟨ f x ⟩
+\end{code}
+%<*ex>
+\begin{code}
+∃⟨_⟩ : Arrows n {ls} as (Set r) → Set (r ⊔ (⨆ n ls))
+∃⟨_⟩ {zero}   f = f
+∃⟨_⟩ {suc n}  f = Σ _ λ x → ∃⟨ f x ⟩
+\end{code}
+%</ex>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- n-ary universal quantifier
 
 -- implicit
 
-∀[_] : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ ⨆ n ls)
-∀[_] {zero}                f = f
-∀[_] {suc n} {as = a , as} f = {x : a} → ∀[ f x ]
+\end{code}
+%<*iall>
+\begin{code}
+∀[_] : Arrows n {ls} as (Set r) → Set (r ⊔ (⨆ n ls))
+∀[_] {zero}   f = f
+∀[_] {suc n}  f = ∀ {x} → ∀[ f x ]
+\end{code}
+%</iall>
+\begin{code}
 
 -- explicit
 
-Π[_] : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Set (r ⊔ ⨆ n ls)
-Π[_] {zero}                f = f
-Π[_] {suc n} {as = a , as} f = (x : a) → Π[ f x ]
-
+\end{code}
+%<*all>
+\begin{code}
+Π[_] : Arrows n {ls} as (Set r) → Set (r ⊔ (⨆ n ls))
+Π[_] {zero}   f = f
+Π[_] {suc n}  f = ∀ x → Π[ f x ]
+\end{code}
+%</all>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- n-ary pointwise liftings
@@ -363,31 +385,54 @@ infix 5 ∃⟨_⟩ ∀[_] Π[_]
 -- implication
 
 infixr 6 _⇒_
-_⇒_ : ∀ {n} {ls r s} {as : Sets n ls} (f :  Arrows n as (Set r)) (g : Arrows n as (Set s)) →
+\end{code}
+%<*implication>
+\begin{code}
+_⇒_ : Arrows n {ls} as (Set r) → Arrows n as (Set s) →
       Arrows n as (Set (r ⊔ s))
-_⇒_ {zero}  f g   = f → g
-_⇒_ {suc n} f g x = f x ⇒ g x
+_⇒_ {zero}   f g = f → g
+_⇒_ {suc n}  f g = λ x → f x ⇒ g x
+\end{code}
+%</implication>
+\begin{code}
 
 -- conjunction
 
 infixr 7 _∩_
-_∩_ : ∀ {n} {ls r s} {as : Sets n ls} (f :  Arrows n as (Set r)) (g : Arrows n as (Set s)) →
+\end{code}
+%<*conjunction>
+\begin{code}
+_∩_ : Arrows n {ls} as (Set r) → Arrows n as (Set s) →
       Arrows n as (Set (r ⊔ s))
-_∩_ {zero}  f g   = f × g
-_∩_ {suc n} f g x = f x ∩ g x
+_∩_ {zero}   f g = f × g
+_∩_ {suc n}  f g = λ x → f x ∩ g x
+\end{code}
+%</conjunction>
+\begin{code}
 
 -- disjunction
 
 infixr 8 _∪_
-_∪_ : ∀ {n} {ls r s} {as : Sets n ls} (f :  Arrows n as (Set r)) (g : Arrows n as (Set s)) →
+\end{code}
+%<*disjunction>
+\begin{code}
+_∪_ : Arrows n {ls} as (Set r) → Arrows n as (Set s) →
       Arrows n as (Set (r ⊔ s))
-_∪_ {zero}  f g   = f ⊎ g
-_∪_ {suc n} f g x = f x ∪ g x
+_∪_ {zero}   f g = f ⊎ g
+_∪_ {suc n}  f g = λ x → f x ∪ g x
+\end{code}
+%</disjunction>
+\begin{code}
 
 -- negation
 
 infix 9 ¬_
-¬_ : ∀ {n ls r} {as : Sets n ls} → Arrows n as (Set r) → Arrows n as (Set r)
-¬_ {zero}  f   = f → ⊥
-¬_ {suc n} f x = ¬_ (f x)
 \end{code}
+%<*negation>
+\begin{code}
+¬_ : Arrows n {ls} as (Set r) → Arrows n as (Set r)
+¬_ {zero}   f = f → ⊥
+¬_ {suc n}  f = λ x → ¬ f x
+\end{code}
+%</negation>
+\begin{code}
