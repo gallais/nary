@@ -171,7 +171,7 @@ we can use the pointwise lifting of pairing.
 
 \ExecuteMetaData[StateOfTheArt.tex]{conjunction}
 
-This enables to write functions which return more than one result. We can
+This enables us to write functions which return more than one result. We can
 for instance write the type of \AF{unzip}, the proof that if the conjunction
 of \AB{P} and \AB{Q} holds of all the elements of a given list then both
 \AB{P} and \AB{Q} in isolation hold of all of that list's elements.
@@ -440,7 +440,7 @@ will be defined at the sucessor of the generalised least upper bound of these
 
 We can now encode an \AB{n}-ary function space as essentially a collection \AB{ls}
 of {(\AF{Levels} \AB{n})} together with a corresponding \AB{n}-tuple of type
-{(\AF{Sets} \AB{n} \AB{ls})} for the domain, and a level \AB{r} and a
+{(\AF{Sets} \AB{n} \AB{ls})} for the domains, and a level \AB{r} and a
 {(\AF{Set} \AB{r})} for the codomain.
 
 \paragraph{Semantics} We can give this encoding a semantics in a straightforward way
@@ -452,5 +452,7 @@ by induction hypothesis.
 \ExecuteMetaData[N-ary.tex]{arrows}
 
 Our first example is a \AN{2}-ary function: our favourite indexed family \AD{All}.
+The last element of the telescope, a value whose type is a lifted version of the
+unit type, can be inferred by Agda so we leave it out.
 
 \ExecuteMetaData[Examples.tex]{all}
