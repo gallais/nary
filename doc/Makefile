@@ -6,7 +6,8 @@ AGDA_FILES:=\
   lagda/Examples.lagda \
   lagda/Broken.lagda \
   lagda/Unifier.lagda \
-  lagda/N-ary.lagda
+  lagda/N-ary.lagda \
+  lagda/Printf.lagda
 
 AGDA_OUTPUT:=$(patsubst lagda/%.lagda,output/%.tex,$(AGDA_FILES))
 AGDA_TEX:=$(patsubst lagda/%.lagda,latex/%.tex,$(AGDA_FILES))

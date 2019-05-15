@@ -16,6 +16,7 @@ open import Data.Sum using (_⊎_)
 private
   variable
     a b r s : Level
+    R : Set r
 
 ------------------------------------------------------------------------
 -- Building blocks of right-nested product
@@ -119,9 +120,15 @@ private
 -- we want our `(un)curryₙ` functions to work for user-written functions and
 -- they rarely are ⊤-terminated.
 
+\end{code}
+%<*product>
+\begin{code}
 Product : ∀ n {ls} → Sets n ls → Set (⨆ n ls)
-Product zero    _        = ⊤
-Product (suc n) (a , as) = a × Product n as
+Product zero     _         = ⊤
+Product (suc n)  (a , as)  = a × Product n as
+\end{code}
+%</product>
+\begin{code}
 
 -- Similarly we may want to talk about a function whose domains are given
 -- by a "vector" of `n` Sets and whose codomain is B. `Arrows` forms such
@@ -138,7 +145,6 @@ Arrows (suc n)  (a , as)  b = a → Arrows n as b
 %</arrows>
 \begin{code}
 
-
 ------------------------------------------------------------------------
 -- Generic Programs
 
@@ -153,25 +159,49 @@ Arrows (suc n)  (a , as)  b = a → Arrows n as b
 ------------------------------------------------------------------------
 -- n-ary versions of `cong` and `subst`
 
-Congₙ : ∀ n {ls : Levels n} {as : Sets n ls} {r} {b : Set r} →
-        (f g : Arrows n as b) → Set (r ⊔ ⨆ n ls)
-Congₙ zero    f g = f ≡ g
-Congₙ (suc n) f g = ∀ {x y} → x ≡ y → Congₙ n (f x) (g y)
+\end{code}
+%<*Cong>
+\begin{code}
+Congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
+        (f g : Arrows n as R) → Set (r ⊔ (⨆ n ls))
+Congₙ zero     f g = f ≡ g
+Congₙ (suc n)  f g = ∀ {x y} → x ≡ y → Congₙ n (f x) (g y)
+\end{code}
+%</Cong>
+\begin{code}
 
-congₙ : ∀ n {ls : Levels n} {as : Sets n ls} {r} {b : Set r} →
-        (f : Arrows n as b) → Congₙ n f f
-congₙ zero    f      = refl
-congₙ (suc n) f refl = congₙ n (f _)
+\end{code}
+%<*cong>
+\begin{code}
+congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
+        (f : Arrows n as R) → Congₙ n f f
+congₙ zero     f       = refl
+congₙ (suc n)  f refl  = congₙ n (f _)
+\end{code}
+%</cong>
+\begin{code}
 
-Substₙ : ∀ n {r} {ls : Levels n} {as : Sets n ls} →
-         (f g : Arrows n as (Set r)) → Set (⨆ n ls ⊔ r)
-Substₙ zero    f g = f → g
-Substₙ (suc n) f g = ∀ {x y} → x ≡ y → Substₙ n (f x) (g y)
+\end{code}
+%<*Subst>
+\begin{code}
+Substₙ : ∀ n {ls} {as : Sets n ls} →
+         (f g : Arrows n as (Set r)) → Set (r ⊔ (⨆ n ls))
+Substₙ zero     f g = f → g
+Substₙ (suc n)  f g = ∀ {x y} → x ≡ y → Substₙ n (f x) (g y)
+\end{code}
+%</Subst>
+\begin{code}
 
-substₙ : ∀ {n} {ls : Levels n} {as : Sets n ls} {r} →
+\end{code}
+%<*subst>
+\begin{code}
+substₙ : ∀ {n r ls} {as : Sets n ls} →
          (f : Arrows n as (Set r)) → Substₙ n f f
-substₙ {zero}   f x    = x
-substₙ {suc n}  f refl = substₙ (f _)
+substₙ {zero}   f x     = x
+substₙ {suc n}  f refl  = substₙ (f _)
+\end{code}
+%</subst>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- (un)curry
@@ -179,15 +209,28 @@ substₙ {suc n}  f refl = substₙ (f _)
 -- We start by defining `curryₙ` and `uncurryₙ` converting back and forth
 -- between `A₁ → ⋯ → Aₙ → B` and `(A₁ × ⋯ × Aₙ) → B` by induction on `n`.
 
-curryₙ : ∀ n {ls} {as : Sets n ls} {r} {b : Set r} →
-         (Product n as → b) → Arrows n as b
-curryₙ zero     f = f _
-curryₙ (suc n)  f = λ a → curryₙ n (λ as → f (a , as))
+\end{code}
+%<*curry>
+\begin{code}
+curry : ∀ n {ls} {as : Sets n ls} →
+        (Product n as → R) → Arrows n as R
+curry zero     f = f _
+curry (suc n)  f = λ a → curry n (λ as → f (a , as))
+\end{code}
+%</curry>
+\begin{code}
 
-uncurryₙ : ∀ n {ls : Levels n} {as : Sets n ls} {r} {b : Set r} →
-           Arrows n as b → (Product n as → b)
-uncurryₙ zero     f _         =  f
-uncurryₙ (suc n)  f (a , as)  = uncurryₙ n (f a) as
+\end{code}
+%<*uncurry>
+\begin{code}
+uncurry : ∀ n {ls} {as : Sets n ls} →
+          Arrows n as R → (Product n as → R)
+uncurry zero     f _         = f
+uncurry (suc n)  f (a , as)  = uncurry n (f a) as
+\end{code}
+%</uncurry>
+\begin{code}
+
 
 ------------------------------------------------------------------------
 -- projection of the k-th component
