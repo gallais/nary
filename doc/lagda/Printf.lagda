@@ -37,7 +37,7 @@ size (Raw _  ∷ f)  = size f
 \end{code}
 %<*format>
 \begin{code}
-format : (f : Format) → Sets (size f) 0ℓs
+format : (fmt : Format) → Sets (size fmt) 0ℓs
 format []            = _
 format (Nat    ∷ f)  = ℕ , format f
 format (Raw _  ∷ f)  = format f
@@ -48,10 +48,10 @@ format (Raw _  ∷ f)  = format f
 \end{code}
 %<*assemble>
 \begin{code}
-assemble : ∀ f → Product _ (format f) → List String
-assemble []            vs        = []
-assemble (Nat    ∷ f)  (n , vs)  = show n ∷ assemble f vs
-assemble (Raw s  ∷ f)  vs        = s ∷ assemble f vs
+assemble : ∀ fmt → Product _ (format fmt) → List String
+assemble []              vs        = []
+assemble (Nat    ∷ fmt)  (n , vs)  = show n ∷ assemble fmt vs
+assemble (Raw s  ∷ fmt)  vs        = s ∷ assemble fmt vs
 \end{code}
 %</assemble>
 \begin{code}
@@ -59,8 +59,8 @@ assemble (Raw s  ∷ f)  vs        = s ∷ assemble f vs
 \end{code}
 %<*printf>
 \begin{code}
-printf : ∀ f → Arrows _ (format f) String
-printf f = curry (size f) (concat ∘ assemble f)
+printf : ∀ fmt → Arrows _ (format fmt) String
+printf fmt = curry (size fmt) (concat ∘ assemble fmt)
 \end{code}
 %</printf>
 \begin{code}
