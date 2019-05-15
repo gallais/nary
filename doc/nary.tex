@@ -489,6 +489,10 @@ unit type, can be inferred by Agda so we leave it out.
 \subsection{Product and (Un)Currying}
 
 \ExecuteMetaData[N-ary.tex]{product}
+
+Both \AF{curryₙ} and \AF{uncurryₙ} are implemented by structural induction
+on \AB{n} and in terms of their binary counterparts.
+
 \ExecuteMetaData[N-ary.tex]{curry}
 \ExecuteMetaData[N-ary.tex]{uncurry}
 
@@ -496,10 +500,32 @@ unit type, can be inferred by Agda so we leave it out.
 
 \subsection{N-ary Zipping Functions}
 
-Some functions are easier to write curried but easier to use uncurried.
-This is the case for instance with \AF{zipWithₙ}.\todo{explain}
+Some functions are easier to write curried but nicer to use uncurried.
+This is the case with \AF{zipWithₙ}, the \AB{n}-ary version of the
+higher-order function which takes a function and two lists as inputs
+and produces a list by processing the lists in lockstep combining their
+elements thanks to the function it was passed. Using ellipses, we would
+write its type as:
+
+\medskip
+\noindent\begin{tabular}{@{}l@{~}l}
+  \AF{zipWithₙ} : & (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
+                  & \AD{List} \AB{A₁} → ⋯ \AD{List} \AB{Aₙ} → \AD{List} \AB{B}
+\end{tabular}
+\medskip
+
+To formally write this type, we need to explain how to map a level polymorphic
+endofunctor on \AF{Set} (here: \AD{List}) over a {(\AF{Sets} \AB{n} \AB{ls})}.
+We proceed by induction on \AB{n}.
+
+\ExecuteMetaData[N-ary.tex]{smap}
+
+As explained earlier it is vastly easier to implement the function using
+the following type, and to then recover the desired type by invoking
+generic (un)currying in the appropriate places.
 
 \ExecuteMetaData[N-ary.tex]{zipWith}
+\ExecuteMetaData[N-ary.tex]{zw-aux}
 
 \subsection{Printf}
 

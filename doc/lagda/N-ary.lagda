@@ -13,6 +13,7 @@ open import Relation.Binary.PropositionalEquality
 open import Data.Empty
 open import Data.Sum using (_⊎_)
 -- open import Data.Fin.Base using (Fin; zero; suc)
+open import Function using (_∘_)
 
 private
   variable
@@ -34,6 +35,18 @@ record ⊤ : Set where
 infixr 2 _×_
 _×_ : Set a → Set b → Set (a ⊔ b)
 A × B = Σ A λ _ → B
+
+curry : ∀ {a b c} {A : Set a} {B : A → Set b} {C : (a : A) → B a → Set c}
+        (f : (p : Σ A B) → C (Σ.proj₁ p) (Σ.proj₂ p)) →
+        (a : A) (b : B a) → C a b
+curry f a b = f (a , b)
+
+
+uncurry : ∀ {a b c} {A : Set a} {B : A → Set b} {C : (a : A) → B a → Set c}
+          (f : (a : A) (b : B a) → C a b) →
+          (p : Σ A B) → C (Σ.proj₁ p) (Σ.proj₂ p)
+uncurry f (a , b) = f a b
+
 
 \end{code}
 %<*lift>
@@ -111,9 +124,16 @@ Sets (suc n)  (l , ls)  = Set l × Sets n ls
 %</sets>
 \begin{code}
 
-_<$>_ : (∀ {ℓ} → Set ℓ → Set ℓ) → ∀ {n ls} → Sets n ls → Sets n ls
+\end{code}
+%<*smap>
+\begin{code}
+_<$>_ : (∀ {l} → Set l → Set l) →
+        ∀ {n ls} → Sets n ls → Sets n ls
 _<$>_ f {zero}   as        = _
 _<$>_ f {suc n}  (a , as)  = f a , f <$> as
+\end{code}
+%</smap>
+\begin{code}
 
 private
   variable
@@ -149,32 +169,6 @@ Arrows (suc n)  (a , as)  b = a → Arrows n as b
 \end{code}
 %</arrows>
 \begin{code}
-
-module _ {a b} {A : Set a} {B : Set b} where
-
-  map : (f : A → B) → List A → List B
-  map f [] = []
-  map f (x ∷ xs) = f x ∷ map f xs
-
-  zipWith : ∀ {c} {C : Set c} → (A → B → C) → List A → List B → List C
-  zipWith f (a ∷ as) (b ∷ bs) = f a b ∷ zipWith f as bs
-  zipWith f _ _ = []
-
-open import Function using (_∘′_; _|>′_)
-
-\end{code}
-%<*zipWith>
-\begin{code}
-zipWithₙ : ∀ n {ls as} {r} {R : Set r} →
-           (Product n {ls} as → R) →
-           (Product n (List <$> as) → List R)
-\end{code}
-%</zipWith>
-\begin{code}
-zipWithₙ 0                f as         = []
-zipWithₙ 1                f (as , _)   = map (f ∘′ (_, _)) as
-zipWithₙ (suc n@(suc _))  f (as , ass) =
-  zipWith _|>′_ as (zipWithₙ n (λ as a → f (a , as)) ass)
 
 
 ------------------------------------------------------------------------
@@ -244,10 +238,10 @@ substₙ {suc n}  f refl  = substₙ (f _)
 \end{code}
 %<*curry>
 \begin{code}
-curry : ∀ n {ls} {as : Sets n ls} →
+curryₙ : ∀ n {ls} {as : Sets n ls} →
         (Product n as → R) → Arrows n as R
-curry zero     f = f _
-curry (suc n)  f = λ a → curry n (λ as → f (a , as))
+curryₙ zero     f = f _
+curryₙ (suc n)  f = curryₙ n ∘ curry f
 \end{code}
 %</curry>
 \begin{code}
@@ -255,12 +249,51 @@ curry (suc n)  f = λ a → curry n (λ as → f (a , as))
 \end{code}
 %<*uncurry>
 \begin{code}
-uncurry : ∀ n {ls} {as : Sets n ls} →
+uncurryₙ : ∀ n {ls} {as : Sets n ls} →
           Arrows n as R → (Product n as → R)
-uncurry zero     f _         = f
-uncurry (suc n)  f (a , as)  = uncurry n (f a) as
+uncurryₙ zero     f = const f
+uncurryₙ (suc n)  f = uncurry (uncurryₙ n ∘ f)
 \end{code}
 %</uncurry>
+\begin{code}
+
+
+module _ {a b} {A : Set a} {B : Set b} where
+
+  map : (f : A → B) → List A → List B
+  map f [] = []
+  map f (x ∷ xs) = f x ∷ map f xs
+
+  zipWith : ∀ {c} {C : Set c} → (A → B → C) → List A → List B → List C
+  zipWith f (a ∷ as) (b ∷ bs) = f a b ∷ zipWith f as bs
+  zipWith f _ _ = []
+
+open import Function using (_∘′_; flip; _$_)
+
+\end{code}
+%<*zw-aux>
+\begin{code}
+zw-aux : ∀ n {ls as} {r} {R : Set r} →
+      (Product n {ls} as → R) →
+      (Product n (List <$> as) → List R)
+zw-aux 0                f as         = []
+zw-aux 1                f (as , _)   = map (f ∘′ (_, _)) as
+zw-aux (suc n@(suc _))  f (as , ass) =
+  let ih = zw-aux n (flip (curry f)) ass
+  in zipWith (λ a f → f a) as ih
+\end{code}
+%</zw-aux>
+\begin{code}
+
+
+\end{code}
+%<*zipWith>
+\begin{code}
+zipWithₙ : ∀ n {ls as} (f : Arrows n {ls} as R) →
+           Arrows n (List <$> as) (List R)
+zipWithₙ n f = curryₙ n (zw-aux n (uncurryₙ n f))
+\end{code}
+%</zipWith>
 \begin{code}
 
 
