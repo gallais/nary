@@ -175,14 +175,43 @@ This enables us to write functions which return more than one result. We can
 for instance write the type of \AF{unzip}, the proof that if the conjunction
 of \AB{P} and \AB{Q} holds of all the elements of a given list then both
 \AB{P} and \AB{Q} in isolation hold of all of that list's elements.
+
 \ExecuteMetaData[StateOfTheArt.tex]{unzip}
 
-\paragraph{Negation}\todo{Pick pure vs distrib vs empty}
+Notice that we are using the conjunction combinator both on predicates ranging
+over values and on ones ranging over lists of values.
+
+\paragraph{Negation} Traditionally negation is defined as functions into
+the empty type \AD{⊥}. We start by defining it together with its elimination
+principle.
+
+\begin{minipage}[t]{0.225\textwidth}
+  \ExecuteMetaData[StateOfTheArt.tex]{bot}
+\end{minipage}\begin{minipage}[t]{0.225\textwidth}
+  \ExecuteMetaData[StateOfTheArt.tex]{botelim}
+\end{minipage}
+
+Negation for a unary predicate \AB{P} is then the unary predicate which to
+each \AB{i} associates {(\AB{P} \AB{i} → ⊥)}.
 
 \ExecuteMetaData[StateOfTheArt.tex]{negation}
 
+Our use case requires the introduction of \AD{Any}, the other classic
+predicate lifting on list. It takes a predicate and ensures that it
+holds of at least one element of the list at hand. Either it holds of
+the first one and we are given a proof (\AIC{here}) or it holds of a
+value somewhere in the tail (\AIC{there}).
+
 \ExecuteMetaData[StateOfTheArt.tex]{any}
+
+These two predicate liftings interact in non-trivial ways. For instance
+if we know that the negation of \AB{P} holds of any value in a given
+list then \AB{P} can't hold of all its elements. In other words:
+
 \ExecuteMetaData[StateOfTheArt.tex]{anynotall}
+
+Notice that we are once more using the combinator we just defined both on
+a predicate on values and one on lists of values.
 
 \subsubsection{Adjustments to The Ambient Index}
 

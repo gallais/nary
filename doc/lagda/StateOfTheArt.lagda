@@ -189,13 +189,25 @@ unzip ((p , q) ∷ pqs)  =  let (ps , qs) = unzip pqs
 \begin{code}
 
 \end{code}
-%<*negation>
+%<*bot>
 \begin{code}
 data ⊥ : Set where
+\end{code}
+%</bot>
+\begin{code}
 
+\end{code}
+%<*botelim>
+\begin{code}
 ⊥-elim : ⊥ → A
 ⊥-elim ()
+\end{code}
+%</botelim>
+\begin{code}
 
+\end{code}
+%<*negation>
+\begin{code}
 ¬_ : (I → Set p) → (I → Set p)
 (¬ P) i = P i → ⊥
 \end{code}
