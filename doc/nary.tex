@@ -669,6 +669,31 @@ The toplevel function itself is obtained by currying the composition of
 
 \ExecuteMetaData[Printf.tex]{printf}
 
-\section{Future Work}
+\section{Conclusion and Future Work}
 
-Telescopes rather than mere \AF{Sets}.
+We have seen that Agda's standard library defines a useful type-level
+domain specific language to manipulate unary predicates.\todo{contribs}
+
+The notions introduced to set the stage for the definition of \AB{n}-ary
+versions of these combinators were already powerful enough to allow us
+to revisit classic dependently typed traversals.
+
+
+\paragraph{Telescopes} The lack of dependencies between the various domains
+and the codomain of our \AF{Arrows} is flagrant. A natural question to ask
+is how much of this machinery can be generalised to telescopes rather than
+mere \AF{Sets} without incurring any additional burden on the user. From
+experience we know that it is sometimes wise to explicitly use the
+non-dependent version of an operator (e.g. function composition) to inform
+Agda's unifier that it is only looking for a solution in a restricted
+subset.
+
+\paragraph{Datatype genericity} Our implementation of an \AB{n}-ary version of
+\AF{zipWith} started as drive-by generic programming, demonstrating that the
+notions introduced for our purposes could be useful in a more general context.
+Previous efforts in dependently typed programming such as Weirich and
+Casinghino~\cite{DBLP:conf/plpv/WeirichC10} work on not only arity-generic
+but also datatype-generic programming suggest we may push this further.
+Their solution predates universe polymorphism and although the traversals
+are adequatly heterogeneous, their approach would not scale to universe
+polymorphic functions.
