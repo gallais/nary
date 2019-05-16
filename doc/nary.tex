@@ -45,14 +45,14 @@ are unsatisfactory.
 \medskip
 \noindent\begin{tabular}{@{}l@{~}l}
   \AF{congₙ} : & (\AB{f} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
-               & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+               & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ → \AB{aₙ} \AD{≡} \AB{bₙ} → \\
                & \AB{f} \AB{a₁} ⋯ \AB{aₙ} \AD{≡} \AB{f} \AB{b₁} ⋯ \AB{bₙ}
 \end{tabular}
 \medskip
 
 \noindent\begin{tabular}{@{}l@{~}l}
   \AF{substₙ} : & (\AB{R} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AF{Set} \AB{r}) →\\
-                & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+                & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ → \AB{aₙ} \AD{≡} \AB{bₙ} → \\
                 & \AB{R} \AB{a₁} ⋯ \AB{aₙ} → \AB{R} \AB{b₁} ⋯ \AB{bₙ}
 \end{tabular}
 
@@ -117,7 +117,7 @@ diamond and box of modal logic.
 quantifiers are represented as dependent pairs. We introduce \AR{Σ}, a record
 type of dependent pairs. They can be constructed using \AIC{\_,\_} and we can
 project out the first and second component by using \ARF{proj₁} and \ARF{proj₂}
-respectively.
+respectively.\todo{def η}
 
 \ExecuteMetaData[StateOfTheArt.tex]{sigma}
 
