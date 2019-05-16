@@ -318,9 +318,10 @@ can easily solve to be able to write combinators usable with minimal user
 input. Indeed if we can anticipate that an argument can be reconstructed,
 we may as well make it implicit and let Agda do the work.
 
-In the following section we write \AB{?a} for a metavariable, and
-{\AB{lhs} ≈ \AB{rhs}} to state a unification problem between two
-expressions \AB{lhs} and \AB{rhs}.
+In the following section we write \AB{?a} for a metavariable,
+\AB{e}[\AB{?a₁}, ⋯ ,\AB{?aₙ}] for an expression \AB{e} containing exactly the
+metavariables \AB{?a₁} to \AB{?aₙ}, and {\AB{lhs} ≈ \AB{rhs}} to state a
+unification problem between two expressions \AB{lhs} and \AB{rhs}.
 
 For testing purposes we can easily trigger unification problems in the
 source language. We can force Agda to introduce metavariables by using
@@ -331,11 +332,29 @@ force Agda to check that {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}
 
 \ExecuteMetaData[Unifier.tex]{unifproblem}
 
-\subsection{Trivial Solution}
+Whenever Agda cannot solve a metavariable by unification it is highlighted
+in yellow like so: \AgdaUnsolvedMeta{\_}. Whenever Agda cannot satisfy a
+unification constraint raised by the use of \AIC{refl}, it will also highlight
+it in yellow like so: \AgdaUnsolvedConstraint{\AIC{refl}}.
 
-Metavariable on one side, expression on the other side not mentioning
-this metavariable. Solution by instantiating the metavariable to the
-candidate expression.
+Let us now look at the various scenarii in which it is easy for the unifier
+to decide whether a constraint is satisfiable.
+
+\subsection{Instantiation}
+
+The simplest case the unifier can encounter is a problem of the form
+{\AB{?a} ≈ \AB{e}[\AB{?a₁} ⋯ \AB{?aₙ}]} where \AB{?a} does not appear
+in the list {[\AB{?a₁}, ⋯ ,\AB{?aₙ}]}. The unifier can simply instantiate
+the metavariable to the candidate expression.
+
+For instance in the following test you can see that neither the underscore
+on the left-hand side nor the \AIC{refl} constructor is highlighted in yellow.
+Meaning that the metavariable on the left was indeed solved (by instantiating
+it to the expression on the right-hand side) and that the constraint induced
+by the use of \AIC{refl} was thus satisfied. The problem itself is
+under-constrained so it is not surprising that the right-hand side lits up.
+
+\ExecuteMetaData[Unifier.tex]{instantiation}
 
 \subsection{Constructor Headed}
 
@@ -370,10 +389,10 @@ In general, it is impossible to solve the unification constraint
 number is not specified then \AF{nary} is stuck. And there is no
 hope to solve this problem; indeed there are two solutions because
 every unary function is also a nullary symbol whose type is a function
-type. Agda communicates to us this failure to solve the two metavariables
-passed to \AF{nary} as arguments by highlighting them in yellow, \AIC{refl}
-is also highlighted as the source of the unification constraint which
-could not be satisfied.
+type. As explained earlier, Agda communicates to us this failure to solve
+the two metavariables passed to \AF{nary} as arguments by highlighting them
+in yellow, \AIC{refl} is also highlighted as the source of the unification
+constraint which could not be satisfied.
 
 \ExecuteMetaData[Unifier.tex]{unsolved}
 
