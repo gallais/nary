@@ -612,8 +612,8 @@ first.
 
 When \AB{n} is \AN{0}, an Haskeller would typically return an infinite list
 containing the value \AB{f} repeated. However this is not possible in Agda,
-a total language~\cite{DBLP:journals/jucs/ATurner04}: all \AD{List} values
-have to be finite. Our only option is to return the empty \AD{List}.
+a total language~\cite{DBLP:journals/jucs/ATurner04}: all the lists have to
+be finite. Our only option is to return the empty one.
 
 \ExecuteMetaData[N-ary.tex]{zw-aux0}
 
@@ -638,14 +638,35 @@ of arguments we had already.
 
 \subsection{Printf}
 
-We can implement \AF{Printf} in direct style, recovering the usual
-type by generic currying.
+The definitions we have introduced also make it easy to implement \AF{Printf}
+in direct style, recovering the usual type by generic currying. We work in a
+simplified setting which allows us to focus on the contribution our \AB{n}-ary
+combinators bring to the table. Our \AF{printf} will only take natural numbers
+as arguments and we will worry about defining the lexer transforming a raw
+string into a \AF{Format}, that is to say a list of \AD{Chunk}s (each being
+either a \AIC{Nat} corresponding to a ``\%u'' directive, or a \AIC{Raw} string).
 
 \ExecuteMetaData[Printf.tex]{chunk}
+
+Our notion of \AF{Format} is not intrinsically sized but we do need to know
+how many arguments our \AF{printf} function is going to take if we want to use
+the machinery for \AB{n}-ary functions. We assume the existence of a \AF{size}
+function counting the number of \AIC{Nat} in a \AF{Format}. We also assume the
+existence of \AF{0ℓs}, a (\AF{Levels} \AB{n}) equal to \AF{0ℓ} everywhere. Using
+these we can give \AF{Format} a semantics:
+
 \ExecuteMetaData[Printf.tex]{format}
 
+The essence of \AF{printf} is then given by a function \AF{assemble} which
+collects a list of strings from various sources. Whenever the format expects
+a natural number, we know we got one as an input and can \AF{show} it.
+Otherwise the raw string to use is specified in the \AF{Format} itself.
 
 \ExecuteMetaData[Printf.tex]{assemble}
+
+The toplevel function itself is obtained by currying the composition of
+\AF{concat} and \AF{assemble}.
+
 \ExecuteMetaData[Printf.tex]{printf}
 
 \section{Future Work}

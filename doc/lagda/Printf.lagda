@@ -60,7 +60,7 @@ assemble (Raw s  ∷ fmt)  vs        = s ∷ assemble fmt vs
 %<*printf>
 \begin{code}
 printf : ∀ fmt → Arrows _ (format fmt) String
-printf fmt = curry (size fmt) (concat ∘ assemble fmt)
+printf fmt = curryₙ (size fmt) (concat ∘ assemble fmt)
 \end{code}
 %</printf>
 \begin{code}
@@ -73,7 +73,6 @@ _ = printf (Nat ∷ Raw " < " ∷ Nat ∷ [])
 \end{code}
 %</example>
 \begin{code}
-
 
 
 \end{code}
