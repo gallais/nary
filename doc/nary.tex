@@ -318,17 +318,20 @@ can easily solve to be able to write combinators usable with minimal user
 input. Indeed if we can anticipate that an argument can be reconstructed,
 we may as well make it implicit and let Agda do the work.
 
-In the following section we write \AB{?a} for a metavariable,
-\AB{e}[\AB{?a₁}, ⋯ ,\AB{?aₙ}] for an expression \AB{e} containing exactly the
-metavariables \AB{?a₁} to \AB{?aₙ}, and {\AB{lhs} ≈ \AB{rhs}} to state a
-unification problem between two expressions \AB{lhs} and \AB{rhs}.
+\paragraph{Notations} We write \AB{?a} for a
+metavariable, \AB{e}[\AB{?a₁}, ⋯ ,\AB{?aₙ}] for an expression \AB{e}
+containing exactly the metavariables \AB{?a₁} to \AB{?aₙ},
+\AB{c} \AB{e₁} ⋯ \AB{eₙ} for the constructor \AB{c} applied to \AB{n}
+expressions and {\AB{lhs} ≈ \AB{rhs}} to state a unification problem
+between two expressions \AB{lhs} and \AB{rhs}.
 
-For testing purposes we can easily trigger unification problems in the
-source language. We can force Agda to introduce metavariables by using
-an underscore (\AF{\_}) as a placeholder for a subterm and use \AIC{refl}
-at the proof of a propositional equality to force it to unify the two
-expressions stated to be equal. For instance in the following test we
-force Agda to check that {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}
+\paragraph{Unification Tests} We can easily trigger the resolution of
+unification problems by writing unit tests in the source language. We can
+force Agda to introduce metavariables by using an underscore (\AF{\_}) as a
+placeholder for a subterm and use \AIC{refl} at the proof of a propositional
+equality to force it to unify the two expressions stated to be equal. For
+instance in the following test we force Agda to check that
+{(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}
 
 \ExecuteMetaData[Unifier.tex]{unifproblem}
 
@@ -358,11 +361,30 @@ under-constrained so it is not surprising that the right-hand side lits up.
 
 \subsection{Constructor Headed}
 
-Both expressions are constructor-headed. Either the constructors match
-up and we can reduce the problem to unifying their respective arguments.
-Or they do not and we can conclude straight away: unification is impossible.
+The second case where the unifier can easily make progress is a unification
+problem between to constructor-headed expression
+{\AB{c} \AB{e₁} ⋯ \AB{eₘ} ≈ \AB{d} \AB{f₁} ⋯ \AB{fₙ}}.
 
-\subsection{Avoid Computations...}
+\paragraph{Success} Either the constructors \AB{c} and \AB{d} match up, we learn
+that \AB{m} equals \AB{n} and we can reduce the problem to unifying their
+respective arguments by forming the new unification problems
+{(\AB{e₁} ≈ \AB{f₁}) ⋯ (\AB{eₘ} ≈ \AB{fₙ})}.
+
+In the following example, Agda sees that both expressions have {\_→\_} as their
+head constructor, proceeds to unify \AD{ℕ} with itself on the one hand (which
+succeeds because both have the same head constructor and they do not have any
+arguments) and \AD{ℕ} with \AB{?A} on the other (which succeeds by instantiation).
+
+\ExecuteMetaData[Unifier.tex]{unifconstr}
+
+\paragraph{Failure} Or \AB{c} and \AB{d} are distinct and we can immediately
+conclude that unification is impossible. We cannot write an expression in Agda
+demonstrating this case as it leads to a type error in the language.
+Trying to form the unification problem {\AD{ℕ} ≈ (\AB{\_} → \AB{\_})} would
+raise such an error because \AD{ℕ} and {\_→\_} are distinct head constructors.
+
+
+\subsection{Avoid Computations...}\todo{}
 
 
 
