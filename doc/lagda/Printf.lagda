@@ -5,6 +5,7 @@ open import Level using (0ℓ)
 open import StateOfTheArt
   using ( ℕ; zero; suc
         ; Σ; _,_
+        ; _≡_; refl
         )
 open import N-ary
 open import Function
@@ -68,11 +69,13 @@ printf fmt = curryₙ (size fmt) (concat ∘ assemble fmt)
 \end{code}
 %<*example>
 \begin{code}
-_ : ℕ → ℕ → String
-_ = printf (Nat ∷ Raw " < " ∷ Nat ∷ [])
+lessThan : ℕ → ℕ → String
+lessThan = printf (Nat ∷ Raw " < " ∷ Nat ∷ [])
+
+_ : lessThan 2 5 ≡ "2 < 5"
+_ = refl
 \end{code}
 %</example>
 \begin{code}
-
 
 \end{code}
