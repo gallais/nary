@@ -17,7 +17,10 @@ open import Function using (_∘_)
 
 private
   variable
-    a b r s : Level
+    a b c r s : Level
+    A : Set a
+    B : Set b
+    C : Set c
     R : Set r
 
 ------------------------------------------------------------------------
@@ -490,6 +493,38 @@ infix 5 ∃⟨_⟩ ∀[_] Π[_]
 ------------------------------------------------------------------------
 -- n-ary pointwise liftings
 
+\end{code}
+%<*lift2>
+\begin{code}
+lift₂ : ∀ n {ls} {as : Sets n ls} → (A → B → C) →
+        Arrows n as A → Arrows n as B → Arrows n as C
+lift₂ zero     op f g = op f g
+lift₂ (suc n)  op f g = λ x → lift₂ n op (f x) (g x)
+\end{code}
+%</lift2>
+\begin{code}
+
+lmap : (Level → Level) → ∀ n → Levels n → Levels n
+lmap f zero    ls       = _
+lmap f (suc n) (l , ls) = f l , lmap f n ls
+
+smap : ∀ f → (∀ {l} → Set l → Set (f l)) →
+       ∀ n {ls} → Sets n ls → Sets n (lmap f n ls)
+smap f F zero    as       = _
+smap f F (suc n) (a , as) = F a , smap f F n as
+
+palg : ∀ f (F : ∀ {l} → Set l → Set (f l)) n {ls} {as : Sets n ls} →
+       (∀ {l} {r : Set l} → F r → r) → Product n (smap f F n as) → Product n as
+palg f F zero    alg ps       = _
+palg f F (suc n) alg (p , ps) = alg p , palg f F n alg ps
+
+liftₙ : ∀ k n {ls rs} {as : Sets n ls} {bs : Sets k rs} {r} {b : Set r} →
+        Arrows k bs b → Arrows k (smap _ (Arrows n as) k bs) (Arrows n as b)
+liftₙ k n op = curryₙ k λ fs →
+               curryₙ n λ vs →
+               uncurryₙ k op $
+               palg _ _ k (λ f → uncurryₙ n f vs) fs
+
 -- implication
 
 infixr 6 _⇒_
@@ -498,8 +533,7 @@ infixr 6 _⇒_
 \begin{code}
 _⇒_ : Arrows n {ls} as (Set r) → Arrows n as (Set s) →
       Arrows n as (Set (r ⊔ s))
-_⇒_ {zero}   f g = f → g
-_⇒_ {suc n}  f g = λ x → f x ⇒ g x
+_⇒_ = lift₂ _ (λ A B → (A → B))
 \end{code}
 %</implication>
 \begin{code}
@@ -512,8 +546,7 @@ infixr 7 _∩_
 \begin{code}
 _∩_ : Arrows n {ls} as (Set r) → Arrows n as (Set s) →
       Arrows n as (Set (r ⊔ s))
-_∩_ {zero}   f g = f × g
-_∩_ {suc n}  f g = λ x → f x ∩ g x
+_∩_ = lift₂ _ (λ A B → (A × B))
 \end{code}
 %</conjunction>
 \begin{code}
@@ -526,8 +559,7 @@ infixr 8 _∪_
 \begin{code}
 _∪_ : Arrows n {ls} as (Set r) → Arrows n as (Set s) →
       Arrows n as (Set (r ⊔ s))
-_∪_ {zero}   f g = f ⊎ g
-_∪_ {suc n}  f g = λ x → f x ∪ g x
+_∪_ = lift₂ _ (λ A B → (A ⊎ B))
 \end{code}
 %</disjunction>
 \begin{code}
@@ -539,8 +571,7 @@ infix 9 ¬_
 %<*negation>
 \begin{code}
 ¬_ : Arrows n {ls} as (Set r) → Arrows n as (Set r)
-¬_ {zero}   f = f → ⊥
-¬_ {suc n}  f = λ x → ¬ f x
+¬_ = liftₙ 1 _ (λ A → (A → ⊥))
 \end{code}
 %</negation>
 \begin{code}

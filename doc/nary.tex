@@ -468,9 +468,52 @@ unit type, can be inferred by Agda so we leave it out.
 
 \subsection{Pointwise liftings}
 
+Pointwise lifting of a binary function can be defined uniformly for any
+operation of type {(\AB{A} → \AB{B} → \AB{C})} and any pair of \AB{n}-ary
+functions whose domains match and codomains are respectively \AB{A} and
+\AB{B}. It is defined by induction on the arity \AB{n} of the input functions.
+
+\ExecuteMetaData[N-ary.tex]{lift2}
+
+From this very general definition we can recover the combinators we are
+used to. For each one of them we are able to leave out the arity argument
+thanks to the observation we made in Section~\ref{sec:unifiermagic}: \AF{Set}
+and {(\AB{?A} → \AB{?B}) are anti-unifiable and Agda is therefore able to
+reconstruct the arity for us!
+
+Implication is the lifting of the function space.
+
 \ExecuteMetaData[N-ary.tex]{implication}
+
+Conjunction is the lifting of pairing.
+
 \ExecuteMetaData[N-ary.tex]{conjunction}
+
+Disjunction is the lifting of the sum type.
+
 \ExecuteMetaData[N-ary.tex]{disjunction}
+
+Negation is obviously not a binary operation. In practice, rather than
+having multiple ad-hoc lifting functions for various arities we have a
+fully generic \AF{liftₙ} functional which lifts a \AB{k}-ary operator
+to work with \AB{k} \AB{n}-ary functions whose respective codomains
+match the domains of the operator. Its type could be summarised as:
+
+\medskip
+\noindent\begin{tabular}{@{}l@{~}l}
+  \AF{liftₙ} : & ∀ k n.\\
+               & (\AB{B₁} → ⋯ → \AB{Bₖ} → \AB{B}) →\\
+               & (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B₁}) →\\
+               \multicolumn{2}{c}{\vdots} \\
+               & (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{Bₖ}) →\\
+               & (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B})\\
+\end{tabular}
+\medskip
+
+The thus generalised definition has a fairly unreadable type so we leave
+this formal definition out of the paper. Curious readers can consult the
+accompanying code.
+
 \ExecuteMetaData[N-ary.tex]{negation}
 
 
