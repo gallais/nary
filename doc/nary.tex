@@ -281,16 +281,28 @@ formulated earlier by actually implementing the n-ary versions of \AF{cong},
 \section{Getting Acquainted With the Unifier}\label{sec:unifier}
 
 Unification is the process by which Agda reconstructs the values of the
-implicit arguments the user was allowed to leave out. It bridges the gap
-between the source program which should be convenient for humans to read,
-write, and modify and the fully explicit terms in the internal syntax.
+implicit arguments the user was allowed to leave out. It is one of the
+mechanisms bridging the gap between the source program which should be
+convenient for humans to read, write, and modify and the fully explicit
+terms in the internal syntax.
 
 It is important to build a good understanding of the problems the unifier
 can easily solve to be able to write combinators usable with minimal user
-input.
+input. Indeed if we can anticipate that an argument can be reconstructed,
+we may as well make it implicit and let Agda do the work.
 
-We write \AB{?a} for a metavariable \AB{a}, and {\AB{lhs} ≈ \AB{rhs}}
-for a unification problem between two expressions. \todo{\AB{\_} invokes unif}
+In the following section we write \AB{?a} for a metavariable, and
+{\AB{lhs} ≈ \AB{rhs}} to state a unification problem between two
+expressions \AB{lhs} and \AB{rhs}.
+
+For testing purposes we can easily trigger unification problems in the
+source language. We can force Agda to introduce metavariables by using
+an underscore (\AF{\_}) as a placeholder for a subterm and use \AIC{refl}
+at the proof of a propositional equality to force it to unify the two
+expressions stated to be equal. For instance in the following test we
+force Agda to check that {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}
+
+\ExecuteMetaData[Unifier.tex]{unifproblem}
 
 \subsection{Trivial Solution}
 
@@ -308,7 +320,7 @@ Or they do not and we can conclude straight away: unification is impossible.
 
 
 
-\subsection{... In Most Cases}
+\subsection{... In Most Cases}\label{sec:unifiermagic}
 
 Although unification problems mentioning computations will in general fail
 to produce solutions, there are exceptions.
@@ -386,15 +398,16 @@ their \AB{n}-ary counterparts without having to mention \AB{n} explicitly.
 
 \section{Representating N-ary Function Types}\label{sec:naryfunction}
 
+\todo{rewrite}
 Recall that a binary function type {\AB{A} → \AB{B} → \AB{C}} can also be seen
-as a unary function type with codomain {\AB{B} → \AB{C}}. As a consequence there
-is no hope for us to get Agda to build the representation we have in mind without
-passing it at least a little bit of information. The least we can do is tell Agda
-the arity of the function. From this single natural number we will compute the
-shape of the whole representation.
+as a unary function type with codomain {\AB{B} → \AB{C}}. As a consequence in
+the general case there is no hope for us to get Agda to build the representation
+we have in mind without passing it at least a little bit of information.
+The least we can do is tell Agda the arity of the function. From this single
+natural number we will compute the shape of the whole representation.
 
 Recall that unification is good at reconstructing values of types which have
-η-rules. As a consequence, from the natural number \AB{n} passed to us as an
+η-rules\todo{fix}. As a consequence, from the natural number \AB{n} passed to us as an
 argument we are going to essentially compute a number of big right-nested
 products.
 
@@ -443,13 +456,19 @@ of {(\AF{Levels} \AB{n})} together with a corresponding \AB{n}-tuple of type
 {(\AF{Sets} \AB{n} \AB{ls})} for the domains, and a level \AB{r} and a
 {(\AF{Set} \AB{r})} for the codomain.
 
-\paragraph{Semantics} We can give this encoding a semantics in a straightforward way
-by induction on \AB{n} and case analysis on the {(\AF{Sets} \AB{n} \AB{ls})} argument.
-A \AIC{zero}-ary function type is simply the codomain whilst a {(\AIC{suc} \AB{n})}-ary
-one is a unary function type whose codomain is the \AB{n}-ary function type obtained
-by induction hypothesis.
+\paragraph{Semantics}\label{sec:semantics}
+We can give this encoding a semantics in a straightforward
+way by induction on \AB{n} and case analysis on the {(\AF{Sets} \AB{n} \AB{ls})}
+argument. A \AIC{zero}-ary function type is simply the codomain whilst a
+{(\AIC{suc} \AB{n})}-ary one is a unary function type whose codomain is the
+\AB{n}-ary function type obtained by induction hypothesis.
 
 \ExecuteMetaData[N-ary.tex]{arrows}
+
+If we look carefully at this definition we can notice that the function
+\AF{Arrows} may only ever get stuck if the natural number is not concrete.
+Even though we do take the \AF{Sets} argument apart, it has a product type
+and thus enjoys η-rules.
 
 Our first example is a \AN{2}-ary function: our favourite indexed family \AD{All}.
 The last element of the telescope, a value whose type is a lifted version of the
