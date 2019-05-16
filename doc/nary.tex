@@ -671,10 +671,10 @@ list.
 \ExecuteMetaData[N-ary.tex]{zw-aux1}
 
 The meat of the definition is in the last case: we are given a function
-{((\AB{A} \AR{×} \AB{A₀} \AR{×} \dots \AR{×} \AB{Aₙ}) → \AB{R})}, a list of \AB{A}s
-and a product of lists {(\AD{List} \AB{A₀} \AR{×} \dots \AR{×} \AD{List} \AB{Aₙ})}.
+{((\AB{A} \AR{×} \AB{A₀} \AR{×} ⋯ \AR{×} \AB{Aₙ}) → \AB{R})}, a list of \AB{A}s
+and a product of lists {(\AD{List} \AB{A₀} \AR{×} ⋯ \AR{×} \AD{List} \AB{Aₙ})}.
 We massage the function to obtain another one of type
-{((\AB{A₀} \AR{×} \dots \AR{×} \AB{Aₙ}) → (\AB{A} → \AB{R}))} which we can
+{((\AB{A₀} \AR{×} ⋯ \AR{×} \AB{Aₙ}) → (\AB{A} → \AB{R}))} which we can
 combine with the product of lists thanks to our induction hypothesis. This gives
 us back a list of functions of type {(\AB{A} → \AB{R})}. We can conclude thanks
 to the usual binary \AF{zipWith} to combine this list of functions with the list

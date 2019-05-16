@@ -48,5 +48,5 @@ latex/%: %
 	cp $< $@
 
 clean:
-	find . -name "*.agdai" | xargs rm
-	rm latex/$(PAPER).pdf
+	find . -name "*.agdai" | xargs rm -f
+	rm -rf latex/
