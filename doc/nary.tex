@@ -69,19 +69,17 @@ function's type.
 
 The standard library defines a set of handy combinators to talk about
 indexed families without having to manipulate their index explicitly.
-These form a compositional type-level DSL: each combinator has a very
-specific semantics and putting them together builds an overall meaning.
+These form a compositional type-level Domain Specific Language (DSL):
+each combinator has a precise semantics and putting them together builds
+an overall meaning.
+
 A typical expression built using this DSL follows a fairly simple schema:
-a combinator acting as a quantifier for the index surrounding a combination
-of pointwise liftings of common type constructors.
-
-
-
-The pointwise liftings of common type constructors mean the index is
-threaded but we also have specialised combinators which either adjust
-locally the value of the index, or quantify over it. This empowers
-us to write lighter types which focus on the important predicates at
-hand.
+a combinator acting as a quantifier for the index (Section~\ref{sec:quantifiers})
+surrounds a combination of pointwise liftings of common type constructors
+(Section~\ref{sec:liftings}), index updates (Section~\ref{sec:iupdates}),
+and base predicates. This empowers us to write lighter types which hide
+away the bits that are constant, focusing instead on the key predicates
+and the changes made to the index.
 
 Before we can talk about concrete indexed families, describe these
 various combinators, and demonstrate their usefulness, we need to
@@ -102,7 +100,7 @@ and of all the elements in its tail.
 
 \ExecuteMetaData[StateOfTheArt.tex]{all}
 
-\subsubsection{Quantifiers}
+\subsubsection{Quantifiers}\label{sec:quantifiers}
 
 We have two types of quantifiers: existential and universal. As they are
 meant to \emph{surround} the indexed expression they are acting upon, we
@@ -148,7 +146,7 @@ whereas the proof itself can take its argument implicitly.
 
 \ExecuteMetaData[StateOfTheArt.tex]{replicate}
 
-\subsubsection{Pointwise Liftings}
+\subsubsection{Pointwise Liftings}\label{sec:liftings}
 
 Pointwise liftings for an index type \AB{I} are operators turning a type
 constructor on \AF{Set}s into one acting on \AB{I}-indexed families by
@@ -213,7 +211,7 @@ list then \AB{P} can't hold of all its elements. In other words:
 Notice that we are once more using the combinator we just defined both on
 a predicate on values and one on lists of values.
 
-\subsubsection{Adjustments to The Ambient Index}
+\subsubsection{Adjustments to The Ambient Index}\label{sec:iupdates}
 
 Threading the index is only the least invasive of the modes of action
 available to us. But we can also more actively interact with the ambient
