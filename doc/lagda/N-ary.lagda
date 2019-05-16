@@ -274,18 +274,29 @@ module _ {a b} {A : Set a} {B : Set b} where
 open import Function using (_∘_; flip; _$_)
 
 \end{code}
-%<*zw-aux>
+%<*zw-aux-type>
 \begin{code}
 zw-aux : ∀ n {ls} {as : Sets n ls} →
          (Product n as → R) →
          (Product n (List <$> as) → List R)
-zw-aux 0                f as          = []
-zw-aux 1                f (as , _)    = map (f ∘ (_, _)) as
-zw-aux (suc n@(suc _))  f (as , ass)  =
-  let ih = zw-aux n (flip (curry f)) ass
-  in zipWith (λ a f → f a) as ih
 \end{code}
-%</zw-aux>
+%</zw-aux-type>
+%<*zw-aux0>
+\begin{code}
+zw-aux 0 f as = []
+\end{code}
+%</zw-aux0>
+%<*zw-aux1>
+\begin{code}
+zw-aux 1 f (as , _) = map (f ∘ (_, tt)) as
+\end{code}
+%</zw-aux1>
+%<*zw-auxn>
+\begin{code}
+zw-aux (suc n) f (as , ass) = zipWith _$_ fs as
+  where fs = zw-aux n (flip (curry f)) ass
+\end{code}
+%</zw-auxn>
 \begin{code}
 
 

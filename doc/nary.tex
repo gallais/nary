@@ -550,28 +550,43 @@ accompanying code.
 
 \subsection{Product and (Un)Currying}
 
+We gave in Section~\ref{sec:semantics} a semantics to our reified types as
+proper \AB{n}-ary function types. We can alternatively interpret a \AF{Sets}
+as a big right-nested and \AR{⊤}-terminated product containing one value for
+each \AF{Set}. We once more proceed by induction on \AB{n}.
+
 \ExecuteMetaData[N-ary.tex]{product}
 
+We can convert back and forth between a unary function whose domain is a
+\AF{Product} of \AF{Sets} and an \AB{n}-ary function whose domains are the
+same sets. These conversion functions correspond to currying and uncurrying.
 Both \AF{curryₙ} and \AF{uncurryₙ} are implemented by structural induction
 on \AB{n} and in terms of their binary counterparts.
 
 \ExecuteMetaData[N-ary.tex]{curry}
 \ExecuteMetaData[N-ary.tex]{uncurry}
 
-\todo{Discuss non top terminated}
+\paragraph{\AR{⊤}-free Variant} In practice users do not tend to write
+\AR{⊤}-terminated right-nested products. As a consequence it is convenient
+to have a definition of \AF{Product} which has a special case for \AF{Sets}
+of size exactly \AN{1} returning the \AF{Set} without pairing it with \AR{⊤}.
+This makes \AF{curryₙ} and \AF{uncurryₙ} more useful overall. Most generic
+functions however are easier to implement using the \AR{⊤}-terminated version
+of \AF{Product}. We provide both as well as conversion functions from one to
+the other.
 
 \subsection{N-ary Zipping Functions}
 
 Some functions are easier to write curried but nicer to use uncurried.
 This is the case with \AF{zipWithₙ}, the \AB{n}-ary version of the
 higher-order function which takes a function and two lists as inputs
-and produces a list by processing the lists in lockstep combining their
-elements thanks to the function it was passed. Using ellipses, we would
+and produces a list by processing both lists in lockstep and using the
+function it was passed to combine their elements. Using ellipses, we would
 write its type as:
 
 \medskip
 \noindent\begin{tabular}{@{}l@{~}l}
-  \AF{zipWithₙ} : & (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
+  \AF{zipWithₙ} : & ∀ n. (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
                   & \AD{List} \AB{A₁} → ⋯ → \AD{List} \AB{Aₙ} → \AD{List} \AB{B}
 \end{tabular}
 \medskip
@@ -584,13 +599,42 @@ We proceed by induction on \AB{n}.
 
 As explained earlier it is vastly easier to implement the function using
 the uncurried type, and to then recover the desired type by invoking generic
-(un)currying in the appropriate places. This is the function we want:
+(un)currying in the appropriate places. The function we want is therefore
+implemented in term of an auxiliary definition called \AF{zw-aux}.
 
 \ExecuteMetaData[N-ary.tex]{zipWith}
 
-But this is how we implement it:
+\paragraph{Implementation} The auxiliary definition is still a bit involved
+so we detail each equation of its definition below. We start with its type
+first.
 
-\ExecuteMetaData[N-ary.tex]{zw-aux}
+\ExecuteMetaData[N-ary.tex]{zw-aux-type}
+
+When \AB{n} is \AN{0}, an Haskeller would typically return an infinite list
+containing the value \AB{f} repeated. However this is not possible in Agda,
+a total language~\cite{DBLP:journals/jucs/ATurner04}: all \AD{List} values
+have to be finite. Our only option is to return the empty \AD{List}.
+
+\ExecuteMetaData[N-ary.tex]{zw-aux0}
+
+When \AB{n} is \AN{1} we can get our hands on a function \AB{f} of type
+{((\AB{A} \AR{×} \AR{⊤}) → \AB{R})} and a {\AD{List} \AB{A}} and we need to
+return a {\AD{List} \AB{R}}. We can \AF{map} the (tweaked) function over the
+list.
+
+\ExecuteMetaData[N-ary.tex]{zw-aux1}
+
+The meat of the definition is in the last case: we are given a function
+{((\AB{A} \AR{×} \AB{A₀} \AR{×} \dots \AR{×} \AB{Aₙ}) → \AB{R})}, a list of \AB{A}s
+and a product of lists {(\AD{List} \AB{A₀} \AR{×} \dots \AR{×} \AD{List} \AB{Aₙ})}.
+We massage the function to obtain another one of type
+{((\AB{A₀} \AR{×} \dots \AR{×} \AB{Aₙ}) → (\AB{A} → \AB{R}))} which we can
+combine with the product of lists thanks to our induction hypothesis. This gives
+us back a list of functions of type {(\AB{A} → \AB{R})}. We can conclude thanks
+to the usual binary \AF{zipWith} to combine this list of functions with the list
+of arguments we had already.
+
+\ExecuteMetaData[N-ary.tex]{zw-auxn}
 
 \subsection{Printf}
 
