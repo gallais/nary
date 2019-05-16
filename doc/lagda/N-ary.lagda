@@ -163,7 +163,7 @@ Product (suc n)  (a , as)  = a × Product n as
 \end{code}
 %<*arrows>
 \begin{code}
-Arrows : ∀ n {ls} → Sets n ls → ∀ {r} → Set r → Set (r ⊔ (⨆ n ls))
+Arrows : ∀ n {ls} → Sets n ls → Set r → Set (r ⊔ (⨆ n ls))
 Arrows zero     _         b = b
 Arrows (suc n)  (a , as)  b = a → Arrows n as b
 \end{code}
@@ -268,17 +268,17 @@ module _ {a b} {A : Set a} {B : Set b} where
   zipWith f (a ∷ as) (b ∷ bs) = f a b ∷ zipWith f as bs
   zipWith f _ _ = []
 
-open import Function using (_∘′_; flip; _$_)
+open import Function using (_∘_; flip; _$_)
 
 \end{code}
 %<*zw-aux>
 \begin{code}
-zw-aux : ∀ n {ls as} {r} {R : Set r} →
-      (Product n {ls} as → R) →
-      (Product n (List <$> as) → List R)
-zw-aux 0                f as         = []
-zw-aux 1                f (as , _)   = map (f ∘′ (_, _)) as
-zw-aux (suc n@(suc _))  f (as , ass) =
+zw-aux : ∀ n {ls} {as : Sets n ls} →
+         (Product n as → R) →
+         (Product n (List <$> as) → List R)
+zw-aux 0                f as          = []
+zw-aux 1                f (as , _)    = map (f ∘ (_, _)) as
+zw-aux (suc n@(suc _))  f (as , ass)  =
   let ih = zw-aux n (flip (curry f)) ass
   in zipWith (λ a f → f a) as ih
 \end{code}
@@ -289,8 +289,8 @@ zw-aux (suc n@(suc _))  f (as , ass) =
 \end{code}
 %<*zipWith>
 \begin{code}
-zipWithₙ : ∀ n {ls as} (f : Arrows n {ls} as R) →
-           Arrows n (List <$> as) (List R)
+zipWithₙ : ∀ n {ls} {as : Sets n ls} →
+           Arrows n as R → Arrows n (List <$> as) (List R)
 zipWithₙ n f = curryₙ n (zw-aux n (uncurryₙ n f))
 \end{code}
 %</zipWith>

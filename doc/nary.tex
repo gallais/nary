@@ -510,7 +510,7 @@ write its type as:
 \medskip
 \noindent\begin{tabular}{@{}l@{~}l}
   \AF{zipWithₙ} : & (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
-                  & \AD{List} \AB{A₁} → ⋯ \AD{List} \AB{Aₙ} → \AD{List} \AB{B}
+                  & \AD{List} \AB{A₁} → ⋯ → \AD{List} \AB{Aₙ} → \AD{List} \AB{B}
 \end{tabular}
 \medskip
 
@@ -521,16 +521,24 @@ We proceed by induction on \AB{n}.
 \ExecuteMetaData[N-ary.tex]{smap}
 
 As explained earlier it is vastly easier to implement the function using
-the following type, and to then recover the desired type by invoking
-generic (un)currying in the appropriate places.
+the uncurried type, and to then recover the desired type by invoking generic
+(un)currying in the appropriate places. This is the function we want:
 
 \ExecuteMetaData[N-ary.tex]{zipWith}
+
+But this is how we implement it:
+
 \ExecuteMetaData[N-ary.tex]{zw-aux}
 
 \subsection{Printf}
 
+We can implement \AF{Printf} in direct style, recovering the usual
+type by generic currying.
+
 \ExecuteMetaData[Printf.tex]{chunk}
 \ExecuteMetaData[Printf.tex]{format}
+
+
 \ExecuteMetaData[Printf.tex]{assemble}
 \ExecuteMetaData[Printf.tex]{printf}
 
