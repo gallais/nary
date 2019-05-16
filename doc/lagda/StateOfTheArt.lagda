@@ -119,8 +119,8 @@ module _ {A : Set a} where
 %<*any>
 \begin{code}
   data Any (P : A → Set p) : List A → Set (a ⊔ p) where
-    [_]  : P x → Any P (x ∷ xs)
-    _∷_  : ∀ x → Any P xs → Any P (x ∷ xs)
+    here   : P x → Any P (x ∷ xs)
+    there  : Any P xs → Any P (x ∷ xs)
 \end{code}
 %</any>
 \begin{code}
@@ -203,11 +203,21 @@ data ⊥ : Set where
 \begin{code}
 
 \end{code}
+%<*anynotall>
+\begin{code}
+Any¬⇒¬All : ∀[ Any (¬ P) ⇒ ¬ All P ]
+Any¬⇒¬All (here ¬px) (px ∷ _)  = ⊥-elim (¬px px)
+Any¬⇒¬All (there ¬p) (_ ∷ ps)  = Any¬⇒¬All ¬p ps
+\end{code}
+%</anynotall>
+\begin{code}
+
+\end{code}
 %<*none>
 \begin{code}
 none : ∀[ ¬ P ] → ∀[ ¬ Any P ]
-none ¬p [ px ]    = ¬p px
-none ¬p (x ∷ px)  = none ¬p px
+none ¬p (here px)  = ¬p px
+none ¬p (there p)  = none ¬p p
 \end{code}
 %</none>
 \begin{code}
@@ -246,7 +256,7 @@ pure p ¬p = ¬p p
 %<*any>
 \begin{code}
 fromAll : ∀[ Any Q ⇒ All P ⇒ Any P ]
-fromAll _ (px ∷ _) = [ px ]
+fromAll _ (px ∷ _) = here px
 \end{code}
 %</any>
 
