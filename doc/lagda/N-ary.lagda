@@ -4,7 +4,7 @@
 module N-ary where
 
 open import Level as L using (Level; 0ℓ; _⊔_)
-open import StateOfTheArt
+open import StateOfTheArt as Unary
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; ¬_
          ; _≡_; refl; ⊥
          ; map
@@ -465,11 +465,23 @@ infix 5 ∃⟨_⟩ ∀[_] Π[_]
 -- n-ary existential quantifier
 
 \end{code}
+%<*quantify>
+\begin{code}
+quantₙ : (∀ {i l} {I : Set i} → (I → Set l) → Set (i ⊔ l)) →
+         ∀ n {ls} {as : Sets n ls} →
+         Arrows n as (Set r) → Set (r ⊔ (⨆ n ls))
+quantₙ Q zero    f = f
+quantₙ Q (suc n) f = Q (λ x → quantₙ Q n (f x))
+\end{code}
+%</quantify>
+\begin{code}
+
+
+\end{code}
 %<*ex>
 \begin{code}
 ∃⟨_⟩ : Arrows n {ls} as (Set r) → Set (r ⊔ (⨆ n ls))
-∃⟨_⟩ {zero}   f = f
-∃⟨_⟩ {suc n}  f = Σ _ λ x → ∃⟨ f x ⟩
+∃⟨_⟩ = quantₙ Unary.∃⟨_⟩ _
 \end{code}
 %</ex>
 \begin{code}
@@ -483,8 +495,7 @@ infix 5 ∃⟨_⟩ ∀[_] Π[_]
 %<*iall>
 \begin{code}
 ∀[_] : Arrows n {ls} as (Set r) → Set (r ⊔ (⨆ n ls))
-∀[_] {zero}   f = f
-∀[_] {suc n}  f = ∀ {x} → ∀[ f x ]
+∀[_] = quantₙ Unary.∀[_] _
 \end{code}
 %</iall>
 \begin{code}
@@ -495,8 +506,7 @@ infix 5 ∃⟨_⟩ ∀[_] Π[_]
 %<*all>
 \begin{code}
 Π[_] : Arrows n {ls} as (Set r) → Set (r ⊔ (⨆ n ls))
-Π[_] {zero}   f = f
-Π[_] {suc n}  f = ∀ x → Π[ f x ]
+Π[_] = quantₙ Unary.Π[_] _
 \end{code}
 %</all>
 \begin{code}
