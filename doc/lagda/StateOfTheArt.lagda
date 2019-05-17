@@ -16,12 +16,11 @@ private
     R : A → Set r
     x y t u : A
 
-module _ {A : Set a} where
 \end{code}
 %<*equality>
 \begin{code}
-  data _≡_ (x : A) : A → Set a where
-    refl : x ≡ x
+data _≡_ {A : Set a} (x : A) : A → Set a where
+  refl : x ≡ x
 \end{code}
 %</equality>
 \begin{code}
@@ -217,9 +216,9 @@ data ⊥ : Set where
 \end{code}
 %<*anynotall>
 \begin{code}
-Any¬⇒¬All : ∀[ Any (¬ P) ⇒ ¬ All P ]
-Any¬⇒¬All (here ¬px) (px ∷ _)  = ⊥-elim (¬px px)
-Any¬⇒¬All (there ¬p) (_ ∷ ps)  = Any¬⇒¬All ¬p ps
+notall : ∀[ Any (¬ P) ⇒ ¬ All P ]
+notall (here ¬px) (px ∷ _)  = ⊥-elim (¬px px)
+notall (there ¬p) (_ ∷ ps)  = notall ¬p ps
 \end{code}
 %</anynotall>
 \begin{code}
@@ -234,35 +233,6 @@ none ¬p (there p)  = none ¬p p
 %</none>
 \begin{code}
 
-
-\end{code}
-%<*distrib>
-\begin{code}
-distrib : ∀[ ¬ (_≡ []) ⇒ All (¬ P) ⇒ ¬ All P ]
-distrib ne []        []       = ne refl
-distrib ne (¬p ∷ _)  (p ∷ _)  = ¬p p
-\end{code}
-%</distrib>
-\begin{code}
-
-\end{code}
-%<*empty>
-\begin{code}
-empty : ∀[ ¬ P ] → ∀[ All P ⇒ [] ≡_ ]
-empty ¬p []          = refl
-empty ¬p (px ∷ pxs)  = ⊥-elim (¬p px)
-\end{code}
-%</empty>
-\begin{code}
-
-\end{code}
-%<*pure>
-\begin{code}
-pure : ∀[ P ⇒ ¬ ¬ P ]
-pure p ¬p = ¬p p
-\end{code}
-%</pure>
-\begin{code}
 
 \end{code}
 %<*any>
@@ -302,12 +272,13 @@ map f (px ∷ pxs)  = f px ∷ map f pxs
 \begin{code}
 
 private
-  module DISPLAYONLY where
+  module DISPLAYONLY {a} {i} {I : Set i} where
 \end{code}
 %<*const>
 \begin{code}
     const : Set a → (I → Set a)
     const A i = A
+
 \end{code}
 %</const>
 \begin{code}
@@ -318,12 +289,13 @@ const a i = a
 \end{code}
 %<*toList>
 \begin{code}
-toList : ∀[ All P ⇒ const (List ∃⟨ P ⟩) ]
-toList []          = []
-toList (px ∷ pxs)  = (_ , px) ∷ toList pxs
+toList : ∃⟨ All P ⟩ → List ∃⟨ P ⟩
+toList (_ , [])      = []
+toList (_ , p ∷ ps)  = (_ , p) ∷ toList (_ , ps)
 \end{code}
 %</toList>
 \begin{code}
+
 
 
 \end{code}

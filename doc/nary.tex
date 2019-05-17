@@ -7,7 +7,10 @@ indexed families of arity exactly one (Section~\ref{sec:unarycombinators}).
 None of these solutions scale well. By getting acquainted with the unifier
 (Section~\ref{sec:unifier}), we can design a good representation of n-ary
 function spaces (Section~\ref{sec:naryfunction}) which empowers us to write
-generalised combinators usable with minimal user input.
+generalised combinators (Sections \ref{sec:narycombinators} and \ref{sec:narycong})
+usable with minimal user input. We then see how the notions introduced to
+tackle our original motivations can be mobilised for other efforts in generic
+programmig from an arity-generic zipWith to a direct style definition of printf.
 
 \section{N-ary Combinators... for N up to 2}\label{sec:nary2}
 
@@ -125,10 +128,11 @@ case of \AR{Σ} which takes the index \AF{Set} implicitly.
 \ExecuteMetaData[StateOfTheArt.tex]{exists}
 
 Using \AF{∃⟨\_⟩} we can write our first statement about an indexed family:
-{(\AF{All} \AB{P})} is always satisfiable. That is to say that we can always
-find a list (the empty one) for which it holds.
+from the existence of a list such that \AB{P} holds of all its elements,
+we can construct a list of pairs of elements and proofs that \AB{P} holds
+for that value.
 
-\ExecuteMetaData[StateOfTheArt.tex]{satisfiable}
+\ExecuteMetaData[StateOfTheArt.tex]{toList}
 
 \paragraph{Universal Quantifiers} The pendant of existential quantification
 is universal quantification. In type theory this corresponds to a dependent
@@ -204,7 +208,8 @@ value somewhere in the tail (\AIC{there}).
 
 These two predicate liftings interact in non-trivial ways. For instance
 if we know that the negation of \AB{P} holds of any value in a given
-list then \AB{P} can't hold of all its elements. In other words:
+list then \AB{P} can't hold of all its elements. In other words: a single
+counter-example is enough to disprove a universal statement.
 
 \ExecuteMetaData[StateOfTheArt.tex]{anynotall}
 
@@ -226,11 +231,8 @@ these cases.
 
 \ExecuteMetaData[StateOfTheArt.tex]{const}
 
-The erasure function taking a proof that \AB{P} holds of all a list's
-elements to a list of pairs of elements and proofs that \AB{P} holds
-of them is an instance where the return type is constant in the index.
-
-\ExecuteMetaData[StateOfTheArt.tex]{toList}
+\todo{find good const}
+% \ExecuteMetaData[StateOfTheArt.tex]{toList}
 
 \paragraph{Update} On the other end of the spectrum, we have operations
 which update the ambient index using an abitrary function. The notation
