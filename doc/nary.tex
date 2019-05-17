@@ -331,7 +331,7 @@ force Agda to introduce metavariables by using an underscore (\AF{\_}) as a
 placeholder for a subterm and use \AIC{refl} at the proof of a propositional
 equality to force it to unify the two expressions stated to be equal. For
 instance in the following test we force Agda to check that
-{(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}
+{(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}.
 
 \ExecuteMetaData[Unifier.tex]{unifproblem}
 
@@ -355,7 +355,7 @@ on the left-hand side nor the \AIC{refl} constructor is highlighted in yellow.
 Meaning that the metavariable on the left was indeed solved (by instantiating
 it to the expression on the right-hand side) and that the constraint induced
 by the use of \AIC{refl} was thus satisfied. The problem itself is
-under-constrained so it is not surprising that the right-hand side lits up.
+under-constrained so it is not surprising that the right-hand side lights up.
 
 \ExecuteMetaData[Unifier.tex]{instantiation}
 
@@ -383,8 +383,16 @@ demonstrating this case as it leads to a type error in the language.
 Trying to form the unification problem {\AD{ℕ} ≈ (\AB{\_} → \AB{\_})} would
 raise such an error because \AD{ℕ} and {\_→\_} are distinct head constructors.
 
+\subsection{Avoid Computations...}
 
-\subsection{Avoid Computations...}\todo{}
+In general unification problems involving computations are undecidable.
+We can easily construct a total simulation function \AF{sim} for T\"uring
+machines which takes in as arguments the code for an arbitrary program \AB{prg}
+and a natural number \AB{n} and returns \AN{0} if and only if the program runs
+for exactly \AB{n} steps before stopping and \AN{1} otherwise. Forming a
+constraint like {\AF{sim} \AB{prg} \AB{\_} ≈ \AN{0}} is effectively asking
+whether the program \AB{prg} terminates. It is clearly impossible to write a
+unifier solving all problems of this form.
 
 
 
