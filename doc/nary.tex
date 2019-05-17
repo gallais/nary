@@ -612,12 +612,48 @@ accompanying code.
 \ExecuteMetaData[N-ary.tex]{negation}
 
 
-\section{Congruence and Substitution}
+\section{Congruence and Substitution}\label{sec:narycong}
+
+So far the types we have ascribed our combinators for \AB{n}-ary relations
+where fairly tame. Things get a bit more complicated when dealing with
+congruence and substitution: we won't be able to write these functions' types
+directly. Both definitions follow the same structure: we start by computing
+the operation's type by induction and we can then implement the operation itself.
+
+\subsection{Congruence}
+
+The type of congruence mentions only one function. However it is applied to two
+distinct lists of values to form the left-hand side and the right-hand side of
+the conclusion. As a consequence when we compute the type we take two functions
+as inputs.
+
+Congruence for two \AN{0}-ary functions collapses to simply propositional equality
+of the two constant values.
+
+Congruence for two (\AIC{suc} \AB{n})-ary functions \AB{f} and \AB{g} amounts to
+stating that for any pair of equal values \AB{x} and \AB{y} we expect that
+{(\AB{f} \AB{x})} and {(\AB{g} \AB{y})} are congruent.
 
 \ExecuteMetaData[N-ary.tex]{Cong}
+
+The congruence lemma is then obtained by stating that the \AB{n}-ary function \AB{f}
+is congruent with itself. We prove it by induction on \AB{n}, pattern-matching on the
+proofs of equality as we go along.
+
 \ExecuteMetaData[N-ary.tex]{cong}
 
+\subsection{Substitution}
+
+The definition of \AF{Substₙ} is identical to that of \AF{Congₙ} except for the
+base case: instead of \AB{f} and \AB{g} being two values, they are two \AF{Set}s.
+We demand a function transporting values in \AB{f} to ones \AB{g}.
+
 \ExecuteMetaData[N-ary.tex]{Subst}
+
+Substitution acts on \AB{n}-ary relations. Recalling our observation made
+in Section~\ref{sec:unifiermagic} that Agda can easily reconstruct the arity
+of \AF{Set}-valued functions, we can make \AB{n} an implicit argument.
+
 \ExecuteMetaData[N-ary.tex]{subst}
 
 
