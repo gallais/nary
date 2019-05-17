@@ -616,6 +616,13 @@ accompanying code.
 
 \section{Further Generic Programming Efforts}
 
+The small language we have developped to talk about \AB{n}-ary functions can
+be used beyond our first few motivating examples of congruence, substitution,
+and combinators to define relations. We detail in this section various results
+which fall out naturally from this work. We start with generic (un)currying
+which we can then use to define an \AB{n}-ary \AF{zipWith} and revisit
+\AF{printf} in direct style.
+
 \subsection{Product and (Un)Currying}
 
 We gave in Section~\ref{sec:semantics} a semantics to our reified types as
@@ -707,7 +714,8 @@ of arguments we had already.
 \subsection{Printf}
 
 The definitions we have introduced also make it easy to implement \AF{Printf}
-in direct style, recovering the usual type by generic currying. We work in a
+in direct style as opposed to the classic accumulator-based
+definition~\cite{DBLP:conf/icfp/Augustsson98}. We work in a
 simplified setting which allows us to focus on the contribution our \AB{n}-ary
 combinators bring to the table. Our \AF{printf} will only take natural numbers
 as arguments and we will worry about defining the lexer transforming a raw
@@ -721,7 +729,7 @@ how many arguments our \AF{printf} function is going to take if we want to use
 the machinery for \AB{n}-ary functions. We assume the existence of a \AF{size}
 function counting the number of \AIC{Nat} in a \AF{Format}. We also assume the
 existence of \AF{0ℓs}, a (\AF{Levels} \AB{n}) equal to \AF{0ℓ} everywhere. Using
-these we can give \AF{Format} a semantics:
+these we can give \AF{Format} a semantics as a \AF{Sets}:
 
 \ExecuteMetaData[Printf.tex]{format}
 
