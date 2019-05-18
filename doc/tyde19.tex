@@ -59,14 +59,17 @@
 % \renewcommand{\shortauthors}{B. Trovato et al.}
 
 \begin{abstract}
-Agda's standard library struggles in various places with n-ary relations:
-it introduces congruence and substitution operators of arities up to two,
-and provides users with convenient combinators for manipulating indexed
-families of arity one.
+Agda's standard library struggles in various places with n-ary functions and
+relations. It introduces congruence and substitution operators for functions
+of arities one and two, and provides users with convenient combinators for
+manipulating indexed families of arity exactly one.
 
-We write fully level polymorphic n-ary versions of these operators and
-combinators, exploiting the unifier to guarantee minimal user input is
-needed.
+After a careful analysis of the kinds of problems the unifier can easily solve,
+we design a unifier-friendly representation of n-ary functions. This allows us
+to write generic programs acting on n-ary functions which automatically reconstruct
+the representation of their inputs' types by unification. In particular, we can
+define fully level polymorphic n-ary versions of congruence, substitution and the
+combinators for indexed families, all requiring minimal user input.
 \end{abstract}
 
 \maketitle

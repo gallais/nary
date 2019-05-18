@@ -36,7 +36,7 @@ provides binary versions of both of these functions:
 \ExecuteMetaData[StateOfTheArt.tex]{cong2}
 \ExecuteMetaData[StateOfTheArt.tex]{subst2}
 
-If we want to go beyond arity two however we are left to either define
+If we want to go beyond arity two we are left to either define
 our own ternary, quaternary, etc. versions of \AF{cong} and \AF{subst}
 or awkwardly chaining the ones with a lower arity to slowly massage
 the expression at hand into the shape we want. Both of these solutions
@@ -62,11 +62,13 @@ are unsatisfactory.
 \section{Invariant Respecting Programs}
 
 A key feature of dependently typed languages is the ability to enforce
-strong invariants in inductive families. As soon as the programmer starts
-baking in these constraints, they need to write constraints-respecting
-programs. Although a lot of programs are index-preserving, users need
-to be painfully explicit about the index being threaded all across the
-function's type.
+strong invariants. Inductive families are essentially classic inductive
+types where one may additionally bake in these strong invariants. As soon
+as the programmer starts making these constraints explicit, they need to
+write constraints-respecting programs. Although a lot of programs are
+index-preserving, users need to be painfully explicit about things that
+stay the same (i.e. the index being threaded all across the function's
+type) rather than being able to highlight the important changes.
 
 \subsection{Working With Indexed Families}\label{sec:unarycombinators}
 
@@ -84,11 +86,12 @@ and base predicates. This empowers us to write lighter types which hide
 away the bits that are constant, focusing instead on the key predicates
 and the changes made to the index.
 
-Before we can talk about concrete indexed families, describe these
+Before we can even talk about concrete indexed families, describe these
 various combinators, and demonstrate their usefulness, we need to
-introduce the data the families will be indexed over. We pick \AD{List}
-the level polymorphic type of lists parametrised by the type of their
-elements as our running example.
+introduce the data the families in our running examples will be indexed
+over. We pick \AD{List} the level polymorphic type of lists parameterised
+by the type of their elements: they are both well-known and complex enough
+to allow us to write interesting types.
 
 \ExecuteMetaData[StateOfTheArt.tex]{list}
 
@@ -103,22 +106,31 @@ and of all the elements in its tail.
 
 \ExecuteMetaData[StateOfTheArt.tex]{all}
 
+Some of our examples require the introduction of \AD{Any}, the other classic
+predicate lifting on list. It takes a predicate and ensures that it holds of
+at least one element of the list at hand. Either it holds of the first one
+and we are given a proof (\AIC{here}) or it holds of a value somewhere in the
+tail (\AIC{there}).
+
+\ExecuteMetaData[StateOfTheArt.tex]{any}
+
 \subsubsection{Quantifiers}\label{sec:quantifiers}
 
 We have two types of quantifiers: existential and universal. As they are
 meant to \emph{surround} the indexed expression they are acting upon, we
-define them as essentially pairs of brackets. The opening one is systematically
-decorated with a mnemonic symbol: \AF{∃} for existential quantification,
-\AF{Π} for explicit dependent quantification and \AF{∀} for implicit
-universal quantification. Additionally we use chevrons for existential
-quantifiers and square brackets for universal ones, recalling the operators
-diamond and box of modal logic.
+define them as essentially pairs of matching opening and closing brackets.
+The opening one is systematically decorated with a mnemonic symbol: \AF{∃}
+for existential quantification, \AF{Π} for explicit dependent quantification
+and \AF{∀} for implicit universal quantification. Additionally we use chevrons
+for existential quantifiers and square brackets for universal ones, recalling
+the operators diamond and box of modal logic.
 
 \paragraph{Existential Quantifier}\label{def:sigma} In type theory, existential
-quantifiers are represented as dependent pairs. We introduce \AR{Σ}, a record
-type of dependent pairs. They can be constructed using \AIC{\_,\_} and we can
-project out the first and second component by using \ARF{proj₁} and \ARF{proj₂}
-respectively.\todo{def η}
+quantifiers are represented as dependent pairs. We introduce \AR{Σ}, a dependent
+record parameterised by a type \AB{A} and a type family \AB{P}. It has two fields
+\ARF{proj₁} for a value of type \AB{A} and \ARF{proj₂} for a proof of type
+{(\AB{P} \ARF{proj₁})}. We can construct pairs using \AIC{\_,\_} and we can
+project either of the pair's components simply by using its field's name.
 
 \ExecuteMetaData[StateOfTheArt.tex]{sigma}
 
@@ -205,8 +217,8 @@ Here we did not limit ourselves to either \AB{P} or its negation but it is
 sometimes necessary to talk directly about negation.
 
 \paragraph{Negation} Traditionally negation is defined as functions into
-the empty type \AD{⊥}. We start by defining it together with its elimination
-principle.
+the empty type \AD{⊥}. We start by defining it as the inductive type with
+not constructor together with its elimination principle.
 
 \begin{minipage}[t]{0.225\textwidth}
   \ExecuteMetaData[StateOfTheArt.tex]{bot}
@@ -237,8 +249,8 @@ index either by ignoring it completely, adjusting it using a function
 or overwriting it entirely. We won't detail the last option as, as always,
 overwriting is adjusting with a constant function.
 
-\paragraph{Constant} Although we manipulate indexed families, some of
-our function's arguments or its result may not depend on the index.
+\paragraph{Constant} Although we have so far only manipulated indexed families,
+some of our function's arguments or its result may not depend on the index.
 The \AF{const}ant indexed family is precisely what we need to represent
 these cases.
 
@@ -248,15 +260,17 @@ We can for instance prove that if the constantly false predicate
 {(\AF{const} \AF{⊥})} holds true of all the elements of a list then
 said list is the empty list. We use a section (i.e. a partially applied
 infix operator) of propositional equality to formulate that conclusion.
+In the proof we do not need to consider the \AIC{\_∷\_} case: Agda
+automatically detects that it is impossible.
 
 \ExecuteMetaData[StateOfTheArt.tex]{empty}
 
-Note that we had to add a type annotation to \AIC{[]}: \AF{const}'s
-domain is an implicit polymorphic argument and so is the type of elements
-in \AD{List}'s nil constructor. Agda can figure out that these two implicit
-arguments are equal but needs to be given enough information to figure out
-what it ought to be. In type theory, an identity function is a fine
-definition of a type annotation operator:
+Note that we had to add a type annotation to \AIC{[]}: the type of the
+index of the predicate defined using \AF{const} is an implicit polymorphic
+argument and so is the type of elements in \AD{List}'s nil constructor.
+Agda can infer that these two implicit arguments are equal but needs to be
+given enough information to figure out what it ought to be. In type theory,
+an identity function is a fine definition of a type annotation operator:
 
 \ExecuteMetaData[StateOfTheArt.tex]{annot}
 
@@ -265,15 +279,15 @@ which update the ambient index using an abitrary function. The notation
 \AF{\_⊢\_} is inspired by the convention in type theory to consider that
 proofs in sequent calculus are written in an ambient context and that we
 may use a turnstyle to describe the addition of newly-bound variables to
-it.
+this context.
 
 \ExecuteMetaData[StateOfTheArt.tex]{update}
 
-Stating that a function is compatible with \AF{All} is a typical use case
-of such a combinator. If the function at hand is called \AF{f} then the
-convention in the standard library is to call such a proof \AF{f⁺} as it
-makes \AF{f} appear in the conclusion. We pick \AF{concat} (whose classic
-definition is left out) in this concrete example.
+Stating that a function operating on lists is compatible with \AF{All} is
+a typical use case of such a combinator. If the function at hand is called
+\AF{f} then the convention in the standard library is to call such a proof
+\AF{f⁺} as it makes \AF{f} appear in the conclusion. We pick \AF{concat}
+(whose classic definition is left out) in this concrete example.
 
 \ExecuteMetaData[StateOfTheArt.tex]{join}
 
@@ -502,23 +516,45 @@ their \AB{n}-ary counterparts without having to mention \AB{n} explicitly.
 
 \section{Representating N-ary Function Types}\label{sec:naryfunction}
 
-\todo{rewrite}
-Recall that a binary function type {\AB{A} → \AB{B} → \AB{C}} can also be seen
-as a unary function type with codomain {\AB{B} → \AB{C}}. As a consequence in
-the general case there is no hope for us to get Agda to build the representation
-we have in mind without passing it at least a little bit of information.
-The least we can do is tell Agda the arity of the function. From this single
-natural number we will compute the shape of the whole representation.
+Now that we understand how the unifier works, we can design a generic
+representation \AD{Rep} and its semantics \AF{⟦\_⟧} so that a constraint
+of the form {\AF{⟦} \AB{?r} \AF{⟧} ≈ (\AD{ℕ} → \AF{Set})} can easily
+lead to the reconstruction of the representation \AB{?r}.
 
-Recall that unification is good at reconstructing values of types which have
-η-rules\todo{fix}. As a consequence, from the natural number \AB{n} passed to us as an
-argument we are going to essentially compute a number of big right-nested
-products.
+\paragraph{User Input} As we have just seen, a binary function type
+{(\AB{A} → \AB{B} → \AB{C})} with codomain \AB{C} can also be seen as
+a unary function type with codomain {(\AB{B} → \AB{C})}. As a consequence
+in the general case there is no hope to get Agda to reconstruct the
+representation we have in mind without passing it at least a little bit
+of information. The least we can do is tell Agda the arity of the function.
+From this single natural number we will compute the shape of the whole
+representation.
+
+\paragraph{Unification} As we have just seen, if we want Agda to reconstruct
+the representation from a unification constraint then our best hope is that
+the semantics function evaluates fully and simply disappears. This means in
+particular that it should not get stuck on a pattern-matching analysing the
+representation. This can be achieved with certainty by constraining our
+representation to only be built up from things we either will not pattern-match
+against (e.g. \AF{Set}s) or type constructors which enjoy η-equality (i.e.
+for which values can always be made to look like they are in canonical form).
+Just like the representation, the semantics will have to be computed entirely
+from the natural number corresponding to the function's arity.
+
+From these two observations, we decide that our representation will be
+parameterised by a natural number which we will use to compute a number
+of big right-nested products.
 
 \paragraph{Right-Nested Products} The two building blocks of right-nested
-products are a binary product \AF{\_×\_} (defined as the non-dependent special
-case of \AR{Σ} we saw in Section~\ref{def:sigma}) and the unit type
-\AF{⊤} defined as a record with no field whatsoever.
+products are a binary product \AF{\_×\_} and the unit type \AF{⊤}.
+
+We obtain the binary product as the non-dependent special case of \AR{Σ} we
+introduced in Section~\ref{def:sigma}. We did not mention at the time but
+record types in Agda enjoy η-rules. That is to say that any value \AB{p} of type
+{(\AR{Σ} \AB{A} \AB{P})} is equal to {(\ARF{proj₁} \AB{p} \AIC{,} \ARF{proj₂} \AB{p})}
+
+The unit type is defined as a record with no field. Every value of type
+\AF{⊤} is equal to the canonical value \AIC{tt}.
 
 \ExecuteMetaData[N-ary.tex]{unit}
 
@@ -561,18 +597,19 @@ of {(\AF{Levels} \AB{n})} together with a corresponding \AB{n}-tuple of type
 {(\AF{Set} \AB{r})} for the codomain.
 
 \paragraph{Semantics}\label{sec:semantics}
-We can give this encoding a semantics in a straightforward
-way by induction on \AB{n} and case analysis on the {(\AF{Sets} \AB{n} \AB{ls})}
-argument. A \AIC{zero}-ary function type is simply the codomain whilst a
-{(\AIC{suc} \AB{n})}-ary one is a unary function type whose codomain is the
-\AB{n}-ary function type obtained by induction hypothesis.
+This encoding has a straightforward semantics by induction on \AB{n} and case
+analysis on the {(\AF{Sets} \AB{n} \AB{ls})} argument. A \AIC{zero}-ary function
+type is simply the codomain whilst a {(\AIC{suc} \AB{n})}-ary one is a unary
+function type whose codomain is the \AB{n}-ary function type obtained by
+induction hypothesis.
 
 \ExecuteMetaData[N-ary.tex]{arrows}
 
 If we look carefully at this definition we can notice that the function
 \AF{Arrows} may only ever get stuck if the natural number is not concrete.
 Even though we do take the \AF{Sets} argument apart, it has a product type
-and thus enjoys η-rules.
+and thus enjoys η-rules. We have achieved the degree of unifier-friendliness
+we were aiming for.
 
 Our first example is a \AN{2}-ary function: our favourite indexed family \AD{All}.
 The last element of the telescope, a value whose type is a lifted version of the
