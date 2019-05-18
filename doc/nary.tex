@@ -619,11 +619,35 @@ unit type, can be inferred by Agda so we leave it out.
 
 \section{Combinators for Indexed Families}\label{sec:narycombinators}
 
-\subsection{Quantifiers}\todo{}
+Now that we have our generic representation of \AB{n}-ary function types we can
+finally start building the \AB{n}-nary counterparts of the combinators we
+discussed at length in Section~\ref{sec:unarycombinators}.
+
+\subsection{Quantifiers}
+
+If we already know how to quantify over one variable, we can easily describe how
+to quantify over \AB{n} variables by induction over \AB{n}. This is what \AF{quantₙ}
+does. Provided a (level polymorphic) quantifier \AB{Q} and a \AF{Set}-valued
+\AB{n}-ary function \AF{f}, we distinguish two cases: if \AB{n} is \AN{0} then
+the function is already a \AF{Set} and we can return it directly; otherwise we use
+\AB{Q} to quantify over the outer variable which we call \AB{x} and proceed to
+quantify over the remaining variables in {(\AB{f} \AB{x})} by using the induction
+hypothesis.
 
 \ExecuteMetaData[N-ary.tex]{quantify}
 
+We can define the specific instances of \AB{n}-ary quantification we are interested
+in by using concrete quantifiers. Because we are dealing with \AF{Set}-valued
+functions, we can leave their arity as an implicit argument and let Agda infer it
+at use site. In all cases we give them the same name as their unary counterparts
+as they can be used as drop-in replacements for them.
+
+We start with the \AB{n}-ary existential quantifier defined using the unary
+quantifier we introduced in Section~\ref{sec:quantifiers}.
+
 \ExecuteMetaData[N-ary.tex]{ex}
+
+Similarly we can define the explicit and implicit universal quantifiers.
 
 \ExecuteMetaData[N-ary.tex]{iall}
 \ExecuteMetaData[N-ary.tex]{all}
