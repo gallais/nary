@@ -10,7 +10,7 @@ function spaces (Section~\ref{sec:naryfunction}) which empowers us to write
 generalised combinators (Sections \ref{sec:narycombinators} and \ref{sec:narycong})
 usable with minimal user input. We then see how the notions introduced to
 tackle our original motivations can be mobilised for other efforts in generic
-programmig from an arity-generic zipWith to a direct style definition of printf.
+programming from an arity-generic zipWith to a direct style definition of printf.
 
 \section{N-ary Combinators... for N up to 2}\label{sec:nary2}
 
@@ -275,10 +275,10 @@ an identity function is a fine definition of a type annotation operator:
 \ExecuteMetaData[StateOfTheArt.tex]{annot}
 
 \paragraph{Update} On the other end of the spectrum, we have operations
-which update the ambient index using an abitrary function. The notation
+which update the ambient index using an arbitrary function. The notation
 \AF{\_⊢\_} is inspired by the convention in type theory to consider that
 proofs in sequent calculus are written in an ambient context and that we
-may use a turnstyle to describe the addition of newly-bound variables to
+may use a turnstile to describe the addition of newly-bound variables to
 this context.
 
 \ExecuteMetaData[StateOfTheArt.tex]{update}
@@ -382,7 +382,7 @@ in yellow like so: \AgdaUnsolvedMeta{\_}. Whenever Agda cannot satisfy a
 unification constraint raised by the use of \AIC{refl}, it will also highlight
 it in yellow like so: \AgdaUnsolvedConstraint{\AIC{refl}}.
 
-Let us now look at the various scenarii in which it is easy for the unifier
+Let us now look at the various scenarios in which it is easy for the unifier
 to decide whether a constraint is satisfiable.
 
 \subsection{Instantiation}
@@ -471,7 +471,7 @@ constraint which could not be satisfied.
 If the natural number argument is however a concrete value then \AF{nary}
 evaluates fully and Agda is able to reconstruct \AB{A} by unification. In
 the following two examples we unify {(\AD{ℕ} → \AD{ℕ})} with {(\AD{ℕ} → \AB{?A})}
-on the one hand and {\AB{?A}} on the other. Both unification problems succed
+on the one hand and {\AB{?A}} on the other. Both unification problems succeed
 without any issue.
 
 \begin{minipage}{0.225\textwidth}
@@ -511,10 +511,10 @@ clearly anti-unifiable with the right-hand sides of our semantics of
 reified function types. Note in particular that combinators acting
 on relations (cf. Section~\ref{sec:unarycombinators}) are manipulating
 functions whose codomain is always of the shape {(\AF{Set} \_)} which
-is clearly disjoing from {(\_ → \_)}. We ought to be able to define
+is clearly disjoint from {(\_ → \_)}. We ought to be able to define
 their \AB{n}-ary counterparts without having to mention \AB{n} explicitly.
 
-\section{Representating N-ary Function Types}\label{sec:naryfunction}
+\section{Representing N-ary Function Types}\label{sec:naryfunction}
 
 Now that we understand how the unifier works, we can design a generic
 representation \AD{Rep} and its semantics \AF{⟦\_⟧} so that a constraint
@@ -586,7 +586,7 @@ to {(\AF{Levels} \AB{n})} by induction on \AB{n}.
 
 Knowing that {(\AF{Set} \AB{a})} sits at level {(\AF{suc} \AB{a})}, it is
 natural to declare that our \AB{n}-tuple of sets defined at various \AF{Levels}
-will be defined at the sucessor of the generalised least upper bound of these
+will be defined at the successor of the generalised least upper bound of these
 \AF{Levels}.
 
 \ExecuteMetaData[N-ary.tex]{sets}
@@ -755,7 +755,7 @@ of \AF{Set}-valued functions, we can make \AB{n} an implicit argument.
 
 \section{Further Generic Programming Efforts}
 
-The small language we have developped to talk about \AB{n}-ary functions can
+The small language we have developed to talk about \AB{n}-ary functions can
 be used beyond our first few motivating examples of congruence, substitution,
 and combinators to define types involving relations. We detail in this section
 various results which fall out naturally from this work. We start with generic
@@ -933,5 +933,5 @@ Previous efforts in dependently typed programming such as Weirich and
 Casinghino~\cite{DBLP:conf/plpv/WeirichC10} work on not only arity-generic
 but also datatype-generic programming suggest we may push this further.
 Their solution predates universe polymorphism and although the traversals
-are adequatly heterogeneous, their approach would not scale to universe
+are adequately heterogeneous, their approach would not scale to universe
 polymorphic functions.
