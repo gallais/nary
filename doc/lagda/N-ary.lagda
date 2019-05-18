@@ -5,13 +5,12 @@ module N-ary where
 
 open import Level as L using (Level; 0ℓ; _⊔_)
 open import StateOfTheArt as Unary
-  hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; ¬_
+  hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; _∪_; ¬_
          ; _≡_; refl; ⊥
          ; map
          )
 open import Relation.Binary.PropositionalEquality
 open import Data.Empty
-open import Data.Sum using (_⊎_)
 -- open import Data.Fin.Base using (Fin; zero; suc)
 open import Function using (_∘_)
 
@@ -468,8 +467,8 @@ infix 5 ∃⟨_⟩ ∀[_] Π[_]
 quantₙ : (∀ {i l} {I : Set i} → (I → Set l) → Set (i ⊔ l)) →
          ∀ n {ls} {as : Sets n ls} →
          Arrows n as (Set r) → Set (r ⊔ (⨆ n ls))
-quantₙ Q zero    f = f
-quantₙ Q (suc n) f = Q (λ x → quantₙ Q n (f x))
+quantₙ Q zero     f = f
+quantₙ Q (suc n)  f = Q (λ x → quantₙ Q n (f x))
 \end{code}
 %</quantify>
 \begin{code}
