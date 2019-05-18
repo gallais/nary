@@ -286,6 +286,25 @@ const : A → (I → A)
 const a i = a
 
 \end{code}
+%<*annot>
+\begin{code}
+_∋_ : ∀ {a} (A : Set a) → A → A
+A ∋ a = a
+\end{code}
+%</annot>
+\begin{code}
+
+\end{code}
+%<*empty>
+\begin{code}
+empty : ∀[ All (const ⊥) ⇒ (List A ∋ []) ≡_ ]
+empty [] = refl
+\end{code}
+%</empty>
+\begin{code}
+
+
+\end{code}
 %<*toList>
 \begin{code}
 toList : ∃⟨ All P ⟩ → List ∃⟨ P ⟩

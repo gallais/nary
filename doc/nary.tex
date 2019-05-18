@@ -231,8 +231,21 @@ these cases.
 
 \ExecuteMetaData[StateOfTheArt.tex]{const}
 
-\todo{find good const}
-% \ExecuteMetaData[StateOfTheArt.tex]{toList}
+We can for instance prove that if the constantly false predicate
+{(\AF{const} \AF{⊥})} holds true of all the elements of a list then
+said list is the empty list. We use a section (i.e. a partially applied
+infix operator) of propositional equality to formulate that conclusion.
+
+\ExecuteMetaData[StateOfTheArt.tex]{empty}
+
+Note that we had to add a type annotation to \AIC{[]}: \AF{const}'s
+domain is an implicit polymorphic argument and so is the type of elements
+in \AD{List}'s nil constructor. Agda can figure out that these two implicit
+arguments are equal but needs to be given enough information to figure out
+what it ought to be. In type theory, an identity function is a fine
+definition of a type annotation operator:
+
+\ExecuteMetaData[StateOfTheArt.tex]{annot}
 
 \paragraph{Update} On the other end of the spectrum, we have operations
 which update the ambient index using an abitrary function. The notation
