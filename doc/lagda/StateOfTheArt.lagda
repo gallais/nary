@@ -188,6 +188,39 @@ unzip ((p , q) ∷ pqs)  =  let (ps , qs) = unzip pqs
 \begin{code}
 
 \end{code}
+%<*sum>
+\begin{code}
+data _⊎_ (A : Set a) (B : Set b) : Set (a ⊔ b) where
+  inj₁ : A → A ⊎ B
+  inj₂ : B → A ⊎ B
+\end{code}
+%</sum>
+\begin{code}
+
+\end{code}
+%<*disjunction>
+\begin{code}
+_∪_ : (I → Set p) → (I → Set q) → (I → Set (p ⊔ q))
+(P ∪ Q) i = (P i) ⊎ (Q i)
+\end{code}
+%</disjunction>
+\begin{code}
+
+\end{code}
+%<*decide>
+\begin{code}
+decide : Π[ P ∪ Q ] → Π[ Any P ∪ All Q ]
+decide pq? []       = inj₂ []
+decide pq? (x ∷ xs) with pq? x | decide pq? xs
+... | inj₁ px | _ = inj₁ (here px)
+... | _ | inj₁ ap = inj₁ (there ap)
+... | inj₂ qx | inj₂ qxs = inj₂ (qx ∷ qxs)
+\end{code}
+%</decide>
+\begin{code}
+
+
+\end{code}
 %<*bot>
 \begin{code}
 data ⊥ : Set where

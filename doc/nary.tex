@@ -183,6 +183,27 @@ of \AB{P} and \AB{Q} holds of all the elements of a given list then both
 Notice that we are using the conjunction combinator both on predicates ranging
 over values and on ones ranging over lists of values.
 
+\paragraph{Disjunction} To formally describe the disjunction of two predicates,
+we need to define \AD{\_⊎\_} the type of disjoint sums first. It has two
+constructors each of which corresponds to a choice of one side of the sum or
+the other.
+
+\ExecuteMetaData[StateOfTheArt.tex]{sum}
+
+The disjunction of two predicates is then the pointwise lifting of \AD{\_⊎\_}.
+
+\ExecuteMetaData[StateOfTheArt.tex]{disjunction}
+
+A typical use case for disjoint sums is the notion of decidability: either
+a predicate or its negation holds. We can formulate a general decidability
+result for \AD{All}: if for any value either \AB{P} or \AB{Q} holds then for
+any list of values, either {(\AD{Any} \AB{P})} or {(\AD{All} \AB{Q})} holds.
+
+\ExecuteMetaData[StateOfTheArt.tex]{decide}
+
+Here we did not limit ourselves to either \AB{P} or its negation but it is
+sometimes necessary to talk directly about negation.
+
 \paragraph{Negation} Traditionally negation is defined as functions into
 the empty type \AD{⊥}. We start by defining it together with its elimination
 principle.
@@ -193,23 +214,15 @@ principle.
   \ExecuteMetaData[StateOfTheArt.tex]{botelim}
 \end{minipage}
 
-Negation for a unary predicate \AB{P} is then the unary predicate which to
-each \AB{i} associates {(\AB{P} \AB{i} → ⊥)}.
+Negation for a unary predicate \AB{P} is then the unary predicate which maps
+\AB{i} to {(\AB{P} \AB{i} → ⊥)}.
 
 \ExecuteMetaData[StateOfTheArt.tex]{negation}
 
-Our use case requires the introduction of \AD{Any}, the other classic
-predicate lifting on list. It takes a predicate and ensures that it
-holds of at least one element of the list at hand. Either it holds of
-the first one and we are given a proof (\AIC{here}) or it holds of a
-value somewhere in the tail (\AIC{there}).
-
-\ExecuteMetaData[StateOfTheArt.tex]{any}
-
-These two predicate liftings interact in non-trivial ways. For instance
-if we know that the negation of \AB{P} holds of any value in a given
-list then \AB{P} can't hold of all its elements. In other words: a single
-counter-example is enough to disprove a universal statement.
+The two predicate liftings \AD{All} and \AD{Any} interact in non-trivial ways.
+For instance if we know that the negation of \AB{P} holds of any value in a
+given list then \AB{P} can't hold of all its elements. In other words: a
+single counter-example is enough to disprove a universal statement.
 
 \ExecuteMetaData[StateOfTheArt.tex]{anynotall}
 
