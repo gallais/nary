@@ -23,8 +23,15 @@ data Chunk : Set where
 %</chunk>
 \begin{code}
 
-
+\end{code}
+%<*chunks>
+\begin{code}
+Format : Set
 Format = List Chunk
+\end{code}
+%</chunks>
+\begin{code}
+
 
 size : Format → ℕ
 size []             = zero
@@ -71,11 +78,17 @@ printf fmt = curryₙ (size fmt) (concat ∘ assemble fmt)
 \begin{code}
 lessThan : ℕ → ℕ → String
 lessThan = printf (Nat ∷ Raw " < " ∷ Nat ∷ [])
+\end{code}
+%</example>
+\begin{code}
 
+\end{code}
+%<*test>
+\begin{code}
 _ : lessThan 2 5 ≡ "2 < 5"
 _ = refl
 \end{code}
-%</example>
+%</test>
 \begin{code}
 
 \end{code}

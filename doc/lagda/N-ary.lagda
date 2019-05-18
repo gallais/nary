@@ -241,7 +241,7 @@ substₙ {suc n}  f refl  = substₙ (f _)
 %<*curry>
 \begin{code}
 curryₙ : ∀ n {ls} {as : Sets n ls} →
-        (Product n as → R) → Arrows n as R
+         (Product n as → R) → Arrows n as R
 curryₙ zero     f = f _
 curryₙ (suc n)  f = curryₙ n ∘ curry f
 \end{code}
@@ -252,7 +252,7 @@ curryₙ (suc n)  f = curryₙ n ∘ curry f
 %<*uncurry>
 \begin{code}
 uncurryₙ : ∀ n {ls} {as : Sets n ls} →
-          Arrows n as R → (Product n as → R)
+           Arrows n as R → (Product n as → R)
 uncurryₙ zero     f = const f
 uncurryₙ (suc n)  f = uncurry (uncurryₙ n ∘ f)
 \end{code}

@@ -451,7 +451,7 @@ use cases the concrete values at hand will allow evaluation to reveal enough
 constructors for unification to succeed.
 
 To demonstrate this phenomenon we introduce a type \AF{nary} of \AB{n}-ary
-functions on natural numbers. It is parametrised by the return type of the
+functions on natural numbers. It is parameterised by the return type of the
 \AB{n}-ary function and defined by induction \AB{n}.
 
 \ExecuteMetaData[Unifier.tex]{nary}
@@ -485,7 +485,7 @@ encoding: we expect our users to only ever use our generic congruence
 combinator with concrete arities. A representation defined by induction
 on such a natural number would therefore work well with the unifier.
 
-\paragraph{Invertible Problem} The second case in which we may have
+\paragraph{Invertible Problem} The second case in which we may encounter
 unification problems involving stuck computations and still see Agda
 find a solution is more language dependent but just as principled.
 Whenever the stuck function is defined by a set of equations whose
@@ -637,10 +637,11 @@ hypothesis.
 \ExecuteMetaData[N-ary.tex]{quantify}
 
 We can define the specific instances of \AB{n}-ary quantification we are interested
-in by using concrete quantifiers. Because we are dealing with \AF{Set}-valued
-functions, we can leave their arity as an implicit argument and let Agda infer it
-at use site. In all cases we give them the same name as their unary counterparts
-as they can be used as drop-in replacements for them.
+in by partially applying \AF{quantₙ} with the appropriate concrete quantifiers.
+Because we are dealing with \AF{Set}-valued functions, we can leave their arity as
+an implicit argument and let Agda infer it at use site. In all cases we give them
+the same name as their unary counterparts as they can be used as drop-in replacements
+for them.
 
 We start with the \AB{n}-ary existential quantifier defined using the unary
 quantifier we introduced in Section~\ref{sec:quantifiers}.
@@ -649,8 +650,8 @@ quantifier we introduced in Section~\ref{sec:quantifiers}.
 
 Similarly we can define the explicit and implicit universal quantifiers.
 
-\ExecuteMetaData[N-ary.tex]{iall}
 \ExecuteMetaData[N-ary.tex]{all}
+\ExecuteMetaData[N-ary.tex]{iall}
 
 \subsection{Pointwise liftings}
 
@@ -698,7 +699,9 @@ match the domains of the operator. Its type could be summarised as:
 
 The thus generalised definition has a fairly unreadable type so we leave
 this formal definition out of the paper. Curious readers can consult the
-accompanying code.
+accompanying code. We can evidently use \AF{liftₙ} with \AB{k} equal to
+\AN{1} to lift negation from an operation on \AF{Set} to an operation on
+\AF{Arrows}.
 
 \ExecuteMetaData[N-ary.tex]{negation}
 
@@ -716,7 +719,8 @@ the operation's type by induction and we can then implement the operation itself
 The type of congruence mentions only one function. However it is applied to two
 distinct lists of values to form the left-hand side and the right-hand side of
 the conclusion. As a consequence when we compute the type we take two functions
-as inputs.
+as inputs and use one to apply to the arguments meant for the left-hand side
+and the other for the ones meant for the right-hand side of the equation.
 
 Congruence for two \AN{0}-ary functions collapses to simply propositional equality
 of the two constant values.
@@ -737,7 +741,7 @@ proofs of equality as we go along.
 
 The definition of \AF{Substₙ} is identical to that of \AF{Congₙ} except for the
 base case: instead of \AB{f} and \AB{g} being two values, they are two \AF{Set}s.
-We demand a function transporting values in \AB{f} to ones \AB{g}.
+We demand a function transporting values in \AB{f} to ones in \AB{g}.
 
 \ExecuteMetaData[N-ary.tex]{Subst}
 
@@ -753,10 +757,10 @@ of \AF{Set}-valued functions, we can make \AB{n} an implicit argument.
 
 The small language we have developped to talk about \AB{n}-ary functions can
 be used beyond our first few motivating examples of congruence, substitution,
-and combinators to define relations. We detail in this section various results
-which fall out naturally from this work. We start with generic (un)currying
-which we can then use to define an \AB{n}-ary \AF{zipWith} and revisit
-\AF{printf} in direct style.
+and combinators to define types involving relations. We detail in this section
+various results which fall out naturally from this work. We start with generic
+currying and uncurrying which we can then use to define an \AB{n}-ary \AF{zipWith}
+and revisit \AF{printf} in direct style.
 
 \subsection{Product and (Un)Currying}
 
@@ -771,7 +775,10 @@ We can convert back and forth between a unary function whose domain is a
 \AF{Product} of \AF{Sets} and an \AB{n}-ary function whose domains are the
 same sets. These conversion functions correspond to currying and uncurrying.
 Both \AF{curryₙ} and \AF{uncurryₙ} are implemented by structural induction
-on \AB{n} and in terms of their binary counterparts.
+on \AB{n} and in terms of their binary counterparts. In the base case, the
+function is either applied to \AIC{tt} or uses \AF{const} to throw away a
+value of type \AR{⊤}; this is an artefact of the fact our definition of
+\AF{Product} is \AR{⊤}-terminated
 
 \ExecuteMetaData[N-ary.tex]{curry}
 \ExecuteMetaData[N-ary.tex]{uncurry}
@@ -782,8 +789,8 @@ to have a definition of \AF{Product} which has a special case for \AF{Sets}
 of size exactly \AN{1} returning the \AF{Set} without pairing it with \AR{⊤}.
 This makes \AF{curryₙ} and \AF{uncurryₙ} more useful overall. Most generic
 functions however are easier to implement using the \AR{⊤}-terminated version
-of \AF{Product}. We provide both as well as conversion functions from one to
-the other.
+of \AF{Product}. We provide both as well as conversion functions between the
+two.
 
 \subsection{N-ary Zipping Functions}
 
@@ -820,17 +827,19 @@ first.
 
 \ExecuteMetaData[N-ary.tex]{zw-aux-type}
 
-When \AB{n} is \AN{0}, an Haskeller would typically return an infinite list
+When \AB{n} is \AN{0}, a Haskeller would typically return an infinite list
 containing the value \AB{f} repeated. However this is not possible in Agda,
 a total language~\cite{DBLP:journals/jucs/ATurner04}: all the lists have to
-be finite. Our only option is to return the empty one.
+be finite. Our only principled option is to return the empty one.
 
 \ExecuteMetaData[N-ary.tex]{zw-aux0}
 
-When \AB{n} is \AN{1} we can get our hands on a function \AB{f} of type
+Because the behaviour of the \AN{0} case is less than ideal, we bypass it
+every time except if \AF{zipWithₙ} is explicitly called on \AN{0}. This is
+done by having a special case for \AB{n} equals \AN{1}. In this situation,
+we can get our hands on a function \AB{f} of type
 {((\AB{A} \AR{×} \AR{⊤}) → \AB{R})} and a {\AD{List} \AB{A}} and we need to
-return a {\AD{List} \AB{R}}. We can \AF{map} the (tweaked) function over the
-list.
+return a {\AD{List} \AB{R}}. We map a tweaked version of the function on the list.
 
 \ExecuteMetaData[N-ary.tex]{zw-aux1}
 
@@ -842,7 +851,7 @@ We massage the function to obtain another one of type
 combine with the product of lists thanks to our induction hypothesis. This gives
 us back a list of functions of type {(\AB{A} → \AB{R})}. We can conclude thanks
 to the usual binary \AF{zipWith} to combine this list of functions with the list
-of arguments we had already.
+of arguments we already had.
 
 \ExecuteMetaData[N-ary.tex]{zw-auxn}
 
@@ -853,38 +862,50 @@ in direct style as opposed to the classic accumulator-based
 definition~\cite{DBLP:conf/icfp/Augustsson98}. We work in a
 simplified setting which allows us to focus on the contribution our \AB{n}-ary
 combinators bring to the table. Our \AF{printf} will only take natural numbers
-as arguments and we will worry about defining the lexer transforming a raw
-string into a \AF{Format}, that is to say a list of \AD{Chunk}s (each being
-either a \AIC{Nat} corresponding to a ``\%u'' directive, or a \AIC{Raw} string).
+as arguments and we will not worry about defining the lexer transforming a raw
+string into a \AF{Format}, that is to say a list of \AD{Chunk}s each being
+either a \AIC{Nat} corresponding to a ``\%u'' directive (i.e. unsigned decimal
+integer) or a \AIC{Raw} string.
 
-\ExecuteMetaData[Printf.tex]{chunk}
+\begin{minipage}[t]{0.25\textwidth}
+  \ExecuteMetaData[Printf.tex]{chunk}
+\end{minipage}\begin{minipage}[t]{0.2\textwidth}
+  \ExecuteMetaData[Printf.tex]{chunks}
+\end{minipage}
 
 Our notion of \AF{Format} is not intrinsically sized but we do need to know
 how many arguments our \AF{printf} function is going to take if we want to use
 the machinery for \AB{n}-ary functions. We assume the existence of a \AF{size}
 function counting the number of \AIC{Nat} in a \AF{Format}. We also assume the
 existence of \AF{0ℓs}, a (\AF{Levels} \AB{n}) equal to \AF{0ℓ} everywhere. Using
-these we can give \AF{Format} a semantics as a \AF{Sets}:
+these we can give \AF{Format} a semantics as a \AF{Sets} of arguments \AF{printf}
+will expect. To each \AIC{Nat} we associate a \AD{ℕ} constraint, the other
+\AD{Chunk}s do not give rise to the need for an input.
 
 \ExecuteMetaData[Printf.tex]{format}
 
 The essence of \AF{printf} is then given by a function \AF{assemble} which
 collects a list of strings from various sources. Whenever the format expects
 a natural number, we know we got one as an input and can \AF{show} it.
-Otherwise the raw string to use is specified in the \AF{Format} itself.
+Otherwise the raw string to use is specified in the \AF{Format} itself as
+an argument to \AIC{Raw}.
 
 \ExecuteMetaData[Printf.tex]{assemble}
 
-The toplevel function itself is obtained by currying the composition of
+The toplevel function is obtained by currying the composition of
 \AF{concat} and \AF{assemble}.
 
 \ExecuteMetaData[Printf.tex]{printf}
 
 We can check on an example that we do get a function with the appropriate
-type when we use a concrete \AF{Format}. And that it does produce the
-expected string when run on arguments.
+type when we use a concrete \AF{Format} (here the one we would obtain from
+the string \AStr{"\%u < \%u"}).
 
 \ExecuteMetaData[Printf.tex]{example}
+
+And that it does produce the expected string when run on arguments.
+
+\ExecuteMetaData[Printf.tex]{test}
 
 \section{Conclusion and Future Work}
 
