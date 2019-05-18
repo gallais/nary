@@ -278,7 +278,6 @@ private
 \begin{code}
     const : Set a → (I → Set a)
     const A i = A
-
 \end{code}
 %</const>
 \begin{code}

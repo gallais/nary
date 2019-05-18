@@ -412,28 +412,26 @@ updateₙ′ n k = updateₙ n k
 composeₙ : ∀ n {ls r} {as : Sets n ls} {b : Set r} →
            ∀ {lᵒ lⁿ} {aᵒ : Set lᵒ} {aⁿ : Set lⁿ} →
            (aⁿ → aᵒ) → Arrows n as (aᵒ → b) → Arrows n as (aⁿ → b)
-composeₙ zero    f g = g ∘′ f
-composeₙ (suc n) f g = composeₙ n f ∘′ g
+composeₙ zero    f g = g ∘ f
+composeₙ (suc n) f g = composeₙ n f ∘ g
 -}
 ------------------------------------------------------------------------
 -- mapping under n arguments
 
-{-
+open import Function using (_∘_)
+
 mapₙ : ∀ n {ls r s} {as : Sets n ls} {b : Set r} {c : Set s} →
        (b → c) → Arrows n as b → Arrows n as c
 mapₙ zero    f v = f v
-mapₙ (suc n) f g = mapₙ n f ∘′ g
--}
+mapₙ (suc n) f g = mapₙ n f ∘ g
 
 ------------------------------------------------------------------------
 -- hole at the n-th position
 
-{-
 holeₙ : ∀ n {ls r lʰ} {as : Sets n ls} {b : Set r} {aʰ : Set lʰ} →
         (aʰ → Arrows n as b) → Arrows n as (aʰ → b)
 holeₙ zero    f = f
-holeₙ (suc n) f = holeₙ n ∘′ flip f
--}
+holeₙ (suc n) f = holeₙ n ∘ flip f
 
 ------------------------------------------------------------------------
 -- function constant in its n first arguments
