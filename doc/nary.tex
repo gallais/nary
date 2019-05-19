@@ -451,7 +451,7 @@ unifier solving all problems of this form.
 
 \subsection{... In Most Cases}\label{sec:unifiermagic}
 
-Although unification problems mentioning computations will in general fail
+Although unification problems involving computations will in general fail
 to produce solutions, there are exceptions.
 
 
@@ -528,8 +528,9 @@ their \AB{n}-ary counterparts without having to mention \AB{n} explicitly.
 \section{Representing N-ary Function Types}\label{sec:naryfunction}
 
 Now that we understand how the unifier works, we can design a generic
-representation \AD{Rep} and its semantics \AF{⟦\_⟧} so that a constraint
-of the form {\AF{⟦} \AB{?r} \AF{⟧} ≈ (\AD{ℕ} → \AF{Set})} can easily
+representation and its semantics (called \AF{⟦\_⟧} here for convenience)
+so that whenever we have a constraint of the form
+{\AF{⟦} \AB{?r} \AF{⟧} ≈ (\AD{ℕ} → \AF{Set})}, it can easily
 lead to the reconstruction of the representation \AB{?r}.
 
 \paragraph{User Input} As we have just seen, a binary function type
@@ -920,13 +921,18 @@ And that it does produce the expected string when run on arguments.
 
 \section{Conclusion and Future Work}
 
-We have seen that Agda's standard library defines a useful type-level
-domain specific language to manipulate unary predicates.\todo{contribs}
-
-The notions introduced to set the stage for the definition of \AB{n}-ary
-versions of these combinators were already powerful enough to allow us
-to revisit classic dependently typed traversals.
-
+We have seen that Agda's standard library defines a useful couple of functions
+to produce proofs of equality as well as a type-level domain specific language
+to manipulate unary predicates. We then got acquainted with the unifier and the
+process by which a unification constraint can lead to the reconstruction of a
+function's implicit arguments. Based on this knowledge we have designed a
+representation of \AB{n}-ary function types particularly amenable to such
+reconstructions. This allowed us define \AB{n}-ary versions of the congruence,
+substitution as well as the basic building blocks of the type-level DSL for
+relations we longed for. The notions introduced to set the stage for these
+definitions were already powerful enough to allow us to revisit classic
+dependently typed traversals such as an \AB{n}-ary version of \AF{zipWith},
+or direct-style \AF{printf}.
 
 \paragraph{Telescopes} The lack of dependencies between the various domains
 and the codomain of our \AF{Arrows} is flagrant. A natural question to ask
