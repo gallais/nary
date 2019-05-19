@@ -4,7 +4,6 @@ PAPER=tyde19
 AGDA_FILES:=\
   lagda/StateOfTheArt.lagda \
   lagda/Examples.lagda \
-  lagda/Broken.lagda \
   lagda/Unifier.lagda \
   lagda/N-ary.lagda \
   lagda/Printf.lagda
@@ -22,6 +21,8 @@ PAPER_DEPENDENCIES:= \
   latex/commands.tex \
   latex/ACM-Reference-Format.bst \
   $(AGDA_TEX)
+
+.SECONDARY: $(AGDA_OUTPUT)
 
 all: latex/$(PAPER).pdf
 
@@ -49,4 +50,4 @@ latex/%: %
 
 clean:
 	find . -name "*.agdai" | xargs rm -f
-	rm -rf latex/
+	rm -rf output/ latex/
