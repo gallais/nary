@@ -371,7 +371,6 @@ antisym = SOA.antisym
 open import Data.Sum
 open import Relation.Binary using (module Tri); open Tri
 open import Data.Nat.Properties
-open import Relation.Binary.PropositionalEquality.Core
 
 ------------------------------------------------------------------------
 -- _∪_ : (A₁ → ⋯ → Aₙ → Set r) → (A₁ → ⋯ → Aₙ → Set s) → (A₁ → ⋯ → Aₙ → Set _)
@@ -399,4 +398,9 @@ open import Relation.Binary.PropositionalEquality.Core
 m<n⇒m≱n : ∀[ _>_ ⇒ ¬ _≤_ ]
 m<n⇒m≱n m>n m≤n = <⇒≱ m>n m≤n
 -}
+
+open import Function using (_$_)
+
+_ : mapₙ 1 (_$ []) (Pw _≡_) ≡ (λ (as : List A) → Pw _≡_ as [])
+_ = refl
 \end{code}

@@ -12,14 +12,16 @@ open import StateOfTheArt as Unary
 open import Relation.Binary.PropositionalEquality
 open import Data.Empty
 -- open import Data.Fin.Base using (Fin; zero; suc)
-open import Function using (_∘_)
+open import Function using (_∘_; id)
 
 private
   variable
-    a b c r s : Level
+    a b c r i j s : Level
     A : Set a
     B : Set b
     C : Set c
+    I : Set i
+    J : Set j
     R : Set r
 
 ------------------------------------------------------------------------
@@ -407,30 +409,47 @@ updateₙ′ n k = updateₙ n k
 ------------------------------------------------------------------------
 -- compose function at the n-th position
 
-{-
-composeₙ : ∀ n {ls r} {as : Sets n ls} {b : Set r} →
-           ∀ {lᵒ lⁿ} {aᵒ : Set lᵒ} {aⁿ : Set lⁿ} →
-           (aⁿ → aᵒ) → Arrows n as (aᵒ → b) → Arrows n as (aⁿ → b)
-composeₙ zero    f g = g ∘ f
-composeₙ (suc n) f g = composeₙ n f ∘ g
--}
+
+\end{code}
+%<*compose>
+\begin{code}
+_%=_⊢_ : ∀ n {ls} {as : Sets n ls} → (I → J) →
+         Arrows n as (J → B) → Arrows n as (I → B)
+zero   %= f ⊢ g = g ∘ f
+suc n  %= f ⊢ g = (n %= f ⊢_) ∘ g
+\end{code}
+%</compose>
+\begin{code}
+
 ------------------------------------------------------------------------
 -- mapping under n arguments
 
 open import Function using (_∘_)
 
-mapₙ : ∀ n {ls r s} {as : Sets n ls} {b : Set r} {c : Set s} →
-       (b → c) → Arrows n as b → Arrows n as c
-mapₙ zero    f v = f v
-mapₙ (suc n) f g = mapₙ n f ∘ g
+\end{code}
+%<*map>
+\begin{code}
+mapₙ : ∀ n {ls} {as : Sets n ls} →
+       (B → C) → Arrows n as B → Arrows n as C
+mapₙ zero     f v = f v
+mapₙ (suc n)  f g = mapₙ n f ∘ g
+\end{code}
+%</map>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- hole at the n-th position
 
-holeₙ : ∀ n {ls r lʰ} {as : Sets n ls} {b : Set r} {aʰ : Set lʰ} →
-        (aʰ → Arrows n as b) → Arrows n as (aʰ → b)
-holeₙ zero    f = f
-holeₙ (suc n) f = holeₙ n ∘ flip f
+\end{code}
+%<*hole>
+\begin{code}
+holeₙ : ∀ n {ls} {as : Sets n ls} →
+        (A → Arrows n as B) → Arrows n as (A → B)
+holeₙ zero     f = f
+holeₙ (suc n)  f = holeₙ n ∘ flip f
+\end{code}
+%</hole>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- function constant in its n first arguments
@@ -439,10 +458,15 @@ holeₙ (suc n) f = holeₙ n ∘ flip f
 -- specifying what the type of the function ought to be. Just like the
 -- usual const: there is no way to infer its domain from its argument.
 
-constₙ : ∀ n {ls r} {as : Sets n ls} {b : Set r} → b → Arrows n as b
-constₙ zero    v = v
-constₙ (suc n) v = const (constₙ n v)
-
+\end{code}
+%<*const>
+\begin{code}
+constₙ : ∀ n {ls} {as : Sets n ls} → B → Arrows n as B
+constₙ zero     = id
+constₙ (suc n)  = const ∘ (constₙ n)
+\end{code}
+%</const>
+\begin{code}
 
 ------------------------------------------------------------------------
 -- Generic type constructors

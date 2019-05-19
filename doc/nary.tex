@@ -244,7 +244,7 @@ single counter-example is enough to disprove a universal statement.
 Notice that we are once more using the combinator we just defined both on
 a predicate on values and one on lists of values.
 
-\subsubsection{Adjustments to The Ambient Index}\label{sec:iupdates}
+\subsubsection{Adjustments To The Ambient Index}\label{sec:iupdates}
 
 Threading the index is only the least invasive of the modes of action
 available to us. But we can also more actively interact with the ambient
@@ -722,6 +722,36 @@ accompanying code. We can evidently use \AF{liftₙ} with \AB{k} equal to
 
 \ExecuteMetaData[N-ary.tex]{negation}
 
+\subsection{Adjustments To The Ambient Indices}
+
+We now have obtained the generalised versions of the index-threading combinators
+we wanted. We can similarly define a number of index-altering combinators. The
+first two are the \AB{n}-ary versions of the two operators we described in
+Section~\ref{sec:iupdates}.
+
+Lifting a mere value to a constant \AB{n}-ary function is a matter of composing
+\AF{const} with itself \AB{n} times.
+
+\ExecuteMetaData[N-ary.tex]{const}
+
+Updates are a bit more subtle: now that we are not limited to a single index,
+we can choose which index should be updated. We expect the user to provide a
+natural number \AB{n} to target a specific index, the type of the combinator
+then clearly states that \AB{n} sets are skipped, the target is updated and
+the rest of the type is unchanged.
+
+\ExecuteMetaData[N-ary.tex]{compose}
+
+The added complexity of working with \AB{n}-ary relations means that we have
+more interesting operators than simply the generalised version of the ones
+we had introduced for unary predicates.
+
+We may for instance want to map a unary function on the result of an \AB{n}-ary
+one. Note that this empowers us to partially apply any \AB{n}-ary function to a
+value \AB{x} in its \AB{k}-th argument by choosing to see it as a \AB{k}-ary
+function and mapping {(\AF{\_\$} \AB{x})} on it.
+
+\ExecuteMetaData[N-ary.tex]{map}
 
 \section{Congruence and Substitution}\label{sec:narycong}
 
