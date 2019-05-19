@@ -3,7 +3,7 @@
 
 module N-ary where
 
-open import Level as L using (Level; 0ℓ; _⊔_)
+open import Level using (Level; 0ℓ; _⊔_)
 open import StateOfTheArt as Unary
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; _∪_; ¬_
          ; _≡_; refl; ⊥
@@ -119,7 +119,7 @@ private
 \end{code}
 %<*sets>
 \begin{code}
-Sets : ∀ n (ls : Levels n) → Set (L.suc (⨆ n ls))
+Sets : ∀ n (ls : Levels n) → Set (Level.suc (⨆ n ls))
 Sets zero     _         = Lift _ ⊤
 Sets (suc n)  (l , ls)  = Set l × Sets n ls
 \end{code}

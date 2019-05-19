@@ -10,7 +10,8 @@ function spaces (Section~\ref{sec:naryfunction}) which empowers us to write
 generalised combinators (Sections \ref{sec:narycombinators} and \ref{sec:narycong})
 usable with minimal user input. We then see how the notions introduced to
 tackle our original motivations can be mobilised for other efforts in generic
-programming from an arity-generic zipWith to a direct style definition of printf.
+programming from an arity-generic zipWith (Section~\ref{sec:zipwith}) to a
+direct style definition of printf (Section~\ref{sec:printf}).
 
 \section{N-ary Combinators... for N up to 2}\label{sec:nary2}
 
@@ -74,7 +75,8 @@ type) rather than being able to highlight the important changes.
 
 The standard library defines a set of handy combinators to talk about
 indexed families without having to manipulate their index explicitly.
-These form a compositional type-level Domain Specific Language (DSL):
+These form a compositional type-level Domain Specific
+Language~\cite{DBLP:journals/csur/Hudak96} (DSL):
 each combinator has a precise semantics and putting them together builds
 an overall meaning.
 
@@ -129,8 +131,9 @@ the operators diamond and box of modal logic.
 quantifiers are represented as dependent pairs. We introduce \AR{Σ}, a dependent
 record parameterised by a type \AB{A} and a type family \AB{P}. It has two fields
 \ARF{proj₁} for a value of type \AB{A} and \ARF{proj₂} for a proof of type
-{(\AB{P} \ARF{proj₁})}. We can construct pairs using \AIC{\_,\_} and we can
-project either of the pair's components simply by using its field's name.
+{(\AB{P} \ARF{proj₁})}. We can build and pattern-match against pairs using the
+constructor \AIC{\_,\_} and we can project either of the pair's components simply
+by using its field's name.
 
 \ExecuteMetaData[StateOfTheArt.tex]{sigma}
 
@@ -279,7 +282,7 @@ which update the ambient index using an arbitrary function. The notation
 \AF{\_⊢\_} is inspired by the convention in type theory to consider that
 proofs in sequent calculus are written in an ambient context and that we
 may use a turnstile to describe the addition of newly-bound variables to
-this context.
+this context (see e.g. Martin L\"of's work~\cite{martin1982constructive}).
 
 \ExecuteMetaData[StateOfTheArt.tex]{update}
 
@@ -309,8 +312,9 @@ to cluttered types which are not much better than their fully expanded counterpa
 Let us look at an example. We introduce \AD{Pw} (for ``pointwise'') the relational
 equivalent of the predicate lifting \AD{All} we have been as our running example so
 far. The inductive family \AD{Pw} is parameterised by a relation \AB{R} and ensures
-its two index list have the same length and that they are compatible with \AB{R} in
-a pointwise manner.
+its two index list are compatible with \AB{R} in a pointwise manner. If both lists
+are empty then they are trivially related (\AIC{[]}); otherwise we demand that their
+heads are related by \AB{R} and their tails are related pointwise (\AIC{\_∷\_}).
 
 \ExecuteMetaData[StateOfTheArt.tex]{pointwise}
 
@@ -321,8 +325,8 @@ build the relation corresponding to the fact that \AB{R} implies \AB{S}.
 
 \ExecuteMetaData[StateOfTheArt.tex]{appw}
 
-Ideally we could have instead used combinators similar to the ones for unary
-predicates and have simply written:
+Ideally we could have instead used binary version of the combinators for unary
+predicates we saw earlier and have simply written:
 
 \ExecuteMetaData[Examples.tex]{appw}
 
@@ -419,7 +423,7 @@ problem between to constructor-headed expression
 {\AB{c} \AB{e₁} ⋯ \AB{eₘ} ≈ \AB{d} \AB{f₁} ⋯ \AB{fₙ}}.
 
 \paragraph{Success} Either the constructors \AB{c} and \AB{d} match up, we learn
-that \AB{m} equals \AB{n} and we can reduce the problem to unifying their
+that \AB{m} equals \AB{n} and we can reduce the problem to unifying the constructors'
 respective arguments by forming the new unification problems
 {(\AB{e₁} ≈ \AB{f₁}) ⋯ (\AB{eₘ} ≈ \AB{fₙ})}.
 
@@ -555,15 +559,16 @@ from the natural number corresponding to the function's arity.
 
 From these two observations, we decide that our representation will be
 parameterised by a natural number which we will use to compute a number
-of big right-nested products.
+of right-nested products.
 
-\paragraph{Right-Nested Products} The two building blocks of right-nested
+\paragraph{Right-Nested Products} The two basic building blocks of right-nested
 products are a binary product \AF{\_×\_} and the unit type \AF{⊤}.
 
 We obtain the binary product as the non-dependent special case of \AR{Σ} we
-introduced in Section~\ref{def:sigma}. We did not mention at the time but
+introduced in Section~\ref{def:sigma}. We did not mention it at the time but
 record types in Agda enjoy η-rules. That is to say that any value \AB{p} of type
-{(\AR{Σ} \AB{A} \AB{P})} is equal to {(\ARF{proj₁} \AB{p} \AIC{,} \ARF{proj₂} \AB{p})}
+{(\AR{Σ} \AB{A} \AB{P})} is definitionally equal to
+{(\ARF{proj₁} \AB{p} \AIC{,} \ARF{proj₂} \AB{p})}.
 
 The unit type is defined as a record with no field. Every value of type
 \AF{⊤} is equal to the canonical value \AIC{tt}.
@@ -609,7 +614,7 @@ of {(\AF{Levels} \AB{n})} together with a corresponding \AB{n}-tuple of type
 {(\AF{Set} \AB{r})} for the codomain.
 
 \paragraph{Semantics}\label{sec:semantics}
-This encoding has a straightforward semantics by induction on \AB{n} and case
+This encoding has a straightforwrd semantics by induction on \AB{n} and case
 analysis on the {(\AF{Sets} \AB{n} \AB{ls})} argument. A \AIC{zero}-ary function
 type is simply the codomain whilst a {(\AIC{suc} \AB{n})}-ary one is a unary
 function type whose codomain is the \AB{n}-ary function type obtained by
@@ -619,7 +624,7 @@ induction hypothesis.
 
 If we look carefully at this definition we can notice that the function
 \AF{Arrows} may only ever get stuck if the natural number is not concrete.
-Even though we do take the \AF{Sets} argument apart, it has a product type
+Even though we do take the \AF{Sets} argument apart, it is a product type
 and thus enjoys η-rules. We have achieved the degree of unifier-friendliness
 we were aiming for.
 
@@ -700,7 +705,7 @@ match the domains of the operator. Its type could be summarised as:
 
 \medskip
 \noindent\begin{tabular}{@{}l@{~}l}
-  \AF{liftₙ} : & ∀ k n.\\
+  \AF{liftₙ} : & ∀ \AB{k} \AB{n}.\\
                & (\AB{B₁} → ⋯ → \AB{Bₖ} → \AB{B}) →\\
                & (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B₁}) →\\
                \multicolumn{2}{c}{\vdots} \\
@@ -801,10 +806,10 @@ to have a definition of \AF{Product} which has a special case for \AF{Sets}
 of size exactly \AN{1} returning the \AF{Set} without pairing it with \AR{⊤}.
 This makes \AF{curryₙ} and \AF{uncurryₙ} more useful overall. Most generic
 functions however are easier to implement using the \AR{⊤}-terminated version
-of \AF{Product}. We provide both as well as conversion functions between the
-two.
+of \AF{Product}. In our library we provide both as well as conversion
+functions between the two interpretations.
 
-\subsection{N-ary Zipping Functions}
+\subsection{N-ary Zipping Functions}\label{sec:zipwith}
 
 Some functions are easier to write curried but nicer to use uncurried.
 This is the case with \AF{zipWithₙ}, the \AB{n}-ary version of the
@@ -815,7 +820,7 @@ write its type as:
 
 \medskip
 \noindent\begin{tabular}{@{}l@{~}l}
-  \AF{zipWithₙ} : & ∀ n. (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
+  \AF{zipWithₙ} : & ∀ \AB{n}. (\AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
                   & \AD{List} \AB{A₁} → ⋯ → \AD{List} \AB{Aₙ} → \AD{List} \AB{B}
 \end{tabular}
 \medskip
@@ -867,7 +872,7 @@ of arguments we already had.
 
 \ExecuteMetaData[N-ary.tex]{zw-auxn}
 
-\subsection{Printf}
+\subsection{Printf}\label{sec:printf}
 
 The definitions we have introduced also make it easy to implement \AF{Printf}
 in direct style as opposed to the classic accumulator-based
@@ -927,7 +932,7 @@ to manipulate unary predicates. We then got acquainted with the unifier and the
 process by which a unification constraint can lead to the reconstruction of a
 function's implicit arguments. Based on this knowledge we have designed a
 representation of \AB{n}-ary function types particularly amenable to such
-reconstructions. This allowed us define \AB{n}-ary versions of the congruence,
+reconstructions. This allowed us to define \AB{n}-ary versions of congruence,
 substitution as well as the basic building blocks of the type-level DSL for
 relations we longed for. The notions introduced to set the stage for these
 definitions were already powerful enough to allow us to revisit classic
@@ -947,7 +952,7 @@ subset.
 \AF{zipWith} started as drive-by generic programming, demonstrating that the
 notions introduced for our purposes could be useful in a more general context.
 Previous efforts in dependently typed programming such as Weirich and
-Casinghino~\cite{DBLP:conf/plpv/WeirichC10} work on not only arity-generic
+Casinghino's work~\cite{DBLP:conf/plpv/WeirichC10} on not only arity-generic
 but also datatype-generic programming suggest we may push this further.
 Their solution predates universe polymorphism and although the traversals
 are adequately heterogeneous, their approach would not scale to universe

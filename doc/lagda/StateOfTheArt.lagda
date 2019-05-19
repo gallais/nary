@@ -344,8 +344,8 @@ empty [] = refl
 %<*toList>
 \begin{code}
 toList : ∃⟨ All P ⟩ → List ∃⟨ P ⟩
-toList (_ , [])      = []
-toList (_ , p ∷ ps)  = (_ , p) ∷ toList (_ , ps)
+toList ([]      , [])      = []
+toList (x ∷ xs  , p ∷ ps)  = (x , p) ∷ toList (xs , ps)
 \end{code}
 %</toList>
 \begin{code}
