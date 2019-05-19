@@ -12,17 +12,20 @@ open import StateOfTheArt as SOA
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; ¬_
          ; ⊥
          ; antisym
+         ; _<⋆>_
          )
 
 
 private
   variable
-    a b c d e p : Level
+    a b c d e p r s : Level
     A : Set a
     B : Set b
     C : Set c
     D : Set d
     E : Set e
+    R : A → B → Set r
+    S : A → B → Set s
 
 ------------------------------------------------------------------------
 -- Introduction
@@ -345,6 +348,16 @@ all₂ = _≟_
 -- _⇒_ : (A₁ → ⋯ → Aₙ → Set r) → (A₁ → ⋯ → Aₙ → Set s) → (A₁ → ⋯ → Aₙ → Set _)
 -- P ⇒ Q = λ a₁ → ⋯ → λ aₙ → P a₁ ⋯ aₙ → Q a₁ ⋯ aₙ
 
+
+\end{code}
+%<*appw>
+\begin{code}
+_<⋆>_ : ∀[ Pw (R ⇒ S) ⇒ Pw R ⇒ Pw S ]
+\end{code}
+%</appw>
+\begin{code}
+[]        <⋆> []        = []
+(f ∷ fs)  <⋆> (x ∷ xs)  = (f x) ∷ (fs <⋆> xs)
 
 \end{code}
 %<*antisym>

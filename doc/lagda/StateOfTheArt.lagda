@@ -13,7 +13,8 @@ private
     J : Set j
     P : A → Set p
     Q : A → Set q
-    R : A → Set r
+    R : A → B → Set r
+    S : A → B → Set r
     x y t u : A
 
 \end{code}
@@ -156,12 +157,14 @@ _⇒_ : (I → Set p) → (I → Set q) → (I → Set (p ⊔ q))
 %</implies>
 \begin{code}
 
+private
+  module ALLAP where
 \end{code}
 %<*ap>
 \begin{code}
-_<⋆>_ : ∀[ All (P ⇒ Q) ⇒ All P ⇒ All Q ]
-[]        <⋆> []        = []
-(f ∷ fs)  <⋆> (x ∷ xs)  = f x ∷ (fs <⋆> xs)
+    _<⋆>_ : ∀[ All (P ⇒ Q) ⇒ All P ⇒ All Q ]
+    []        <⋆> []        = []
+    (f ∷ fs)  <⋆> (x ∷ xs)  = f x ∷ (fs <⋆> xs)
 \end{code}
 %</ap>
 \begin{code}
@@ -427,4 +430,26 @@ antisym z≤n        z≤n        = refl
 antisym (s≤s m≥n)  (s≤s m≤n)  = cong suc (antisym m≥n m≤n)
 
 
+module _ {A : Set a} {B : Set b} where
+\end{code}
+%<*pointwise>
+\begin{code}
+  data Pw (R : A → B → Set r) :
+          List A → List B → Set (a ⊔ b ⊔ r) where
+    []   : Pw R [] []
+    _∷_  : R x y → Pw R xs ys → Pw R (x ∷ xs) (y ∷ ys)
+\end{code}
+%</pointwise>
+\begin{code}
+
+\end{code}
+%<*appw>
+\begin{code}
+_<⋆>_ : ∀[ Pw (λ x → R x ⇒ S x) xs ⇒
+           Pw R xs ⇒ Pw S xs ]
+\end{code}
+%</appw>
+\begin{code}
+[]        <⋆> []        = []
+(f ∷ fs)  <⋆> (x ∷ xs)  = (f x) ∷ (fs <⋆> xs)
 \end{code}

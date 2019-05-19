@@ -296,24 +296,35 @@ a typical use case of such a combinator. If the function at hand is called
 We started by showing both the type and the implementation of each of our
 examples. Although convenient at first to build an understanding of which
 arguments are explicit and which ones are implicit, we are in the end only
-interested in the way combinators let us write types. From now on, we
+interested in the way combinators let us write types. In this section, we
 focus on the types and only the types of our examples.
 
 The combinators presented earlier are all available in the standard library.
-They work really well for unary predicates. Unfortunately they do not scale
-beyond that. Meaning that if we are manipulating binary relations for
-instance we have to partially apply the relations in question before we can
-use our usual unary combinators. This leads to cluttered types which are not
-much better than their fully expanded counterparts. For instance, assuming
-that \AF{\_≤\_} is the usual order on natural numbers and \AF{\_≥\_} its
-converse, to state that \AF{\_≤\_} is antisymmetric we have to write:
+As we have demonstrated, they work really well for unary predicates. Unfortunately
+they do not scale beyond that. Meaning that if we are manipulating binary relations
+for instance we have to explicitly introduce one of the indices and partially apply
+the relations in question before we can use our usual unary combinators. This leads
+to cluttered types which are not much better than their fully expanded counterparts.
 
-\ExecuteMetaData[StateOfTheArt.tex]{brokenantisym}
+Let us look at an example. We introduce \AD{Pw} (for ``pointwise'') the relational
+equivalent of the predicate lifting \AD{All} we have been as our running example so
+far. The inductive family \AD{Pw} is parameterised by a relation \AB{R} and ensures
+its two index list have the same length and that they are compatible with \AB{R} in
+a pointwise manner.
 
-Ideally we could have used combinators similar to the ones for unary predicates
-and have simply written:
+\ExecuteMetaData[StateOfTheArt.tex]{pointwise}
 
-\ExecuteMetaData[Examples.tex]{antisym}
+To state the relational equivalent to \AD{All}'s \AF{\_<⋆>\_} using our unary
+combinators to manipulate predicates, we need to partially apply \AD{Pw} to
+\AB{xs} to make it a predicate as well as explicitly use a λ-abstraction to
+build the relation corresponding to the fact that \AB{R} implies \AB{S}.
+
+\ExecuteMetaData[StateOfTheArt.tex]{appw}
+
+Ideally we could have instead used combinators similar to the ones for unary
+predicates and have simply written:
+
+\ExecuteMetaData[Examples.tex]{appw}
 
 We could duplicate the definitions for unary predicates and have equivalent
 combinators for binary relations however this will create two new issues.
