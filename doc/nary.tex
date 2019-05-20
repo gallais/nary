@@ -971,6 +971,18 @@ definitions were already powerful enough to allow us to revisit classic
 dependently typed traversals such as an \AB{n}-ary version of \AF{zipWith},
 or direct-style \AF{printf}.
 
+\paragraph{Limitations} We are relying heavily on two key features of Agda
+which are not implemented in other dependently typed as far as we know.
+First of all \AF{Level}s are a first class notion, they can be manipulated,
+stored in data structures, passed around and computed with just like any other
+primitive type. Second, Agda's unifier has a (principled!) heuristics which
+attempts to invert stuck functions when solving constraints. Without the first
+feature we would be unable to write our representation and without the second
+the user would be burdened with always having to mention the arity of the
+relation they are manipulating. We hope that our detailed use-case incites
+other languages to implement similar features, and users to find new ways to
+exploit them.
+
 \paragraph{Codes for N-ary Function Types} We can find in the literature various
 deep~\cite{DBLP:conf/icfp/VerbruggenVH08} and
 shallow~\cite{DBLP:journals/jfp/McBride02,DBLP:conf/plpv/WeirichC10}
