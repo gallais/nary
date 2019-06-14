@@ -9,7 +9,7 @@
 
 \patchcmd{\beamer@sectionintoc}
   {\vfill}
-  {\vskip\itemsep}
+  {\bigskip}
   {}
   {}
 
@@ -242,6 +242,21 @@
 
 \subsection{N-ary Combinators}
 
+\begin{frame}{Congruence}
+  \ExecuteMetaData[N-ary.tex]{Cong}
+  \ExecuteMetaData[N-ary.tex]{cong}
+\end{frame}
+
+\begin{frame}{Lifting of Type Constructors}
+  \ExecuteMetaData[N-ary.tex]{lift2}
+  \ExecuteMetaData[N-ary.tex]{implication}
+\end{frame}
+
+\begin{frame}{Adjustments To The Ambient Index}
+  \ExecuteMetaData[N-ary.tex]{compose}
+\end{frame}
+
+
 \section{Going Further}
 
 \begin{frame}{Results}
@@ -255,7 +270,7 @@
       \item Unification-friendly representation of n-ary functions and products
       \item Proofs of n-ary congruence and substitution
       \item Combinators for n-ary relations and functions
-      \item Direct style printf
+      \item Direct style \AF{printf}
     \end{itemize}
     \bigskip
     \item Coming up:
@@ -268,6 +283,22 @@
       \item Dependent n-ary functions and products
     \end{itemize}
   \end{itemize}
+\end{frame}
+
+\section*{Appendix}
+
+\begin{frame}{Printf}
+  \small
+  \begin{minipage}[t]{0.5\textwidth}
+    \ExecuteMetaData[Printf.tex]{chunk}
+  \end{minipage}\begin{minipage}[t]{0.4\textwidth}
+    \ExecuteMetaData[Printf.tex]{chunks}
+  \end{minipage}
+
+  \ExecuteMetaData[Printf.tex]{format}
+  \ExecuteMetaData[Printf.tex]{assemble}
+  \ExecuteMetaData[Printf.tex]{printf}
+  \normalsize
 \end{frame}
 
 \end{document}
