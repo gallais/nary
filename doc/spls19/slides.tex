@@ -212,8 +212,36 @@
 
 \section{Generic Level Polymorphic N-ary Functions}
 
+\begin{frame}{Design Constraints}
+
+  We want to
+  \begin{itemize}
+    \item Define representation of \AB{n}-ary functions
+    \item Give it a semantics (here called \AF{⟦\_⟧})
+  \end{itemize}
+
+  \bigskip
+  Such that when faced with constraints involving concrete types,
+  Agda can easily reconstruct the representation.
+
+  \bigskip
+  Example: recover \AB{?r} from {\AF{⟦} \AB{?r} \AF{⟧} ≈ (\AD{ℕ} → \AF{Set})}
+\end{frame}
+
 \subsection{Unification-Friendly Representation}
+
+\begin{frame}{Representation}
+  \begin{minipage}{0.5\textwidth}
+    \ExecuteMetaData[N-ary.tex]{levels}
+  \end{minipage}\begin{minipage}{0.4\textwidth}
+    \onslide<2->{\ExecuteMetaData[N-ary.tex]{tolevel}}
+  \end{minipage}
+  \onslide<3->{\ExecuteMetaData[N-ary.tex]{sets}}
+  \onslide<4>{\ExecuteMetaData[N-ary.tex]{arrows}}
+\end{frame}
+
 \subsection{N-ary Combinators}
+
 \subsection{Going Further}
 
 
