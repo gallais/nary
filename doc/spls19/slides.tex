@@ -1,25 +1,223 @@
-\documentclass[slidestop,compress,9pt]{beamer}
+\documentclass[compress,9pt]{beamer}
 
-\usepackage[sci,plain]{strathclyde}
+\usepackage[sci]{strathclyde}
 \makeatletter
 \let\code\@undefined
 \usepackage{agda}
 \usepackage{catchfilebetweentags}
-\setlength{\mathindent}{0em}
+\usepackage[T1]{fontenc}
+
+\patchcmd{\beamer@sectionintoc}
+  {\vfill}
+  {\vskip\itemsep}
+  {}
+  {}
+
+\input{unicode}
+\input{commands}
+\strathsetidentity{Department of}{Computer \& Information Sciences}
 
 \title{Generic Level Polymorphic N-ary Functions}
 \author{Guillaume ALLAIS}
 \institute{SPLS @ LFCS}
 \date[Jun 17]{June 17, 2019}
-\strathsetidentity{Department of}{Computer \& Information Sciences}
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}[t]
 \maketitle
 \end{frame}
 
-\begin{frame}{Plan}
+\begin{frame}
+\tableofcontents
+\end{frame}
+
+\section{State Of the Art}
+
+\subsection{N-ary Combinators... for N up to 2}
+
+\begin{frame}{Propositional Equality}
+  \ExecuteMetaData[StateOfTheArt.tex]{equality}
+  \ExecuteMetaData[StateOfTheArt.tex]{cong}
+  \ExecuteMetaData[StateOfTheArt.tex]{subst}
+\end{frame}
+
+\begin{frame}{Binary Versions}
+  \ExecuteMetaData[StateOfTheArt.tex]{cong2}
+  \ExecuteMetaData[StateOfTheArt.tex]{subst2}
+\end{frame}
+
+\begin{frame}{Wish: N-ary Versions}
+  \hspace*{\mathindent}\begin{tabular}{@{}l@{~}l}
+    \AF{congₙ} : & (\AB{f} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
+                 & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ → \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+                 & \AB{f} \AB{a₁} ⋯ \AB{aₙ} \AD{≡} \AB{f} \AB{b₁} ⋯ \AB{bₙ}
+  \end{tabular}
+
+  \medskip
+
+  \hspace*{\mathindent}\begin{tabular}{@{}l@{~}l}
+    \AF{substₙ} : & (\AB{R} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AF{Set} \AB{r}) →\\
+                  & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ → \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+                  & \AB{R} \AB{a₁} ⋯ \AB{aₙ} → \AB{R} \AB{b₁} ⋯ \AB{bₙ}
+  \end{tabular}
+\end{frame}
+
+\subsection{Working with Indexed Families}
+
+\begin{frame}{List}
+  \ExecuteMetaData[StateOfTheArt.tex]{list}
+  \ExecuteMetaData[StateOfTheArt.tex]{all}
+\end{frame}
+
+\begin{frame}{Quantifiers}
+  \ExecuteMetaData[StateOfTheArt.tex]{universal}
+  \ExecuteMetaData[StateOfTheArt.tex]{iuniversal}
+  \ExecuteMetaData[StateOfTheArt.tex]{replicate}
+\end{frame}
+
+\begin{frame}{Lifting of Type Constructors}
+\ExecuteMetaData[StateOfTheArt.tex]{implies}
+\ExecuteMetaData[StateOfTheArt.tex]{ap}
+\end{frame}
+
+\begin{frame}{Adjustments To The Ambient Index}
+  \ExecuteMetaData[StateOfTheArt.tex]{update}
+  \ExecuteMetaData[StateOfTheArt.tex]{join}
+\end{frame}
+
+\section{Requirements}
+
+\begin{frame}{Wishes}
+\end{frame}
+
+\section{Getting Acquainted With the Unifier}
+
+\begin{frame}{Unification}
+
+  \begin{itemize}
+    \item Use case\medskip
+
+    Mechanical process to reconstruct missing values:
+    \begin{itemize}
+      \item Implicit arguments
+      \item Boring details the programmer left out
+    \end{itemize}
+
+    Principled: the generated solutions (if any) are unique.
+
+    \bigskip
+
+    \item Unification Problems: {\AB{lhs} ≈ \AB{rhs}}\medskip
+
+    \begin{itemize}
+      \item \AB{?a} stands for a metavariable
+      \item {\AB{e}\,[\AB{?a₁}, ⋯ ,\AB{?aₙ}]} for expression \AB{e} mentioning \AB{?a₁} to \AB{?aₙ}
+      \item {\AB{c} \AB{e₁} ⋯ \AB{eₙ} for a} constructor \AB{c} applied to \AB{n} expressions
+    \end{itemize}
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Unification Tests}
+  Agda does unification all the time.\medskip
+
+  It is easy for us to ask Agda to solve unification problems
+
+  \begin{itemize}
+    \item Leave out values to create metavariables
+    \item State that two expressions are equal to start a unification problem
+  \end{itemize}
+
+  \bigskip
+  For instance, {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}:
+
+  \ExecuteMetaData[Unifier.tex]{unifproblem}
+
+\end{frame}
+
+\begin{frame}{Instantiation}
+  \begin{alertblock}{Problem: {\AB{?a} ≈ \AB{e}\,[\AB{?a₁} ⋯ \AB{?aₙ}]}}
+    Unifying a meta-variable with an expression which does not mention it.
+  \end{alertblock}
+
+  \bigskip
+  \begin{enumerate}
+    \item Instantiate \AB{?a} to {\AB{e}\,[\AB{?a₁} ⋯ \AB{?aₙ}]}
+    \item Discard the problem
+  \end{enumerate}
+
+  \bigskip Example:
+  \ExecuteMetaData[Unifier.tex]{instantiation}
+\end{frame}
+
+\begin{frame}{Constructor Headed Problems}
+
+  \begin{alertblock}{Problem: {\AB{c} \AB{e₁} ⋯ \AB{eₘ} ≈ \AB{d} \AB{f₁} ⋯ \AB{fₙ}}}
+    Unifying two constructor-headed expressions.
+  \end{alertblock}
+
+  \bigskip
+  \begin{enumerate}
+    \item Make sure the constructors \AB{c} and \AB{d} are equal
+    \item This means \AB{m} equals \AB{n}
+    \item Replace problem with subproblems {(\AB{e₁} ≈ \AB{f₁}) ⋯ (\AB{eₘ} ≈ \AB{fₙ})}
+  \end{enumerate}
+
+  \bigskip Example:
+  \ExecuteMetaData[Unifier.tex]{unifconstr}
+\end{frame}
+
+\begin{frame}{Avoid Computations... Unless (Part I)}
+
+  Avoid generating unification problems involving recursive functions.
+
+  \begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{nary}
+  \end{minipage}\begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{unsolved}
+  \end{minipage}
+  \bigskip
+  \onslide<2>{
+    Unless the recursion goes away in the cases you are interested in.
+
+    \begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{normalised0}
+    \end{minipage}\begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{normalised1}
+    \end{minipage}
+  }
+\end{frame}
+
+\begin{frame}{Avoid Computations... Unless (Part II)}
+
+  Avoid generating unification problems involving recursive functions.
+
+  \begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{nary}
+  \end{minipage}\begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{notinverted}
+  \end{minipage}
+  \bigskip
+  \onslide<2>{
+    Unless the recursion is trivially invertible.
+
+    \begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{inverted0}
+    \end{minipage}\begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{inverted}
+    \end{minipage}
+  }
+\end{frame}
+
+\section{Generic Level Polymorphic N-ary Functions}
+
+\subsection{Unification-Friendly Representation}
+\subsection{N-ary Combinators}
+\subsection{Going Further}
+
+
+\begin{frame}
 \end{frame}
 
 \end{document}

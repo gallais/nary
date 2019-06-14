@@ -92,6 +92,14 @@ _ = refl
 \begin{code}
 
 \end{code}
+%<*inverted0>
+\begin{code}
+_ : nary _ ℕ ≡ ℕ
+_ = refl
+\end{code}
+%</inverted0>
+
+\end{code}
 %<*inverted>
 \begin{code}
 _ : nary _ ℕ ≡ (ℕ → ℕ)
