@@ -22,6 +22,15 @@ _ = refl
 
 
 \end{code}
+%<*sharedunifproblem>
+\begin{code}
+_ : let ?A = _ in (?A → ?A) ≡ (ℕ → ℕ)
+_ = refl
+\end{code}
+%</sharedunifproblem>
+\begin{code}
+
+\end{code}
 %<*unifconstr>
 \begin{code}
 _ : (ℕ → _) ≡ (ℕ → ℕ)

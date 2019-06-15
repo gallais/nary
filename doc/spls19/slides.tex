@@ -148,10 +148,14 @@
   \end{itemize}
 
   \bigskip
-  For instance, {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}:
+  For instance, {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})} and
+  {(\AB{?A} → \AB{?A}) ≈ (\AD{ℕ} → \AD{ℕ})}
 
-  \ExecuteMetaData[Unifier.tex]{unifproblem}
-
+  \begin{minipage}{0.35\textwidth}
+    \ExecuteMetaData[Unifier.tex]{unifproblem}
+  \end{minipage}\begin{minipage}{0.55\textwidth}
+    \ExecuteMetaData[Unifier.tex]{sharedunifproblem}
+  \end{minipage}
 \end{frame}
 
 \begin{frame}{Instantiation}
