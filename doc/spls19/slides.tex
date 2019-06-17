@@ -37,17 +37,24 @@
 \subsection{N-ary Combinators... for N up to 2}
 
 \begin{frame}{Propositional Equality}
+  Propositional equality as an inductive family:
+
   \ExecuteMetaData[StateOfTheArt.tex]{equality}
+
+  Congruence and substitution proven by pattern-matching:
   \ExecuteMetaData[StateOfTheArt.tex]{cong}
   \ExecuteMetaData[StateOfTheArt.tex]{subst}
 \end{frame}
 
 \begin{frame}{Binary Versions}
+  Binary congruence and substitution proven by pattern-matching:
   \ExecuteMetaData[StateOfTheArt.tex]{cong2}
   \ExecuteMetaData[StateOfTheArt.tex]{subst2}
 \end{frame}
 
 \begin{frame}{Wish: N-ary Versions}
+  What we would like to have: n-ary congruence and substitution.\bigskip
+
   \hspace*{\mathindent}\begin{tabular}{@{}l@{~}l}
     \AF{congₙ} : & (\AB{f} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
                  & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ → \AB{aₙ} \AD{≡} \AB{bₙ} → \\
@@ -66,28 +73,48 @@
 \subsection{Working with Indexed Families}
 
 \begin{frame}{List}
+  Example datatype our families will be indexed over:
+
   \ExecuteMetaData[StateOfTheArt.tex]{list}
+
+  \bigskip
+  Predicate transformer: \AB{P} holds of all the values in the list:
+
   \ExecuteMetaData[StateOfTheArt.tex]{all}
 \end{frame}
 
 \begin{frame}{Quantifiers}
+  Explicit and implicit universal quantifier:
+
   \ExecuteMetaData[StateOfTheArt.tex]{universal}
   \ExecuteMetaData[StateOfTheArt.tex]{iuniversal}
+
+  Example: if \AB{P} is universally true, then it holds of all the elements
+  of any list.
   \ExecuteMetaData[StateOfTheArt.tex]{replicate}
 \end{frame}
 
 \begin{frame}{Lifting of Type Constructors}
-\ExecuteMetaData[StateOfTheArt.tex]{implies}
-\ExecuteMetaData[StateOfTheArt.tex]{ap}
+
+  Lifting implication between \AF{Set}s to implication between families:
+  \ExecuteMetaData[StateOfTheArt.tex]{implies}
+
+  \bigskip
+  Example: Applicative's 'ap' for \AD{All}:
+  \ExecuteMetaData[StateOfTheArt.tex]{ap}
 \end{frame}
 
 \begin{frame}{Adjustments To The Ambient Index}
+
+  Updating the index we are talking about:
   \ExecuteMetaData[StateOfTheArt.tex]{update}
+
+  \bigskip
+  Example: concat's action on the predicate transformer \AD{All}:
   \ExecuteMetaData[StateOfTheArt.tex]{join}
 \end{frame}
 
 \section{Requirements}
-
 
 \begin{frame}{Wishes}
 
@@ -138,6 +165,7 @@
 \end{frame}
 
 \begin{frame}{Unification Tests}
+  \begin{minipage}{0.75\textwidth}
   Agda does unification all the time.\medskip
 
   It is easy for us to ask Agda to solve unification problems
@@ -146,6 +174,10 @@
     \item Leave out values to create metavariables
     \item State that two expressions are equal to start a unification problem
   \end{itemize}
+  \end{minipage}
+  \begin{minipage}{0.15\textwidth}
+    \ExecuteMetaData[Unifier.tex]{unsolvedproblem}
+  \end{minipage}
 
   \bigskip
   For instance, {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})} and
@@ -160,11 +192,12 @@
 
 \begin{frame}{Instantiation}
   \begin{alertblock}{Problem: {\AB{?a} ≈ \AB{e}\,[\AB{?a₁} ⋯ \AB{?aₙ}]}}
-    Unifying a meta-variable with an expression which does not mention it.
+    Unifying a meta-variable with an expression.
   \end{alertblock}
 
   \bigskip
   \begin{enumerate}
+    \item Make sure \AB{?a} does not appear in \AB{?a₁}, ⋯, \AB{?aₙ}
     \item Instantiate \AB{?a} to {\AB{e}\,[\AB{?a₁} ⋯ \AB{?aₙ}]}
     \item Discard the problem
   \end{enumerate}

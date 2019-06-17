@@ -12,6 +12,16 @@ open import StateOfTheArt
         )
 
 \end{code}
+%<*unsolvedproblem>
+\begin{code}
+_ : _
+_ = _
+\end{code}
+%</unsolvedproblem>
+\begin{code}
+
+
+\end{code}
 %<*unifproblem>
 \begin{code}
 _ : (_ → _) ≡ (ℕ → ℕ)
