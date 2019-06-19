@@ -1026,13 +1026,14 @@ Agda's unifier that it is only looking for a solution in a restricted
 subset.
 
 \paragraph{Datatype genericity} Our implementation of an \AB{n}-ary version of
-\AF{zipWith} started as drive-by generic programming, demonstrating that the
-notions introduced for our purposes could be useful in a more general context.
-This result is not new either with or without dependent
+\AF{zipWith} started as an example of the types and accompanying generic programs one can
+write with our library. It demonstrates that the notions introduced for our
+purposes can be useful in a more general context. This result is not new either
+with or without dependent
 types~\cite{DBLP:journals/jfp/FridlenderI00,DBLP:journals/jfp/McBride02}.
 It can however be extended as previous efforts in dependently typed programming
 have demonstrated: Weirich and Casinghino's work~\cite{DBLP:conf/plpv/WeirichC10}
-on arity-generic but also data-generic programming suggest we should be
+on arity-generic but also data-generic programming suggests we should be
 able to push this further. Their development predates the addition of universe
 polymorphism to Agda and although the traversals are adequately heterogeneous,
 their approach would not scale to universe polymorphic functions.
