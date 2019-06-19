@@ -94,7 +94,7 @@ Before we can even talk about concrete indexed families, describe these
 various combinators, and demonstrate their usefulness, we need to
 introduce the data the families in our running examples will be indexed
 over. We pick \AD{List} the level polymorphic type of lists parameterised
-by the type of their elements: they are both well-known and complex enough
+by the type of their elements: it is both well-known and complex enough
 to allow us to write interesting types.
 
 \ExecuteMetaData[StateOfTheArt.tex]{list}
@@ -125,9 +125,9 @@ meant to \emph{surround} the indexed expression they are acting upon, we
 define them as essentially pairs of matching opening and closing brackets.
 The opening one is systematically decorated with a mnemonic symbol: \AF{∃}
 for existential quantification, \AF{Π} for explicit dependent quantification
-and \AF{∀} for implicit universal quantification. Additionally we use chevrons
-for existential quantifiers and square brackets for universal ones, recalling
-the operators diamond and box of modal logic.
+and \AF{∀} for implicit universal quantification. Additionally we use angle
+brackets for existential quantifiers and square brackets for universal ones,
+recalling the operators diamond and box of modal logic.
 
 \paragraph{Existential Quantifier}\label{def:sigma} In type theory, existential
 quantifiers are represented as dependent pairs. We introduce \AR{Σ}, a dependent
@@ -252,7 +252,7 @@ a predicate on values and one on lists of values.
 Threading the index is only the least invasive of the modes of action
 available to us. But we can also more actively interact with the ambient
 index either by ignoring it completely, adjusting it using a function
-or overwriting it entirely. We won't detail the last option as, as always,
+or overwriting it entirely. We will not detail the last option as, as always,
 overwriting is adjusting with a constant function.
 
 \paragraph{Constant} Although we have so far only manipulated indexed families,
@@ -345,23 +345,23 @@ pointwise lifting of common type constructors, and adjustment functions.
 
 \section{Plan} We can start to draw out the structure of our contribution now
 that we have a good idea of the current state of the art, its limitation, and
-the extension we want to see. Here are the key points we need to deliver:
+the extension we want to see. Here are the key points we deliver:
 
-\paragraph{Reified Types} We need to come up with a representation of n-ary
+\paragraph{Reified Types} We come up with a representation of n-ary
 functions which is as general as possible: the domains should be allowed to
-be different types, even types defined at different levels.
+be different types, even types defined at different universe levels.
 
-\paragraph{Semantics} We need to give a semantics taking a reified type and
+\paragraph{Semantics} We give a semantics taking a reified type and
 computing its meaning as a \AF{Set} at some level which will also need to
 be computed.
 
-\paragraph{Invertible} The representation and its semantics should be unifier
+\paragraph{Invertible} The representation and its semantics are unifier
 friendly. That is to say that if using a combinators yields a constraint of
 the form ``this type should be the result of evaluating the representation of
-an n-ary function type'' then Agda should be able to reconstruct the
+an n-ary function type'' then Agda will be able to reconstruct the
 representation and discharge the constraints without any outside help.
 
-\paragraph{Applications} Lastly we need to deliver the two wishes we
+\paragraph{Applications} Lastly we deliver the two wishes we
 formulated earlier by actually implementing the n-ary versions of \AF{cong},
 \AF{subst}, and the various combinators for manipulating indexed families.
 
@@ -765,8 +765,8 @@ function and mapping {(\AF{\_\$} \AB{x})} on it.
 \section{Congruence and Substitution}\label{sec:narycong}
 
 So far the types we have ascribed our combinators for \AB{n}-ary relations
-where fairly tame. Things get a bit more complicated when dealing with
-congruence and substitution: we won't be able to write these functions' types
+were fairly tame. Things get a bit more complicated when dealing with
+congruence and substitution: we will not be able to write these functions' types
 directly. Both definitions follow the same structure: we start by computing
 the operation's type by induction and we can then implement the operation itself.
 
@@ -795,9 +795,11 @@ proofs of equality as we go along.
 
 \subsection{Substitution}
 
-The definition of \AF{Substₙ} is identical to that of \AF{Congₙ} except for the
-base case: instead of \AB{f} and \AB{g} being two values, they are two \AF{Set}s.
-We demand a function transporting values in \AB{f} to ones in \AB{g}.
+The definition of \AF{Substₙ} is identical to that of \AF{Congₙ} except that we
+now consider predicates rather than arbitrary functions. The base case is therefore
+dealing with \AB{P} and \AB{Q} being two \AF{Set}s rather than two values at a given
+type. As a consequence we demand a function transporting proofs of \AB{P} to proofs
+of \AB{Q} rather than a proof of equality.
 
 \ExecuteMetaData[N-ary.tex]{Subst}
 
