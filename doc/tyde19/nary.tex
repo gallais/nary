@@ -151,7 +151,8 @@ for that value.
 
 \ExecuteMetaData[StateOfTheArt.tex]{toList}
 
-\paragraph{Universal Quantifiers} The pendant of existential quantification
+\paragraph{Universal Quantifiers}\label{par:universalquantifiers}
+The pendant of existential quantification
 is universal quantification. In type theory this corresponds to a dependent
 function space. Here we have room for variations and we can consider both
 the explicit (\AF{Π[\_]}) \emph{and} the implicit (\AF{∀[\_]}) universal
@@ -1034,3 +1035,15 @@ on arity-generic but also data-generic programming suggest we should be
 able to push this further. Their development predates the addition of universe
 polymorphism to Agda and although the traversals are adequately heterogeneous,
 their approach would not scale to universe polymorphic functions.
+
+\paragraph{Parametricity as a derivation principle} Some of the examples we have
+used could have been obtained ``for free'' by parametricity: \AD{All} and \AD{Pw}
+are respectively the predicate and the relational interpretation of the definition
+of \AD{List}. The function \AF{replicate} defined in
+Section~\ref{par:universalquantifiers}
+is the free theorem corresponding to the predicate interpretation and a similar
+free theorem stating that if a relation is reflexive then so is its pointwise
+lifting could have been derived for \AD{Pw}. Bernardy, Jansson, and Paterson's
+work on parametricity for dependent types~\cite{DBLP:journals/jfp/BernardyJP12}
+generalises these constructions to all inductive types and n-ary relational
+liftings.
