@@ -391,9 +391,15 @@ force Agda to introduce metavariables by using an underscore (\AF{\_}) as a
 placeholder for a subterm and use \AIC{refl} at the proof of a propositional
 equality to force it to unify the two expressions stated to be equal. For
 instance in the following test we force Agda to check that
-{(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})}.
+{(\AB{?A} → \AB{?B})} can be unified with {(\AD{ℕ} → \AD{ℕ})}.
 
 \ExecuteMetaData[Unifier.tex]{unifproblem}
+
+To express problems where a single metavariable is used multiple times,
+we can use a \AK{let} binder. For instance, we can indeed unify
+{(\AB{?A} → \AB{?A})} with {(\AD{ℕ} → \AD{ℕ})}.
+
+\ExecuteMetaData[Unifier.tex]{sharedunifproblem}
 
 Whenever Agda cannot solve a metavariable by unification it is highlighted
 in yellow like so: \AgdaUnsolvedMeta{\_}. Whenever Agda cannot satisfy a
