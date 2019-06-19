@@ -9,6 +9,8 @@ open import StateOfTheArt as Unary
          ; _≡_; refl; ⊥
          ; map
          ; cong
+         ; cong₂
+         ; subst
          )
 open import Relation.Binary.PropositionalEquality
 open import Data.Empty
@@ -191,13 +193,15 @@ Arrows (suc n)  (a , as)  b = a → Arrows n as b
 ------------------------------------------------------------------------
 -- n-ary versions of `cong` and `subst`
 
+module OLD where
+
 \end{code}
 %<*Cong>
 \begin{code}
-Congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
-        (f g : Arrows n as R) → Set (r ⊔ (⨆ n ls))
-Congₙ zero     f g = f ≡ g
-Congₙ (suc n)  f g = ∀ {x y} → x ≡ y → Congₙ n (f x) (g y)
+  Congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
+          (f g : Arrows n as R) → Set (r ⊔ (⨆ n ls))
+  Congₙ zero     f g = f ≡ g
+  Congₙ (suc n)  f g = ∀ {x y} → x ≡ y → Congₙ n (f x) (g y)
 \end{code}
 %</Cong>
 \begin{code}
@@ -205,10 +209,10 @@ Congₙ (suc n)  f g = ∀ {x y} → x ≡ y → Congₙ n (f x) (g y)
 \end{code}
 %<*cong>
 \begin{code}
-congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
-        (f : Arrows n as R) → Congₙ n f f
-congₙ zero     f       = refl
-congₙ (suc n)  f refl  = congₙ n (f _)
+  congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
+          (f : Arrows n as R) → Congₙ n f f
+  congₙ zero     f       = refl
+  congₙ (suc n)  f refl  = congₙ n (f _)
 \end{code}
 %</cong>
 \begin{code}
@@ -216,10 +220,10 @@ congₙ (suc n)  f refl  = congₙ n (f _)
 \end{code}
 %<*Subst>
 \begin{code}
-Substₙ : ∀ n {ls} {as : Sets n ls} →
-         (f g : Arrows n as (Set r)) → Set (r ⊔ (⨆ n ls))
-Substₙ zero     f g = f → g
-Substₙ (suc n)  f g = ∀ {x y} → x ≡ y → Substₙ n (f x) (g y)
+  Substₙ : ∀ n {ls} {as : Sets n ls} →
+           (P Q : Arrows n as (Set r)) → Set (r ⊔ (⨆ n ls))
+  Substₙ zero     P Q = P → Q
+  Substₙ (suc n)  P Q = ∀ {x y} → x ≡ y → Substₙ n (P x) (Q y)
 \end{code}
 %</Subst>
 \begin{code}
@@ -227,10 +231,10 @@ Substₙ (suc n)  f g = ∀ {x y} → x ≡ y → Substₙ n (f x) (g y)
 \end{code}
 %<*subst>
 \begin{code}
-substₙ : ∀ {n r ls} {as : Sets n ls} →
-         (f : Arrows n as (Set r)) → Substₙ n f f
-substₙ {zero}   f x     = x
-substₙ {suc n}  f refl  = substₙ (f _)
+  substₙ : ∀ {n r ls} {as : Sets n ls} →
+           (P : Arrows n as (Set r)) → Substₙ n P P
+  substₙ {zero}   P x     = x
+  substₙ {suc n}  P refl  = substₙ (P _)
 \end{code}
 %</subst>
 \begin{code}
@@ -262,6 +266,59 @@ uncurryₙ (suc n)  f = uncurry (uncurryₙ n ∘ f)
 \end{code}
 %</uncurry>
 \begin{code}
+
+\end{code}
+%<*equaln>
+\begin{code}
+Equalₙ : ∀ n {ls} {as : Sets n ls} →
+         (vs ws : Product n as) → Sets n ls
+Equalₙ zero     vs        ws        = _
+Equalₙ (suc n)  (v , vs)  (w , ws)  = (v ≡ w) , Equalₙ n vs ws
+\end{code}
+%</equaln>
+\begin{code}
+
+\end{code}
+%</fromequaln>
+\begin{code}
+fromEqualₙ : ∀ n {ls} {as : Sets n ls} {vs ws : Product n as} →
+             Product n (Equalₙ n vs ws) → vs ≡ ws
+fromEqualₙ zero     _           = refl
+fromEqualₙ (suc n)  (eq , eqs)  = cong₂ _,_ eq (fromEqualₙ n eqs)
+\end{code}
+%</fromequaln>
+\begin{code}
+
+
+\end{code}
+%<*refactoredcong>
+\begin{code}
+module _ n {ls} {as : Sets n ls} {R : Set r} (f : Arrows n as R) where
+
+  g : Product n as → R
+  g = uncurryₙ n f
+
+  congₙ : ∀ {l r} → Arrows n (Equalₙ n l r) (g l ≡ g r)
+  congₙ = curryₙ n (λ eqs → cong g (fromEqualₙ n eqs))
+\end{code}
+%</refactoredcong>
+\begin{code}
+
+
+\end{code}
+%<*refactoredsubst>
+\begin{code}
+module _ {n ls} {as : Sets n ls} (P : Arrows n as (Set r)) where
+
+  Q : Product n as → Set r
+  Q = uncurryₙ n P
+
+  substₙ : ∀ {l r} → Arrows n (Equalₙ n l r) (Q l → Q r)
+  substₙ = curryₙ n (λ eqs → subst Q (fromEqualₙ n eqs))
+\end{code}
+%</refactoredsubst>
+\begin{code}
+
 
 
 module _ {a b} {A : Set a} {B : Set b} where
@@ -456,11 +513,11 @@ module _ m n {ls ls'} {as : Sets m ls} {bs : Sets n ls'}
          (f : Arrows m as (A → Arrows n bs B)) where
 
   private
-    g : Product m as → A → Product n bs → B
-    g vs a ws = uncurryₙ n (uncurryₙ m f vs a) ws
+    f' : Product m as → A → Product n bs → B
+    f' vs a ws = uncurryₙ n (uncurryₙ m f vs a) ws
 
-  congAt : ∀ {vs ws a₁ a₂} → a₁ ≡ a₂ → g vs a₁ ws ≡ g vs a₂ ws
-  congAt {vs} {ws} = cong (λ a → g vs a ws)
+  congAt : ∀ {vs ws a₁ a₂} → a₁ ≡ a₂ → f' vs a₁ ws ≡ f' vs a₂ ws
+  congAt {vs} {ws} = cong (λ a → f' vs a ws)
 \end{code}
 %</congat>
 \begin{code}
