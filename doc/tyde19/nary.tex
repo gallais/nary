@@ -912,15 +912,19 @@ of arguments we already had.
 
 \subsection{Printf}\label{sec:printf}
 
-The definitions we have introduced also make it easy to implement \AF{Printf}
+The combinators we have introduced also make it easy to implement \AF{printf}
 in direct style as opposed to the classic accumulator-based
-definition~\cite{DBLP:conf/icfp/Augustsson98,DBLP:journals/jfp/Danvy98}. We work in a
-simplified setting which allows us to focus on the contribution our \AB{n}-ary
-combinators bring to the table. Our \AF{printf} will only take natural numbers
-as arguments and we will not worry about defining the lexer transforming a raw
-string into a \AF{Format}, that is to say a list of \AD{Chunk}s each being
-either a \AIC{Nat} corresponding to a ``\%u'' directive (i.e. unsigned decimal
-integer) or a \AIC{Raw} string.
+definition~\cite{DBLP:conf/icfp/Augustsson98,DBLP:journals/jfp/Danvy98}. We
+effectively produce a well typed version of the ill typed intermediate
+function Asai, Kiselyov, and Shan consider in their derivation of a direct-style
+implementation using delimited control~\cite{DBLP:journals/lisp/AsaiKS11}.
+
+We work in a simplified setting which allows us to focus on the contribution our
+\AB{n}-ary combinators bring to the table. Our \AF{printf} will only take natural
+numbers as arguments and we will not worry about defining the lexer transforming
+a raw \AD{String} into a \AF{Format}, that is to say a list of \AD{Chunk}s each
+being either a \AIC{Nat} corresponding to a ``\%u'' directive (i.e. unsigned
+decimal integer) or a \AIC{Raw} string.
 
 \begin{minipage}[t]{0.25\textwidth}
   \ExecuteMetaData[Printf.tex]{chunk}
