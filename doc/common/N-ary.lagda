@@ -8,6 +8,7 @@ open import StateOfTheArt as Unary
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; _∪_; ¬_
          ; _≡_; refl; ⊥
          ; map
+         ; cong
          )
 open import Relation.Binary.PropositionalEquality
 open import Data.Empty
@@ -185,6 +186,7 @@ Arrows (suc n)  (a , as)  b = a → Arrows n as b
 -- 2. action on the corresponding vector of n Sets
 -- 3. actual program, typed thank to the function defined in step 2.
 ------------------------------------------------------------------------
+
 
 ------------------------------------------------------------------------
 -- n-ary versions of `cong` and `subst`
@@ -436,6 +438,33 @@ mapₙ (suc n)  f g = mapₙ n f ∘ g
 \end{code}
 %</map>
 \begin{code}
+
+\end{code}
+%<*focus>
+\begin{code}
+focusₙ : ∀ n {ls} {as : Sets n ls} →
+         Arrows n as (A → B) → (A → Arrows n as B)
+focusₙ n f a = mapₙ n (_$ a) f
+\end{code}
+%</focus>
+\begin{code}
+
+\end{code}
+%<*congat>
+\begin{code}
+module _ m n {ls ls'} {as : Sets m ls} {bs : Sets n ls'}
+         (f : Arrows m as (A → Arrows n bs B)) where
+
+  private
+    g : Product m as → A → Product n bs → B
+    g vs a ws = uncurryₙ n (uncurryₙ m f vs a) ws
+
+  congAt : ∀ {vs ws a₁ a₂} → a₁ ≡ a₂ → g vs a₁ ws ≡ g vs a₂ ws
+  congAt {vs} {ws} = cong (λ a → g vs a ws)
+\end{code}
+%</congat>
+\begin{code}
+
 
 ------------------------------------------------------------------------
 -- hole at the n-th position
