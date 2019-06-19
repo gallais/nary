@@ -104,7 +104,7 @@ _ = refl
 \end{code}
 %<*unsolved>
 \begin{code}
-_ : nary _ _ ≡ (ℕ → ℕ)
+_ : nary _ _ ≡ (ℕ → A)
 _ = refl
 \end{code}
 %</unsolved>

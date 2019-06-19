@@ -476,19 +476,19 @@ constructors for unification to succeed.
 
 To demonstrate this phenomenon we introduce a type \AF{nary} of \AB{n}-ary
 functions on natural numbers. It is parameterised by the return type of the
-\AB{n}-ary function and defined by induction \AB{n}.
+\AB{n}-ary function and defined by induction on \AB{n}.
 
 \ExecuteMetaData[Unifier.tex]{nary}
 
 In general, it is impossible to solve the unification constraint
-{\AF{nary} \AB{?n} \AB{?A}} ≈ {(\AD{ℕ} → \AB{A})}. If the natural
-number is not specified then \AF{nary} is stuck. And there is no
-hope to solve this problem; indeed there are two solutions because
-every unary function is also a nullary symbol whose type is a function
-type. As explained earlier, Agda communicates to us this failure to solve
-the two metavariables passed to \AF{nary} as arguments by highlighting them
-in yellow, \AIC{refl} is also highlighted as the source of the unification
-constraint which could not be satisfied.
+{\AF{nary} \AB{?n} \AB{?A}} ≈ {(\AD{ℕ} → \AB{A})}. If the natural number
+is not specified then \AF{nary} is stuck. And there is no hope to solve
+this problem; indeed there are two solutions (\AB{?n} could be either \AN{0}
+or \AN{1}) because every unary function is also a nullary symbol whose type
+is a function type. As explained earlier, Agda communicates to us this
+failure to solve the two metavariables passed to \AF{nary} as arguments by
+highlighting them in yellow, \AIC{refl} is also highlighted as the source
+of the unification constraint which could not be satisfied.
 
 \ExecuteMetaData[Unifier.tex]{unsolved}
 
@@ -520,13 +520,13 @@ For instance if the \AF{Set} parameter to \AF{nary} is known to be
 \AD{ℕ} then the right-hand side of the first equation is \AD{ℕ} and
 the second's one has the shape {(\AD{ℕ} → \_)}. These two are clearly
 disjoint and so Agda can invert \AF{nary} and figure out that the
-arity we left out is \AN{1}.
+arity we left out in the following example is \AN{1}.
 
 \ExecuteMetaData[Unifier.tex]{inverted}
 
-If we had passed {(\AD{ℕ} → \AD{ℕ})} instead then the two right-hand
-sides would not have been obviously disjoint and Agda would have given
-up on trying to invert \AF{nary}.
+If we had passed {(\AD{ℕ} → \AD{ℕ})} instead as the second argument to
+\AF{nary} then the two right-hand sides would not have been obviously
+disjoint and Agda would have given up on trying to invert \AF{nary}.
 
 \ExecuteMetaData[Unifier.tex]{notinverted}
 
