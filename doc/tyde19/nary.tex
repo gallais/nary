@@ -1040,12 +1040,13 @@ their approach would not scale to universe polymorphic functions.
 
 \paragraph{Parametricity as a derivation principle} Some of the examples we have
 used could have been obtained ``for free'' by parametricity: \AD{All} and \AD{Pw}
-are respectively the predicate and the relational interpretation of the definition
-of \AD{List}. The function \AF{replicate} defined in
+are respectively the predicate and the relational inductive-style translations of
+the definition of \AD{List}. The function \AF{replicate} defined in
 Section~\ref{par:universalquantifiers}
-is the free theorem corresponding to the predicate interpretation and a similar
-free theorem stating that if a relation is reflexive then so is its pointwise
-lifting could have been derived for \AD{Pw}. Bernardy, Jansson, and Paterson's
-work on parametricity for dependent types~\cite{DBLP:journals/jfp/BernardyJP12}
+is a consequence of the abstraction theorem corresponding to the predicate
+interpretation and a similar free theorem stating that if a relation is reflexive
+then so is its pointwise lifting could have been derived for \AD{Pw}. Bernardy,
+Jansson, and Paterson's work on parametricity for dependent
+types~\cite{DBLP:journals/jfp/BernardyJP12} makes these observations formal and
 generalises these constructions to all inductive types and n-ary relational
 liftings.
