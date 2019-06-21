@@ -12,7 +12,8 @@ usable with minimal user input. We then see how the notions introduced to
 tackle our original motivations can be mobilised for other efforts in generic
 programming from an arity-generic zipWith (Section~\ref{sec:zipwith}) to a
 direct style definition of printf (Section~\ref{sec:printf}).
-All the code in this paper is written in Agda~\cite{DBLP:conf/afp/Norell08}.
+All the code in this paper is written in Agda; we discuss some of the more
+esoteric aspects of the language in Appendix~\ref{appendix:agda}.
 
 \section{N-ary Combinators... for N up to 2}\label{sec:nary2}
 
@@ -386,7 +387,8 @@ containing exactly the metavariables \AB{?a₁} to \AB{?aₙ},
 expressions and {\AB{lhs} ≈ \AB{rhs}} to state a unification problem
 between two expressions \AB{lhs} and \AB{rhs}.
 
-\paragraph{Unification Tests} We can easily trigger the resolution of
+\paragraph{Unification Tests}\label{sec:unificationtest}
+We can easily trigger the resolution of
 unification problems by writing unit tests in the source language. We can
 force Agda to introduce metavariables by using an underscore (\AF{\_}) as a
 placeholder for a subterm and use \AIC{refl} at the proof of a propositional
@@ -1050,3 +1052,92 @@ Jansson, and Paterson's work on parametricity for dependent
 types~\cite{DBLP:journals/jfp/BernardyJP12} makes these observations formal and
 generalises these constructions to all inductive types and n-ary relational
 liftings.
+
+\appendix
+
+\section{Agda-Specific Features}\label{appendix:agda}
+
+We provide here a description of some of the more esoteric Agda features
+used in this paper. Readers interested in a more thorough introduction to
+the language may consider reading Ulf Norell's lecture
+notes~\cite{DBLP:conf/afp/Norell08}.
+
+\subsection{Implicit Variable Generalisation}\label{appendix:agda:variable}
+
+Agda supports the implicit generalisation of variables appearing in type signatures.
+Every time an unbound variable is used, the reader can safely assume that
+it was automatically introduced using a prenex implicit quantifier just like
+it would have been in either Haskell or OCaml.
+
+In the type of the following definition for instance, \AB{A} and \AB{B} are
+two \AF{Set}s introduced implicitly together with their respective universe
+levels \AB{a} and \AB{b} (see Appendix~\ref{appendix:agda:level}) and \AB{x}
+and \AB{y} are two values of type \AB{A}. All have been introduced using this
+implicit generalisation mechanism.
+
+\ExecuteMetaData[StateOfTheArt.tex]{cong}
+
+If we had not relied on the implicit generalisation mechanism, we would have
+needed to write the following type declaration.
+
+\ExecuteMetaData[Appendix.tex]{congtype}
+
+\subsection{Meaning of Underscore}
+
+Underscores have different meanings in different contexts. They can either stand
+for argument positions when defining identifiers, trivial values Agda should be
+able to reconstruct, or discarded values.
+
+\subsubsection{Argument Position in a Mixfix Identifier}
+
+Users can define arbitrary mixfix identifiers~\cite{DBLP:conf/ifl/DanielssonN08},
+a generalisation of infix identifiers which turns any alternating list of name
+parts and argument positions into a valid identifier. These argument positions
+are denoted using an underscore. For instance ({∀[\_]}) is a unary operator,
+({\_::\_}) corresponds to a binary infix identifier and ({\_\%=\_⊢\_}) is a
+ternary operator.
+
+\subsubsection{Trivial Value}
+
+Programmers can leave out trivial parts of a definition by using an underscore
+instead of spelling out the tedious details. This will be accepted by Agda as
+long as it is able to reconstruct the missing value by unification. We discuss
+these use cases further in Section~\ref{sec:unificationtest}.
+
+\subsubsection{Ignored Binder}
+
+An underscore used in place of an identifier in a binder means that the binding
+should be discarded. For instance {(λ \_ → a)} defines a constant function.
+Toplevel bindings can similarly be discarded which is a convenient way of
+writing unit tests (in type theory programs can be run at typechecking time)
+without polluting the namespace. The following unnamed definition checks for
+instance the result of applying addition defined on natural numbers to
+\AN{2} and \AN{3}.
+
+\ExecuteMetaData[Appendix.tex]{unittest}
+
+\subsection{Universe levels}\label{appendix:agda:level}
+
+Agda avoids Russell-style paradoxes by introducing a tower of universes
+\AF{Set₀} (usually written \AF{Set}), \AF{Set₁}, \AF{Set₂}, etc. Each
+\AF{Setₙ} does not itself have type \AF{Setₙ} but rather \AF{Setₙ₊₁} thus
+preventing circularity.
+
+We can form {\bf function types} from a domain type in \AF{Setₘ} to a codomain
+type in \AF{Setₙ}. Such a function type lives at the level corresponding
+to the maxium of \AB{m} and \AB{n}. This maximum is denoted {(\AB{m} \AF{⊔} \AB{n})}.
+
+An {\bf inductive} type or a {\bf record} type storing values of type \AF{Setₙ}
+needs to be defined at universe level \AB{n} or higher. We can combine multiple
+constraints of this form by using the maximum operator. The respective definitions
+of propositional equality in Section~\ref{sec:nary2} and dependent pairs in
+Section~\ref{def:sigma} are examples of such data and record types.
+
+Without support for a mechanism to define {\bf level polymorphic functions},
+we would need to duplicate a lot of code. Luckily Agda has a primitive notion
+of universe levels called \AD{Level}. We can write level polymorphic code by
+quantifying over such a \AD{Level} \AB{l} and form the universe at level
+\AB{l} by writing (\AF{Set} \AB{l}). The prototypical example of such a
+level polymorphic function is the identity function \AF{id} defined as follows.
+
+\ExecuteMetaData[Appendix.tex]{identity}
