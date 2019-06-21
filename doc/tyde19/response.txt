@@ -1,0 +1,16 @@
+* Expanded the discussion of limitations and suggested coping strategies
+  (e.g. using meta-programming where manipulating universe levels is
+  uncontroversial, added a reference to MetaCoq)
+
+* Cited and discussed relationship to Kiselyov's Functional Un-unparsing
+
+* Added a paragraph discussing Parametricity as a derivation principle
+  for All, Pw, their n-ary and datatype-generic generalisation and the
+  corresponding generic definition of replicate. Added a reference to
+  Bernardy, Jansson and Paterson's Parametricity for dependent types.
+
+* Added congAt to the library with pseudotype:
+
+  congAt : (f : Arrows m as (A → Arrows n bs B)) →
+           a₁ ≡ a₂ → f vs a₁ ws ≡ f vs a₂ ws
+
