@@ -3,10 +3,9 @@
 
 module Unifier where
 
-open import N-ary
-  using (_×_; ⊤)
+open import Data.Nat.Base using (ℕ; zero; suc)
 open import StateOfTheArt
-  using ( ℕ; zero; suc; _+_
+  using ( _×_; ⊤
         ; _,_
         ; _≡_; refl
         )

@@ -6,16 +6,17 @@ module N-ary where
 open import Level using (Level; 0ℓ; _⊔_)
 open import StateOfTheArt as Unary
   hiding ( ∃⟨_⟩; ∀[_]; Π[_]; _⇒_; _∩_; _∪_; ¬_
-         ; _≡_; refl; ⊥
+         ; _≡_; refl
          ; map
          ; cong
          ; cong₂
          ; subst
          )
+open Listy
+
+open import Data.Nat.Base using (ℕ; zero; suc)
 open import Relation.Binary.PropositionalEquality
-open import Data.Empty
--- open import Data.Fin.Base using (Fin; zero; suc)
-open import Function using (_∘_; id)
+open import Function using (_∘_; id; flip; _$_)
 
 private
   variable
@@ -26,49 +27,6 @@ private
     I : Set i
     J : Set j
     R : Set r
-
-------------------------------------------------------------------------
--- Building blocks of right-nested product
-
-\end{code}
-%<*unit>
-\begin{code}
-record ⊤ : Set where
-  constructor tt
-\end{code}
-%</unit>
-\begin{code}
-
-infixr 2 _×_
-_×_ : Set a → Set b → Set (a ⊔ b)
-A × B = Σ A λ _ → B
-
-curry : ∀ {a b c} {A : Set a} {B : A → Set b} {C : (a : A) → B a → Set c}
-        (f : (p : Σ A B) → C (Σ.proj₁ p) (Σ.proj₂ p)) →
-        (a : A) (b : B a) → C a b
-curry f a b = f (a , b)
-
-
-uncurry : ∀ {a b c} {A : Set a} {B : A → Set b} {C : (a : A) → B a → Set c}
-          (f : (a : A) (b : B a) → C a b) →
-          (p : Σ A B) → C (Σ.proj₁ p) (Σ.proj₂ p)
-uncurry f (a , b) = f a b
-
-
-\end{code}
-%<*lift>
-\begin{code}
-record Lift ℓ (A : Set a) : Set (ℓ ⊔ a) where
-  constructor lift
-  field lower : A
-\end{code}
-%</lift>
-\begin{code}
-
-------------------------------------------------------------------------
--- Concrete examples can be found in README.N-ary. This file's comments
--- are more focused on the implementation details and the motivations
--- behind the design decisions.
 
 ------------------------------------------------------------------------
 -- Type Definitions
@@ -98,7 +56,6 @@ Levels (suc n)  = Level × Levels n
 %</levels>
 \begin{code}
 
-
 private
   variable
     n : ℕ
@@ -119,7 +76,6 @@ private
 
 -- Second, a "vector" of `n` Sets whose respective Levels are determined
 -- by the `Levels n` input.
-
 
 \end{code}
 %<*sets>
@@ -166,7 +122,6 @@ Product (suc n)  (a , as)  = a × Product n as
 -- by a "vector" of `n` Sets and whose codomain is B. `Arrows` forms such
 -- a type of shape `A₁ → ⋯ → Aₙ → B` by induction on `n`.
 
-
 \end{code}
 %<*arrows>
 \begin{code}
@@ -177,67 +132,6 @@ Arrows (suc n)  (a , as)  b = a → Arrows n as b
 %</arrows>
 \begin{code}
 
-
-------------------------------------------------------------------------
--- Generic Programs
-
--- Once we have these type definitions, we can write generic programs
--- over them. They will typically be split into two or three definitions:
-
--- 1. action on the vector of n levels (if any)
--- 2. action on the corresponding vector of n Sets
--- 3. actual program, typed thank to the function defined in step 2.
-------------------------------------------------------------------------
-
-
-------------------------------------------------------------------------
--- n-ary versions of `cong` and `subst`
-
-module OLD where
-
-\end{code}
-%<*Cong>
-\begin{code}
-  Congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
-          (f g : Arrows n as R) → Set (r ⊔ (⨆ n ls))
-  Congₙ zero     f g = f ≡ g
-  Congₙ (suc n)  f g = ∀ {x y} → x ≡ y → Congₙ n (f x) (g y)
-\end{code}
-%</Cong>
-\begin{code}
-
-\end{code}
-%<*cong>
-\begin{code}
-  congₙ : ∀ n {ls} {as : Sets n ls} {R : Set r} →
-          (f : Arrows n as R) → Congₙ n f f
-  congₙ zero     f       = refl
-  congₙ (suc n)  f refl  = congₙ n (f _)
-\end{code}
-%</cong>
-\begin{code}
-
-\end{code}
-%<*Subst>
-\begin{code}
-  Substₙ : ∀ n {ls} {as : Sets n ls} →
-           (P Q : Arrows n as (Set r)) → Set (r ⊔ (⨆ n ls))
-  Substₙ zero     P Q = P → Q
-  Substₙ (suc n)  P Q = ∀ {x y} → x ≡ y → Substₙ n (P x) (Q y)
-\end{code}
-%</Subst>
-\begin{code}
-
-\end{code}
-%<*subst>
-\begin{code}
-  substₙ : ∀ {n r ls} {as : Sets n ls} →
-           (P : Arrows n as (Set r)) → Substₙ n P P
-  substₙ {zero}   P x     = x
-  substₙ {suc n}  P refl  = substₙ (P _)
-\end{code}
-%</subst>
-\begin{code}
 
 ------------------------------------------------------------------------
 -- (un)curry
@@ -267,6 +161,9 @@ uncurryₙ (suc n)  f = uncurry (uncurryₙ n ∘ f)
 %</uncurry>
 \begin{code}
 
+------------------------------------------------------------------------
+-- Pointwise equality for n-ary products
+
 \end{code}
 %<*equaln>
 \begin{code}
@@ -277,6 +174,8 @@ Equalₙ (suc n)  (v , vs)  (w , ws)  = (v ≡ w) , Equalₙ n vs ws
 \end{code}
 %</equaln>
 \begin{code}
+
+-- Pointwise equality implies propositional equality
 
 \end{code}
 %</fromequaln>
@@ -289,182 +188,6 @@ fromEqualₙ (suc n)  (eq , eqs)  = cong₂ _,_ eq (fromEqualₙ n eqs)
 %</fromequaln>
 \begin{code}
 
-
-\end{code}
-%<*refactoredcong>
-\begin{code}
-module _ n {ls} {as : Sets n ls} {R : Set r} (f : Arrows n as R) where
-
-  g : Product n as → R
-  g = uncurryₙ n f
-
-  congₙ : ∀ {l r} → Arrows n (Equalₙ n l r) (g l ≡ g r)
-  congₙ = curryₙ n (λ eqs → cong g (fromEqualₙ n eqs))
-\end{code}
-%</refactoredcong>
-\begin{code}
-
-
-\end{code}
-%<*refactoredsubst>
-\begin{code}
-module _ {n ls} {as : Sets n ls} (P : Arrows n as (Set r)) where
-
-  Q : Product n as → Set r
-  Q = uncurryₙ n P
-
-  substₙ : ∀ {l r} → Arrows n (Equalₙ n l r) (Q l → Q r)
-  substₙ = curryₙ n (λ eqs → subst Q (fromEqualₙ n eqs))
-\end{code}
-%</refactoredsubst>
-\begin{code}
-
-
-
-module _ {a b} {A : Set a} {B : Set b} where
-
-  map : (f : A → B) → List A → List B
-  map f [] = []
-  map f (x ∷ xs) = f x ∷ map f xs
-
-  zipWith : ∀ {c} {C : Set c} → (A → B → C) → List A → List B → List C
-  zipWith f (a ∷ as) (b ∷ bs) = f a b ∷ zipWith f as bs
-  zipWith f _ _ = []
-
-open import Function using (_∘_; flip; _$_)
-
-\end{code}
-%<*zw-aux-type>
-\begin{code}
-zw-aux : ∀ n {ls} {as : Sets n ls} →
-         (Product n as → R) →
-         (Product n (List <$> as) → List R)
-\end{code}
-%</zw-aux-type>
-%<*zw-aux0>
-\begin{code}
-zw-aux 0 f as = []
-\end{code}
-%</zw-aux0>
-%<*zw-aux1>
-\begin{code}
-zw-aux 1 f (as , _) = map (f ∘ (_, tt)) as
-\end{code}
-%</zw-aux1>
-%<*zw-auxn>
-\begin{code}
-zw-aux (suc n) f (as , ass) = zipWith _$_ fs as
-  where fs = zw-aux n (flip (curry f)) ass
-\end{code}
-%</zw-auxn>
-\begin{code}
-
-
-\end{code}
-%<*zipWith>
-\begin{code}
-zipWithₙ : ∀ n {ls} {as : Sets n ls} →
-           Arrows n as R → Arrows n (List <$> as) (List R)
-zipWithₙ n f = curryₙ n (zw-aux n (uncurryₙ n f))
-\end{code}
-%</zipWith>
-\begin{code}
-
-
-------------------------------------------------------------------------
--- projection of the k-th component
-
--- To know at which Set level the k-th projection out of an n-ary product
--- lives, we need to extract said level, by induction on k.
-{-
-
-Levelₙ : ∀ {n} → Levels n → Fin n → Level
-Levelₙ (l , _)  zero    = l
-Levelₙ (_ , ls) (suc k) = Levelₙ ls k
-
--- Once we have the Sets used in the product, we can extract the one we
--- are interested in, once more by induction on k.
-
-Projₙ : ∀ {n ls} → Sets n ls → ∀ k → Set (Levelₙ ls k)
-Projₙ (a , _)  zero    = a
-Projₙ (_ , as) (suc k) = Projₙ as k
-
--- Finally, provided a Product of these sets, we can extract the k-th value.
--- `projₙ` takes both `n` and `k` explicitly because we expect the user will
--- be using a concrete `k` (potentially manufactured using `Data.Fin`'s `#_`)
--- and it will not be possible to infer `n` from it.
-
-projₙ : ∀ n {ls} {as : Sets n ls} k → Product n as → Projₙ as k
-projₙ 1               zero    v        = v
-projₙ (suc n@(suc _)) zero    (v , _)  = v
-projₙ (suc n@(suc _)) (suc k) (_ , vs) = projₙ n k vs
-projₙ 1 (suc ()) v
--}
-------------------------------------------------------------------------
--- removal of the k-th component
-
-{-
-Levelₙ⁻ : ∀ {n} → Levels n → Fin n → Levels (pred n)
-Levelₙ⁻               (_ , ls) zero    = ls
-Levelₙ⁻ {suc (suc _)} (l , ls) (suc k) = l , Levelₙ⁻ ls k
-Levelₙ⁻ {1} _ (suc ())
-
-Removeₙ : ∀ {n ls} → Sets n ls → ∀ k → Sets (pred n) (Levelₙ⁻ ls k)
-Removeₙ               (_ , as) zero    = as
-Removeₙ {suc (suc _)} (a , as) (suc k) = a , Removeₙ as k
-Removeₙ {1} _ (suc ())
-
-removeₙ : ∀ n {ls} {as : Sets n ls} k →
-          Product n as → Product (pred n) (Removeₙ as k)
-removeₙ (suc zero)          zero    _        = _
-removeₙ (suc (suc _))       zero    (_ , vs) = vs
-removeₙ (suc (suc zero))    (suc k) (v , _)  = v
-removeₙ (suc (suc (suc _))) (suc k) (v , vs) = v , removeₙ _ k vs
-removeₙ (suc zero) (suc ()) _
--}
-------------------------------------------------------------------------
--- insertion of a k-th component
-{-
-Levelₙ⁺ : ∀ {n} → Levels n → Fin (suc n) → Level → Levels (suc n)
-Levelₙ⁺         ls       zero    l⁺ = l⁺ , ls
-Levelₙ⁺ {suc _} (l , ls) (suc k) l⁺ = l , Levelₙ⁺ ls k l⁺
-Levelₙ⁺ {0} _ (suc ())
-
-Insertₙ : ∀ {n ls l⁺} → Sets n ls → ∀ k (a⁺ : Set l⁺) → Sets (suc n) (Levelₙ⁺ ls k l⁺)
-Insertₙ         as       zero    a⁺ = a⁺ , as
-Insertₙ {suc _} (a , as) (suc k) a⁺ = a , Insertₙ as k a⁺
-Insertₙ {zero} _ (suc ()) _
-
-insertₙ : ∀ n {ls l⁺} {as : Sets n ls} {a⁺ : Set l⁺} k (v⁺ : a⁺) →
-          Product n as → Product (suc n) (Insertₙ as k a⁺)
-insertₙ 0             zero    v⁺ vs       = v⁺
-insertₙ (suc n)       zero    v⁺ vs       = v⁺ , vs
-insertₙ 1             (suc k) v⁺ vs       = vs , insertₙ 0 k v⁺ _
-insertₙ (suc (suc n)) (suc k) v⁺ (v , vs) = v , insertₙ _ k v⁺ vs
-insertₙ 0 (suc ()) _ _
--}
-------------------------------------------------------------------------
--- update of a k-th component
-{-
-Levelₙᵘ : ∀ {n} → Levels n → Fin n → Level → Levels n
-Levelₙᵘ (_ , ls) zero    lᵘ = lᵘ , ls
-Levelₙᵘ (l , ls) (suc k) lᵘ = l , Levelₙᵘ ls k lᵘ
-
-Updateₙ : ∀ {n ls lᵘ} (as : Sets n ls) k (aᵘ : Set lᵘ) → Sets n (Levelₙᵘ ls k lᵘ)
-Updateₙ (_ , as) zero    aᵘ = aᵘ , as
-Updateₙ (a , as) (suc k) aᵘ = a , Updateₙ as k aᵘ
-
-updateₙ : ∀ n {ls lᵘ} {as : Sets n ls} k {aᵘ : _ → Set lᵘ} (f : ∀ v → aᵘ v)
-          (vs : Product n as) → Product n (Updateₙ as k (aᵘ (projₙ n k vs)))
-updateₙ 1             zero    f v        = f v
-updateₙ (suc (suc _)) zero    f (v , vs) = f v , vs
-updateₙ (suc (suc _)) (suc k) f (v , vs) = v , updateₙ _ k f vs
-updateₙ 1 (suc ()) _ _
-
-updateₙ′ : ∀ n {ls lᵘ} {as : Sets n ls} k {aᵘ : Set lᵘ} (f : Projₙ as k → aᵘ) →
-           Product n as → Product n (Updateₙ as k aᵘ)
-updateₙ′ n k = updateₙ n k
--}
 ------------------------------------------------------------------------
 -- compose function at the n-th position
 
@@ -621,6 +344,8 @@ quantₙ Q (suc n)  f = Q (λ x → quantₙ Q n (f x))
 ------------------------------------------------------------------------
 -- n-ary pointwise liftings
 
+-- Warm up: binary version
+
 \end{code}
 %<*lift2>
 \begin{code}
@@ -631,6 +356,8 @@ lift₂ (suc n)  op f g = λ x → lift₂ n op (f x) (g x)
 \end{code}
 %</lift2>
 \begin{code}
+
+-- Proper n-ary version
 
 lmap : (Level → Level) → ∀ n → Levels n → Levels n
 lmap f zero    ls       = _

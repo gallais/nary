@@ -6,7 +6,8 @@ AGDA_FILES:=\
   Unifier.lagda \
   N-ary.lagda \
   Printf.lagda \
-  Appendix.lagda
+  Appendix.lagda \
+  Applications.lagda
 
 AGDA_OUTPUT:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
 
@@ -20,6 +21,7 @@ PAPER_DEPENDENCIES:= \
   latex/agda.sty \
   latex/unicode.tex \
   latex/commands.tex \
+  latex/appendix.tex \
 
 .SECONDARY: $(AGDA_OUTPUT)
 
@@ -56,6 +58,10 @@ latex/commands.tex: ../common/commands.tex
 	cp $< $@
 
 latex/nary.tex: nary.tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/appendix.tex: appendix.tex
 	mkdir -p $(dir $@)
 	cp $< $@
 

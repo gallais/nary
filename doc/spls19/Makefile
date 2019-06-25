@@ -1,13 +1,14 @@
 PAPER=slides
 
 AGDA_FILES:=\
-  lagda/StateOfTheArt.lagda \
-  lagda/Examples.lagda \
-  lagda/Unifier.lagda \
-  lagda/N-ary.lagda \
-  lagda/Printf.lagda
+  StateOfTheArt.lagda \
+  Examples.lagda \
+  Unifier.lagda \
+  N-ary.lagda \
+  Printf.lagda \
+  Applications.lagda \
 
-AGDA_OUTPUT:=$(patsubst lagda/%.lagda,latex/%.tex,$(AGDA_FILES))
+AGDA_OUTPUT:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
 
 PAPER_DEPENDENCIES:= \
   common \

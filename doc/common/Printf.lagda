@@ -3,13 +3,13 @@ module Printf where
 
 open import Level using (0ℓ)
 open import StateOfTheArt
-  using ( ℕ; zero; suc
-        ; Σ; _,_
+  using ( Σ; _,_
         ; _≡_; refl
         )
 open import N-ary
 open import Function
 open import Data.List.Base using (List; []; _∷_)
+open import Data.Nat.Base using (ℕ; zero; suc)
 open import Data.String using (String; concat)
 open import Data.Nat.Show
 
