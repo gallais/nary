@@ -5,25 +5,50 @@ used in this paper. Readers interested in a more thorough introduction to
 the language may consider reading Ulf Norell's lecture
 notes~\cite{DBLP:conf/afp/Norell08}.
 
+\subsection{Syntax Highlighting}
+
+The colours used in this paper all have a meaning: keywords are highlighted
+in \AK{orange}; \AF{blue} denotes function and type definitions; \AIC{green}
+marks constructors; \ARF{pink} is associated to record fields and the
+corresponding projections.
+
+
 \subsection{Implicit Variable Generalisation}\label{appendix:agda:variable}
 
-Agda supports the implicit generalisation of variables appearing in type signatures.
-Every time an unbound variable is used, the reader can safely assume that
-it was automatically introduced using a prenex implicit quantifier just like
-it would have been in either Haskell or OCaml.
+Agda supports the implicit generalisation of variables appearing in type
+signatures. Every time a seemingly unbound variable is used, the reader
+can safely assume that it was automatically introduced by Agda using a
+prenex implicit quantifier. Both Haskell and OCaml behave similarly with
+respect to unbound type variables.
 
 In the type of the following definition for instance, \AB{A} and \AB{B} are
-two \AF{Set}s introduced implicitly together with their respective universe
-levels \AB{a} and \AB{b} (see Appendix~\ref{appendix:agda:level}) and \AB{x}
-and \AB{y} are two values of type \AB{A}. All have been introduced using this
-implicit generalisation mechanism.
+two \AF{Set}s of respective universe levels \AB{a} and \AB{b} (see
+Appendix~\ref{appendix:agda:level}) and \AB{x} and \AB{y} are two values of
+type \AB{A}. All of these variables have been introduced using this implicit
+generalisation mechanism.
 
 \ExecuteMetaData[StateOfTheArt.tex]{cong}
 
 If we had not relied on the implicit generalisation mechanism, we would have
-needed to write the following type declaration.
+needed to write the following verbose type declaration.
 
 \ExecuteMetaData[Appendix.tex]{congtype}
+
+This mechanism can also be used when defining an inductive family.
+In Section~\ref{def:all}, we introduced the predicate lifting \AD{All}
+in the following mannger. The careful reader will have noticed a
+number of unbound names: \AB{a}, \AB{A}, \AB{p} in the declaration
+of the type constructor and \AB{x} and \AB{xs} in the declaration of
+the data constructor \AIC{\_::\_}.
+
+\ExecuteMetaData[StateOfTheArt.tex]{all}
+
+This definition corresponds internally to the following expanded
+version (modulo the order in which the variables have been generalised
+over).
+
+\ExecuteMetaData[Appendix.tex]{all}
+
 
 \subsection{Meaning of Underscore}
 
@@ -33,11 +58,12 @@ able to reconstruct, or discarded values.
 
 \subsubsection{Argument Position in a Mixfix Identifier}
 
-Users can define arbitrary mixfix identifiers~\cite{DBLP:conf/ifl/DanielssonN08},
-a generalisation of infix identifiers which turns any alternating list of name
-parts and argument positions into a valid identifier. These argument positions
-are denoted using an underscore. For instance ({∀[\_]}) is a unary operator,
-({\_::\_}) corresponds to a binary infix identifier and ({\_\%=\_⊢\_}) is a
+Users can define arbitrary mixfix identifiers as names for both functions and
+constructors. Mixfix identifiers are a generalisation of infix identifiers
+which turns any alternating list of name parts and argument positions into a
+valid identifier~\cite{DBLP:conf/ifl/DanielssonN08}. These argument positions
+are denoted using an underscore. For instance \AF{∀[\_]} is a unary operator,
+(\AIC{\_::\_}) corresponds to a binary infix identifier and (\AF{\_\%=\_⊢\_}) is a
 ternary operator.
 
 \subsubsection{Trivial Value}
@@ -80,7 +106,7 @@ Without support for a mechanism to define {\bf level polymorphic functions},
 we would need to duplicate a lot of code. Luckily Agda has a primitive notion
 of universe levels called \AD{Level}. We can write level polymorphic code by
 quantifying over such a \AD{Level} \AB{l} and form the universe at level
-\AB{l} by writing (\AF{Set} \AB{l}). The prototypical example of such a
-level polymorphic function is the identity function \AF{id} defined as follows.
+\AB{l} by writing (\AF{Set} \AB{l}). The prototypical example of such a level
+polymorphic function is the identity function \AF{id} defined as follows.
 
 \ExecuteMetaData[Appendix.tex]{identity}

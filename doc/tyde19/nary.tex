@@ -12,7 +12,8 @@ usable with minimal user input. We then see how the notions introduced to
 tackle our original motivations can be mobilised for other efforts in generic
 programming from an arity-generic zipWith (Section~\ref{sec:zipwith}) to a
 direct style definition of printf (Section~\ref{sec:printf}).
-All the code in this paper is written in Agda; we discuss some of the more
+This paper is a literate Agda file\footnote{The source code is available at
+\url{https://github.com/gallais/nary}}; we discuss some of the more
 esoteric aspects of the language in Appendix~\ref{appendix:agda}.
 
 \section{N-ary Combinators... for N up to 2}\label{sec:nary2}
@@ -109,7 +110,7 @@ empty list satisfy \AB{P} and cons (\AIC{\_::\_}) is a proof that \AB{P}
 holds of all the elements of a non-empty list if it holds of its head
 and of all the elements in its tail.
 
-\ExecuteMetaData[StateOfTheArt.tex]{all}
+\ExecuteMetaData[StateOfTheArt.tex]{all}\label{def:all}
 
 Some of our examples require the introduction of \AD{Any}, the other classic
 predicate lifting on list. It takes a predicate and ensures that it holds of
