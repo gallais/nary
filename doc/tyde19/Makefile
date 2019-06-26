@@ -9,30 +9,37 @@ AGDA_FILES:=\
   Appendix.lagda \
   Applications.lagda
 
-AGDA_OUTPUT:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
+AGDA_OUTPUT:=$(patsubst %.lagda,../common/latex/%.tex,$(AGDA_FILES))
+AGDA_DEPENDENCIES:=$(patsubst %.lagda,latex/%.tex,$(AGDA_FILES))
 
 PAPER_DEPENDENCIES:= \
   common \
+  latex/agda.sty \
   latex/acmart.cls \
   latex/$(PAPER).tex \
   latex/nary.tex \
   latex/nary.bib \
   latex/ACM-Reference-Format.bst \
-  latex/agda.sty \
   latex/unicode.tex \
   latex/commands.tex \
   latex/appendix.tex \
+  $(AGDA_DEPENDENCIES)
 
 .SECONDARY: $(AGDA_OUTPUT)
+.SECONDARY: $(AGDA_DEPENDENCIES)
 
 all: latex/$(PAPER).pdf
 
 common:
 	$(MAKE) -C ../common
 
-latex/agda.sty: $(AGDA_OUTPUT)
-	mkdir -p latex/
-	cp ../common/latex/agda.sty latex/
+latex/%.tex: ../common/latex/%.tex
+	mkdir -p $(dir $@)
+	cp $< $@
+
+latex/agda.sty: ../common/latex/agda.sty
+	mkdir -p $(dir $@)
+	cp $< $@
 
 latex/$(PAPER).pdf: $(PAPER_DEPENDENCIES)
 	cd latex && latexmk -pdf -bibtex ${PAPER}.tex
@@ -67,10 +74,6 @@ latex/appendix.tex: appendix.tex
 
 latex/$(PAPER).tex: $(PAPER).tex
 	@mkdir -p $(dir $@)
-	cp $< $@
-
-latex/%.tex: ../common/latex/%.tex common
-	mkdir -p $(dir $@)
 	cp $< $@
 
 clean:
