@@ -53,7 +53,7 @@ const a i = a
 \end{code}
 %<*annot>
 \begin{code}
-_∋_ : ∀ {a} (A : Set a) → A → A
+_∋_ : (A : Set a) → A → A
 A ∋ a = a
 \end{code}
 %</annot>

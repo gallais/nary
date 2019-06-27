@@ -42,7 +42,7 @@ const a i = a
 -- Type annotation
 
 
-_∋_ : ∀ {a} (A : Set a) → A → A
+_∋_ : (A : Set a) → A → A
 A ∋ a = a
 
 
