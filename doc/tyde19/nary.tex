@@ -2,7 +2,7 @@
 
 For user convenience, Agda's standard library has accumulated a set of
 equality-manipulating combinators of varying arities (Section~\ref{sec:nary2})
-as well as a type-level compositional DSL to write clean types involving
+as well as a type-level compositional Domain Specific Language to write clean types involving
 indexed families of arity exactly one (Section~\ref{sec:unarycombinators}).
 None of these solutions scale well. By getting acquainted with the unifier
 (Section~\ref{sec:unifier}), we can design a good representation of n-ary
@@ -19,7 +19,8 @@ esoteric aspects of the language in Appendix~\ref{appendix:agda}.
 \section{N-ary Combinators... for N up to 2}\label{sec:nary2}
 
 Agda's standard library relies on propositional equality defined as
-a level polymorphic inductive family with one constructor \AIC{refl}.
+a level polymorphic inductive family. It has one constructor (\AIC{refl})
+witnessing the fact any value is equal to itself.
 
 \ExecuteMetaData[StateOfTheArt.tex]{equality}
 
@@ -33,7 +34,7 @@ pattern-matching on the equality proof:
 \ExecuteMetaData[StateOfTheArt.tex]{subst}
 
 However we quickly realise that it is convenient to be able to use
-congruence for functions which take more than one argument and
+congruence for functions that take more than one argument and
 substitution for at least binary relations. The standard library
 provides binary versions of both of these functions:
 
@@ -41,8 +42,8 @@ provides binary versions of both of these functions:
 \ExecuteMetaData[StateOfTheArt.tex]{subst2}
 
 If we want to go beyond arity two we are left to either define
-our own ternary, quaternary, etc. versions of \AF{cong} and \AF{subst}
-or awkwardly chaining the ones with a lower arity to slowly massage
+our own ternary, quaternary, etc. versions of \AF{cong} and \AF{subst},
+or to awkwardly chain the ones with a lower arity to slowly massage
 the expression at hand into the shape we want. Both of these solutions
 are unsatisfactory.
 
@@ -88,7 +89,7 @@ A typical expression built using this DSL follows a fairly simple schema:
 a combinator acting as a quantifier for the index (Section~\ref{sec:quantifiers})
 surrounds a combination of pointwise liftings of common type constructors
 (Section~\ref{sec:liftings}), index updates (Section~\ref{sec:iupdates}),
-and base predicates. This empowers us to write lighter types which hide
+and base predicates. This empowers us to write lighter types, which hide
 away the bits that are constant, focusing instead on the key predicates
 and the changes made to the index.
 
@@ -105,8 +106,8 @@ The most straightforward non-trivial indexed family we can define over
 \AD{List} is the predicate lifting \AF{All} which ensures that a given
 predicate \AB{P} holds of all the elements of a list. It has two
 constructors which each bear the same name as their counterparts in the
-underlying data: nil (\AIC{[]}) is a proof that all the elements in the
-empty list satisfy \AB{P} and cons (\AIC{\_::\_}) is a proof that \AB{P}
+underlying data: nil (\AIC{[]}) states that all the elements in the
+empty list satisfy \AB{P} and cons (\AIC{\_::\_}) states that \AB{P}
 holds of all the elements of a non-empty list if it holds of its head
 and of all the elements in its tail.
 
@@ -142,7 +143,7 @@ by using its field's name.
 \ExecuteMetaData[StateOfTheArt.tex]{sigma}
 
 The existential quantifier for indexed families is defined as a special
-case of \AR{Σ} which takes the index \AF{Set} implicitly.
+case of \AR{Σ}; it takes the index \AF{Set} implicitly.
 
 \ExecuteMetaData[StateOfTheArt.tex]{exists}
 
@@ -154,7 +155,7 @@ for that value.
 \ExecuteMetaData[StateOfTheArt.tex]{toList}
 
 \paragraph{Universal Quantifiers}\label{par:universalquantifiers}
-The pendant of existential quantification
+The natural counterpart of existential quantification
 is universal quantification. In type theory this corresponds to a dependent
 function space. Here we have room for variations and we can consider both
 the explicit (\AF{Π[\_]}) \emph{and} the implicit (\AF{∀[\_]}) universal
@@ -226,7 +227,7 @@ sometimes necessary to talk directly about negation.
 
 \paragraph{Negation} Traditionally negation is defined as functions into
 the empty type \AD{⊥}. We start by defining it as the inductive type with
-not constructor together with its elimination principle.
+not constructor together with its elimination principle (\AF{⊥-elim}).
 
 \begin{minipage}[t]{0.225\textwidth}
   \ExecuteMetaData[StateOfTheArt.tex]{bot}
@@ -315,7 +316,7 @@ the relations in question before we can use our usual unary combinators. This le
 to cluttered types which are not much better than their fully expanded counterparts.
 
 Let us look at an example. We introduce \AD{Pw} (for ``pointwise'') the relational
-equivalent of the predicate lifting \AD{All} we have been as our running example so
+equivalent of the predicate lifting \AD{All} we have been using as our running example so
 far. The inductive family \AD{Pw} is parameterised by a relation \AB{R} and ensures
 its two index list are compatible with \AB{R} in a pointwise manner. If both lists
 are empty then they are trivially related (\AIC{[]}); otherwise we demand that their
@@ -323,8 +324,8 @@ heads are related by \AB{R} and their tails are related pointwise (\AIC{\_∷\_}
 
 \ExecuteMetaData[StateOfTheArt.tex]{pointwise}
 
-To state the relational equivalent to \AD{All}'s \AF{\_<⋆>\_} using our unary
-combinators to manipulate predicates, we need to partially apply \AD{Pw} to
+To state the relational equivalent to \AD{All}'s \AF{\_<⋆>\_} using our
+combinators for unary predicates, we need to partially apply \AD{Pw} to
 \AB{xs} to make it a predicate as well as explicitly use a λ-abstraction to
 build the relation corresponding to the fact that \AB{R} implies \AB{S}.
 
@@ -347,20 +348,20 @@ pointwise lifting of common type constructors, and adjustment functions.
 
 \section{Plan} We can start to draw out the structure of our contribution now
 that we have a good idea of the current state of the art, its limitation, and
-the extension we want to see. Here are the key points we deliver:
+the extensions we want to see. Here are the key points we deliver:
 
 \paragraph{Reified Types} We come up with a representation of n-ary
 functions which is as general as possible: the domains should be allowed to
 be different types, even types defined at different universe levels.
 
 \paragraph{Semantics} We give a semantics taking a reified type and
-computing its meaning as a \AF{Set} at some level which will also need to
-be computed.
+computing its meaning as a \AF{Set} at some universe level. This level
+also needs to be computed from the description.
 
 \paragraph{Invertible} The representation and its semantics are unifier
 friendly. That is to say that if using a combinators yields a constraint of
-the form ``this type should be the result of evaluating the representation of
-an n-ary function type'' then Agda will be able to reconstruct the
+the form ``this type is the result of evaluating the representation of
+an n-ary function type'', then Agda will be able to reconstruct the
 representation and discharge the constraints without any outside help.
 
 \paragraph{Applications} Lastly we deliver the two wishes we
@@ -450,7 +451,7 @@ arguments) and \AD{ℕ} with \AB{?A} on the other (which succeeds by instantiati
 \paragraph{Failure} Or \AB{c} and \AB{d} are distinct and we can immediately
 conclude that unification is impossible. We cannot write an expression in Agda
 demonstrating this case as it leads to a type error in the language.
-Trying to form the unification problem {\AD{ℕ} ≈ (\AB{\_} → \AB{\_})} would
+Trying to form the unification problem {\AD{ℕ} ≈ (\AB{?A} → \AB{?B})} would
 raise such an error because \AD{ℕ} and {\_→\_} are distinct head constructors.
 
 \subsection{Avoid Computations...}
@@ -487,10 +488,10 @@ In general, it is impossible to solve the unification constraint
 is not specified then \AF{nary} is stuck. And there is no hope to solve
 this problem; indeed there are two solutions (\AB{?n} could be either \AN{0}
 or \AN{1}) because every unary function is also a nullary symbol whose type
-is a function type. As explained earlier, Agda communicates to us this
-failure to solve the two metavariables passed to \AF{nary} as arguments by
-highlighting them in yellow, \AIC{refl} is also highlighted as the source
-of the unification constraint which could not be satisfied.
+is a function type. As explained earlier, Agda communicates to us this failure
+to solve the two metavariables passed to \AF{nary} as arguments by
+highlighting them in yellow. The constructor \AIC{refl} is also highlighted as
+the source of the unification constraint that could not be satisfied.
 
 \ExecuteMetaData[Unifier.tex]{unsolved}
 
@@ -648,7 +649,7 @@ unit type, can be inferred by Agda so we leave it out.
 
 \section{Combinators for Indexed Families}\label{sec:narycombinators}
 
-Now that we have our generic representation of \AB{n}-ary function types we can
+Now that we have our generic representation of \AB{n}-ary function types, we can
 finally start building the \AB{n}-nary counterparts of the combinators we
 discussed at length in Section~\ref{sec:unarycombinators}.
 
@@ -818,8 +819,8 @@ of \AF{Set}-valued functions, we can make \AB{n} an implicit argument.
 The small language we have developed to talk about \AB{n}-ary functions can
 be used beyond our first few motivating examples of congruence, substitution,
 and combinators to define types involving relations. We detail in this section
-various results which fall out naturally from this work. We start with generic
-currying and uncurrying which we can then use to define an \AB{n}-ary \AF{zipWith}
+various results that fall out naturally from this work. We start with generic
+currying and uncurrying, and then use these to define an \AB{n}-ary \AF{zipWith}
 and revisit \AF{printf} in direct style.
 
 \subsection{Product and (Un)Currying}
@@ -890,7 +891,7 @@ first.
 When \AB{n} is \AN{0}, a Haskeller would typically return an infinite list
 containing the value \AB{f} repeated. However this is not possible in Agda,
 a total language~\cite{DBLP:journals/jucs/ATurner04}: all the lists have to
-be finite. Our only principled option is to return the empty one.
+be finite. Our only principled option is to return the empty list.
 
 \ExecuteMetaData[Applications.tex]{zw-aux0}
 
@@ -993,7 +994,7 @@ library code and \texttt{Text.Printf} for one application).
 \paragraph{Limitations} We are relying heavily on two key features of Agda
 that are not implemented in other dependently typed languages as far as we know.
 
-First of all \AF{Level}s are a first class notion: they can be stored in
+First, \AF{Level}s are a first class notion: they can be stored in
 data structures, passed around in functions and computed with just like
 any other primitive type. Unlike other primitive types (e.g. floating point
 numbers), it is not possible to perform case analysis on them. Other
@@ -1001,7 +1002,7 @@ dependently typed languages may not be too keen on adopting this extension
 given that its meta-theoretical consequences are currently unknown. We
 recommend that they use meta-programming instead to duplicate this work:
 programs written in MetaCoq~\cite{DBLP:conf/itp/AnandBCST18,draf/metacoq18}
-can explicitly manipulate universe levels.
+can for instance explicitly manipulate universe levels.
 
 Second, Agda's unifier has a heuristics that attempts to invert stuck functions
 when solving constraints. As we have explained in Section~\ref{sec:unifierinversion}

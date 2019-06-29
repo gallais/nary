@@ -1,54 +1,42 @@
 \section{Agda-Specific Features}\label{appendix:agda}
 
-We provide here a description of some of the more esoteric Agda features
-used in this paper. Readers interested in a more thorough introduction to
-the language may consider reading Ulf Norell's lecture
+We provide here a description of some of the more esoteric Agda
+features used in this paper. Readers interested in a more thorough
+introduction to the language may consider reading Ulf Norell's lecture
 notes~\cite{DBLP:conf/afp/Norell08}.
 
-\subsection{Syntax Highlighting}
+\subsection{Syntax Highlighting in the Text}
 
 The colours used in this paper all have a meaning: keywords are highlighted
 in \AK{orange}; \AF{blue} denotes function and type definitions; \AIC{green}
-marks constructors; \ARF{pink} is associated to record fields and the
+marks constructors; \ARF{pink} is associated to record fields and
 corresponding projections.
 
+\subsection{Universe levels}\label{appendix:agda:level}
 
-\subsection{Implicit Variable Generalisation}\label{appendix:agda:variable}
+Agda avoids Russell-style paradoxes by introducing a tower of universes
+\AF{Set₀} (usually written \AF{Set}), \AF{Set₁}, \AF{Set₂}, etc. Each
+\AF{Setₙ} does not itself have type \AF{Setₙ} but rather \AF{Setₙ₊₁} thus
+preventing circularity.
 
-Agda supports the implicit generalisation of variables appearing in type
-signatures. Every time a seemingly unbound variable is used, the reader
-can safely assume that it was automatically introduced by Agda using a
-prenex implicit quantifier. Both Haskell and OCaml behave similarly with
-respect to unbound type variables.
+We can form {\bf function types} from a domain type in \AF{Setₘ} to a codomain
+type in \AF{Setₙ}. Such a function type lives at the level corresponding
+to the maximum of \AB{m} and \AB{n}. This maximum is denoted {(\AB{m} \AF{⊔} \AB{n})}.
 
-In the type of the following definition for instance, \AB{A} and \AB{B} are
-two \AF{Set}s of respective universe levels \AB{a} and \AB{b} (see
-Appendix~\ref{appendix:agda:level}) and \AB{x} and \AB{y} are two values of
-type \AB{A}. All of these variables have been introduced using this implicit
-generalisation mechanism.
+An {\bf inductive} type or a {\bf record} type storing values of type \AF{Setₙ}
+needs to be defined at universe level \AB{n} or higher. We can combine multiple
+constraints of this form by using the maximum operator. The respective definitions
+of propositional equality in Section~\ref{sec:nary2} and dependent pairs in
+Section~\ref{def:sigma} are examples of such data and record types.
 
-\ExecuteMetaData[StateOfTheArt.tex]{cong}
+Without support for a mechanism to define {\bf level polymorphic functions},
+we would need to duplicate a lot of code. Luckily Agda has a primitive notion
+of universe levels called \AD{Level}. We can write level polymorphic code by
+quantifying over such a level \AB{l} and form the universe at level
+\AB{l} by writing (\AF{Set} \AB{l}). The prototypical example of such a level
+polymorphic function is the identity function \AF{id} defined as follows.
 
-If we had not relied on the implicit generalisation mechanism, we would have
-needed to write the following verbose type declaration.
-
-\ExecuteMetaData[Appendix.tex]{congtype}
-
-This mechanism can also be used when defining an inductive family.
-In Section~\ref{def:all}, we introduced the predicate lifting \AD{All}
-in the following mannger. The careful reader will have noticed a
-number of unbound names: \AB{a}, \AB{A}, \AB{p} in the declaration
-of the type constructor and \AB{x} and \AB{xs} in the declaration of
-the data constructor \AIC{\_::\_}.
-
-\ExecuteMetaData[StateOfTheArt.tex]{all}
-
-This definition corresponds internally to the following expanded
-version (modulo the order in which the variables have been generalised
-over).
-
-\ExecuteMetaData[Appendix.tex]{all}
-
+\ExecuteMetaData[Appendix.tex]{identity}
 
 \subsection{Meaning of Underscore}
 
@@ -85,28 +73,39 @@ instance the result of applying addition defined on natural numbers to
 
 \ExecuteMetaData[Appendix.tex]{unittest}
 
-\subsection{Universe levels}\label{appendix:agda:level}
+\subsection{Implicit Variable Generalisation}\label{appendix:agda:variable}
 
-Agda avoids Russell-style paradoxes by introducing a tower of universes
-\AF{Set₀} (usually written \AF{Set}), \AF{Set₁}, \AF{Set₂}, etc. Each
-\AF{Setₙ} does not itself have type \AF{Setₙ} but rather \AF{Setₙ₊₁} thus
-preventing circularity.
+Agda supports the implicit generalisation of variables appearing in type
+signatures. Every time a seemingly unbound variable is used, the reader can
+safely assume that it was declared by us as being a \AK{variable} Agda should
+automatically introduce. These variables are bound using an implicit
+prenex universal quantifier. Haskell, OCaml, and Idris behave similarly with
+respect to unbound type variables.
 
-We can form {\bf function types} from a domain type in \AF{Setₘ} to a codomain
-type in \AF{Setₙ}. Such a function type lives at the level corresponding
-to the maxium of \AB{m} and \AB{n}. This maximum is denoted {(\AB{m} \AF{⊔} \AB{n})}.
+In the type of the following definition for instance, \AB{A} and \AB{B} are
+two \AF{Set}s of respective universe levels \AB{a} and \AB{b} (see
+Appendix~\ref{appendix:agda:level}) and \AB{x} and \AB{y} are two values of
+type \AB{A}. All of these variables have been introduced using this implicit
+generalisation mechanism.
 
-An {\bf inductive} type or a {\bf record} type storing values of type \AF{Setₙ}
-needs to be defined at universe level \AB{n} or higher. We can combine multiple
-constraints of this form by using the maximum operator. The respective definitions
-of propositional equality in Section~\ref{sec:nary2} and dependent pairs in
-Section~\ref{def:sigma} are examples of such data and record types.
+\ExecuteMetaData[StateOfTheArt.tex]{cong}
 
-Without support for a mechanism to define {\bf level polymorphic functions},
-we would need to duplicate a lot of code. Luckily Agda has a primitive notion
-of universe levels called \AD{Level}. We can write level polymorphic code by
-quantifying over such a \AD{Level} \AB{l} and form the universe at level
-\AB{l} by writing (\AF{Set} \AB{l}). The prototypical example of such a level
-polymorphic function is the identity function \AF{id} defined as follows.
+If we had not relied on the implicit generalisation mechanism, we would have
+needed to write the following verbose type declaration.
 
-\ExecuteMetaData[Appendix.tex]{identity}
+\ExecuteMetaData[Appendix.tex]{congtype}
+
+This mechanism can also be used when defining an inductive family.
+In Section~\ref{def:all}, we introduced the predicate lifting \AD{All}
+in the following manner. The careful reader will have noticed a
+number of unbound names: \AB{a}, \AB{A}, \AB{p} in the declaration
+of the type constructor and \AB{x} and \AB{xs} in the declaration of
+the data constructor \AIC{\_::\_}.
+
+\ExecuteMetaData[StateOfTheArt.tex]{all}
+
+This definition corresponds internally to the following expanded
+version (modulo the order in which the variables have been generalised
+over).
+
+\ExecuteMetaData[Appendix.tex]{all}
