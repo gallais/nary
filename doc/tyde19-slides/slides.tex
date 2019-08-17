@@ -1,0 +1,359 @@
+\documentclass[compress,9pt]{beamer}
+
+\usepackage[sci]{strathclyde}
+\makeatletter
+\let\code\@undefined
+\usepackage{agda}
+\usepackage{catchfilebetweentags}
+\usepackage[T1]{fontenc}
+
+\patchcmd{\beamer@sectionintoc}
+  {\vfill}
+  {\bigskip}
+  {}
+  {}
+
+\input{unicode}
+\input{commands}
+\strathsetidentity{Department of}{Computer \& Information Sciences}
+
+\title{Generic Level Polymorphic N-ary Functions}
+\author{Guillaume ALLAIS}
+\institute{TyDe'19}
+\date[Aug 18]{August 18, 2019}
+
+\begin{document}
+
+\begin{frame}[t]
+\maketitle
+\end{frame}
+
+\begin{frame}
+\tableofcontents
+\end{frame}
+
+\section{State Of the Art}
+
+\subsection{N-ary Combinators... for N up to 2}
+
+\begin{frame}{Propositional Equality}
+  Propositional equality as an inductive family:
+
+  \ExecuteMetaData[StateOfTheArt.tex]{equality}
+
+  Congruence and substitution proven by pattern-matching:
+  \ExecuteMetaData[StateOfTheArt.tex]{cong}
+  \ExecuteMetaData[StateOfTheArt.tex]{subst}
+\end{frame}
+
+\begin{frame}{Binary Versions}
+  Binary congruence and substitution proven by pattern-matching:
+  \ExecuteMetaData[StateOfTheArt.tex]{cong2}
+  \ExecuteMetaData[StateOfTheArt.tex]{subst2}
+\end{frame}
+
+\begin{frame}{Wish: N-ary Versions}
+  What we would like to have: n-ary congruence and substitution.\bigskip
+
+  \hspace*{\mathindent}\begin{tabular}{@{}l@{~}l}
+    \AF{congₙ} : & (\AB{f} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AB{B}) →\\
+                 & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ → \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+                 & \AB{f} \AB{a₁} ⋯ \AB{aₙ} \AD{≡} \AB{f} \AB{b₁} ⋯ \AB{bₙ}
+  \end{tabular}
+
+  \medskip
+
+  \hspace*{\mathindent}\begin{tabular}{@{}l@{~}l}
+    \AF{substₙ} : & (\AB{R} : \AB{A₁} → ⋯ → \AB{Aₙ} → \AF{Set} \AB{r}) →\\
+                  & \AB{a₁} \AD{≡} \AB{b₁} → ⋯ → \AB{aₙ} \AD{≡} \AB{bₙ} → \\
+                  & \AB{R} \AB{a₁} ⋯ \AB{aₙ} → \AB{R} \AB{b₁} ⋯ \AB{bₙ}
+  \end{tabular}
+\end{frame}
+
+\subsection{Working with Indexed Families}
+
+\begin{frame}{List}
+  Example datatype our families will be indexed over:
+
+  \ExecuteMetaData[StateOfTheArt.tex]{list}
+
+  \bigskip
+  Predicate transformer: \AB{P} holds of all the values in the list:
+
+  \ExecuteMetaData[StateOfTheArt.tex]{all}
+\end{frame}
+
+\begin{frame}{Quantifiers}
+  Explicit and implicit universal quantifier:
+
+  \ExecuteMetaData[StateOfTheArt.tex]{universal}
+  \ExecuteMetaData[StateOfTheArt.tex]{iuniversal}
+
+  Example: if \AB{P} is universally true, then it holds of all the elements
+  of any list.
+  \ExecuteMetaData[StateOfTheArt.tex]{replicate}
+\end{frame}
+
+\begin{frame}{Lifting of Type Constructors}
+
+  Lifting implication between \AF{Set}s to implication between families:
+  \ExecuteMetaData[StateOfTheArt.tex]{implies}
+
+  \bigskip
+  Example: Applicative's 'ap' for \AD{All}:
+  \ExecuteMetaData[StateOfTheArt.tex]{ap}
+\end{frame}
+
+\begin{frame}{Adjustments To The Ambient Index}
+
+  Updating the index we are talking about:
+  \ExecuteMetaData[StateOfTheArt.tex]{update}
+
+  \bigskip
+  Example: concat's action on the predicate transformer \AD{All}:
+  \ExecuteMetaData[StateOfTheArt.tex]{join}
+\end{frame}
+
+\section{Requirements}
+
+\begin{frame}{Wishes}
+
+  \begin{enumerate}
+    \item Reified types of n-ary functions (including level polymorphism)
+    \bigskip
+    \item Semantics which should be
+      \begin{itemize}
+        \item computable (including its Set-level)
+        \item invertible (to minimise user input)
+      \end{itemize}
+    \bigskip
+    \item Applications: generic programs
+      \begin{itemize}
+        \item congruence, substitution
+        \item combinators for n-ary indexed families
+      \end{itemize}
+    \end{enumerate}
+
+\end{frame}
+
+\section{Getting Acquainted With the Unifier}
+
+\begin{frame}{Unification}
+
+  \begin{itemize}
+    \item Use case\medskip
+
+    Mechanical process to reconstruct missing values:
+    \begin{itemize}
+      \item Implicit arguments
+      \item Boring details the programmer left out
+    \end{itemize}
+
+    Principled: the generated solutions (if any) are unique.
+
+    \bigskip
+
+    \item Unification Problems: {\AB{lhs} ≈ \AB{rhs}}\medskip
+
+    \begin{itemize}
+      \item \AB{?a} stands for a metavariable
+      \item {\AB{e}\,[\AB{?a₁}, ⋯ ,\AB{?aₙ}]} for expression \AB{e} mentioning \AB{?a₁} to \AB{?aₙ}
+      \item {\AB{c} \AB{e₁} ⋯ \AB{eₙ} for a} constructor \AB{c} applied to \AB{n} expressions
+    \end{itemize}
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Unification Tests}
+  \begin{minipage}{0.75\textwidth}
+  Agda does unification all the time.\medskip
+
+  It is easy for us to ask Agda to solve unification problems
+
+  \begin{itemize}
+    \item Leave out values to create metavariables
+    \item State that two expressions are equal to start a unification problem
+  \end{itemize}
+  \end{minipage}
+  \begin{minipage}{0.15\textwidth}
+    \ExecuteMetaData[Unifier.tex]{unsolvedproblem}
+  \end{minipage}
+
+  \bigskip
+  For instance, {(\AB{?A} → \AB{?B}) ≈ (\AD{ℕ} → \AD{ℕ})} and
+  {(\AB{?A} → \AB{?A}) ≈ (\AD{ℕ} → \AD{ℕ})}
+
+  \begin{minipage}{0.35\textwidth}
+    \ExecuteMetaData[Unifier.tex]{unifproblem}
+  \end{minipage}\begin{minipage}{0.55\textwidth}
+    \ExecuteMetaData[Unifier.tex]{sharedunifproblem}
+  \end{minipage}
+\end{frame}
+
+\begin{frame}{Instantiation}
+  \begin{alertblock}{Problem: {\AB{?a} ≈ \AB{e}\,[\AB{?a₁} ⋯ \AB{?aₙ}]}}
+    Unifying a meta-variable with an expression.
+  \end{alertblock}
+
+  \bigskip
+  \begin{enumerate}
+    \item Make sure \AB{?a} does not appear in \AB{?a₁}, ⋯, \AB{?aₙ}
+    \item Instantiate \AB{?a} to {\AB{e}\,[\AB{?a₁} ⋯ \AB{?aₙ}]}
+    \item Discard the problem
+  \end{enumerate}
+
+  \bigskip Example:
+  \ExecuteMetaData[Unifier.tex]{instantiation}
+\end{frame}
+
+\begin{frame}{Constructor Headed Problems}
+
+  \begin{alertblock}{Problem: {\AB{c} \AB{e₁} ⋯ \AB{eₘ} ≈ \AB{d} \AB{f₁} ⋯ \AB{fₙ}}}
+    Unifying two constructor-headed expressions.
+  \end{alertblock}
+
+  \bigskip
+  \begin{enumerate}
+    \item Make sure the constructors \AB{c} and \AB{d} are equal
+    \item This means \AB{m} equals \AB{n}
+    \item Replace problem with subproblems {(\AB{e₁} ≈ \AB{f₁}) ⋯ (\AB{eₘ} ≈ \AB{fₙ})}
+  \end{enumerate}
+
+  \bigskip Example:
+  \ExecuteMetaData[Unifier.tex]{unifconstr}
+\end{frame}
+
+\begin{frame}{Avoid Computations... Unless (Part I)}
+
+  Avoid generating unification problems involving recursive functions.
+
+  \begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{nary}
+  \end{minipage}\begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{unsolved}
+  \end{minipage}
+  \bigskip
+  \onslide<2>{
+    Unless the recursion goes away in the cases you are interested in.
+
+    \begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{normalised0}
+    \end{minipage}\begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{normalised1}
+    \end{minipage}
+  }
+\end{frame}
+
+\begin{frame}{Avoid Computations... Unless (Part II)}
+
+  Avoid generating unification problems involving recursive functions.
+
+  \begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{nary}
+  \end{minipage}\begin{minipage}{0.45\textwidth}
+    \ExecuteMetaData[Unifier.tex]{notinverted}
+  \end{minipage}
+  \bigskip
+  \onslide<2>{
+    Unless the recursion is trivially invertible.
+
+    \begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{inverted0}
+    \end{minipage}\begin{minipage}{0.45\textwidth}
+      \ExecuteMetaData[Unifier.tex]{inverted}
+    \end{minipage}
+  }
+\end{frame}
+
+\section{Generic Level Polymorphic N-ary Functions}
+
+\begin{frame}{Design Constraints}
+
+  We want to
+  \begin{itemize}
+    \item Define representation of \AB{n}-ary functions
+    \item Give it a semantics (here called \AF{⟦\_⟧})
+  \end{itemize}
+
+  \bigskip
+  Such that when faced with constraints involving concrete types,
+  Agda can easily reconstruct the representation.
+
+  \bigskip
+  Example: recover \AB{?r} from {\AF{⟦} \AB{?r} \AF{⟧} ≈ (\AD{ℕ} → \AF{Set})}
+\end{frame}
+
+\subsection{Unification-Friendly Representation}
+
+\begin{frame}{Representation}
+  \begin{minipage}{0.5\textwidth}
+    \ExecuteMetaData[N-ary.tex]{levels}
+  \end{minipage}\begin{minipage}{0.4\textwidth}
+    \onslide<2->{\ExecuteMetaData[N-ary.tex]{tolevel}}
+  \end{minipage}
+  \onslide<3->{\ExecuteMetaData[N-ary.tex]{sets}}
+  \onslide<4>{\ExecuteMetaData[N-ary.tex]{arrows}}
+\end{frame}
+
+\subsection{N-ary Combinators}
+
+\begin{frame}{Congruence}
+  \ExecuteMetaData[Applications.tex]{Cong}
+  \ExecuteMetaData[Applications.tex]{cong}
+\end{frame}
+
+\begin{frame}{Lifting of Type Constructors}
+  \ExecuteMetaData[N-ary.tex]{lift2}
+  \ExecuteMetaData[N-ary.tex]{implication}
+\end{frame}
+
+\begin{frame}{Adjustments To The Ambient Index}
+  \ExecuteMetaData[N-ary.tex]{compose}
+\end{frame}
+
+
+\section{Going Further}
+
+\begin{frame}{Results}
+
+  Draft: {\large\url{https://gallais.github.io/pdf/tyde19_draft.pdf}}
+  \bigskip
+
+  \begin{itemize}
+    \item Already merged in the standard library:
+    \begin{itemize}
+      \item Unification-friendly representation of n-ary functions and products
+      \item Proofs of n-ary congruence and substitution
+      \item Combinators for n-ary relations and functions
+      \item Direct style \AF{printf}
+    \end{itemize}
+    \bigskip
+    \item Coming up:
+    \begin{itemize}
+      \item n-ary version of \AF{zipWith} \& friends
+    \end{itemize}
+    \bigskip
+    \item Future work:
+    \begin{itemize}
+      \item Dependent n-ary functions and products
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section*{Appendix}
+
+\begin{frame}{Printf}
+  \small
+  \begin{minipage}[t]{0.5\textwidth}
+    \ExecuteMetaData[Printf.tex]{chunk}
+  \end{minipage}\begin{minipage}[t]{0.4\textwidth}
+    \ExecuteMetaData[Printf.tex]{chunks}
+  \end{minipage}
+
+  \ExecuteMetaData[Printf.tex]{format}
+  \ExecuteMetaData[Printf.tex]{assemble}
+  \ExecuteMetaData[Printf.tex]{printf}
+  \normalsize
+\end{frame}
+
+\end{document}
